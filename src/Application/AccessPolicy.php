@@ -7,19 +7,20 @@ use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
 
 final class AccessPolicy
 {
-    /**
-     * @var Application
-     */
     private Application $application;
 
-    public function __construct(Application $application)
+    private LeanpubSales $leanpubSales;
+
+    public function __construct(Application $application, LeanpubSales $leanpubSales)
     {
         $this->application = $application;
+        $this->leanpubSales = $leanpubSales;
     }
 
     public function whenMemberRequestedAccess(MemberRequestedAccess $event): void
     {
-        // TODO ask LeanpubSales service
-        $this->application->grantAccess($event->memberId());
+        if ($this->leanpubSales->isInvoiceIdOfActualPurchase($event->leanpubInvoiceId())) {
+            $this->application->grantAccess($event->memberId());
+        }
     }
 }

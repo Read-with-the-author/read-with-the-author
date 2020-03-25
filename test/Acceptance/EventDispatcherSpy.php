@@ -10,7 +10,7 @@ final class EventDispatcherSpy implements EventDispatcher
     /**
      * @var array<object>
      */
-    private array $dispatchedEvents;
+    private array $dispatchedEvents = [];
 
     private EventDispatcher $wrappedEventDispatcher;
 

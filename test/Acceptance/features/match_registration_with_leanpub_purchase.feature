@@ -7,3 +7,7 @@ Feature:
     Given someone has bought a copy of the book
     When they request access to the club providing the correct invoice ID
     Then they should be granted access to the club
+
+  Scenario: The provided invoice ID does not match a purchase
+    When someone requests access to the club providing an invoice ID that does not match an actual purchase
+    Then they should not be granted access to the club

@@ -24,4 +24,9 @@ final class LeanpubInvoiceId
     {
         return $this->leanpubInvoiceId;
     }
+
+    public function equals(LeanpubInvoiceId $other): bool
+    {
+        return $this->leanpubInvoiceId === $other->leanpubInvoiceId;
+    }
 }

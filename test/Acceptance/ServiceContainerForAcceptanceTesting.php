@@ -14,6 +14,7 @@ final class ServiceContainerForAcceptanceTesting
     private ?Application $application = null;
     private ?EventDispatcherSpy $eventDispatcher = null;
     private ?MemberRepository $memberRepository = null;
+    private ?LeanpubSalesInMemory $leanpubSales = null;
 
     public function eventDispatcher(): EventDispatcherSpy
     {
@@ -24,7 +25,7 @@ final class ServiceContainerForAcceptanceTesting
 
             $eventDispatcher->addSubscriber(
                 MemberRequestedAccess::class,
-                [new AccessPolicy($this->application()), 'whenMemberRequestedAccess']
+                [new AccessPolicy($this->application(), $this->leanpubSales()), 'whenMemberRequestedAccess']
             );
         }
 
@@ -50,5 +51,14 @@ final class ServiceContainerForAcceptanceTesting
         }
 
         return $this->memberRepository;
+    }
+
+    public function leanpubSales(): LeanpubSalesInMemory
+    {
+        if ($this->leanpubSales === null) {
+            $this->leanpubSales = new LeanpubSalesInMemory();
+        }
+
+        return $this->leanpubSales;
     }
 }

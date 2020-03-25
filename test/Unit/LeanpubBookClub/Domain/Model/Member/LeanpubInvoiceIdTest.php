@@ -40,4 +40,21 @@ final class LeanpubInvoiceIdTest extends TestCase
             LeanpubInvoiceId::fromString('jP6LfQ3UkfOvZTLZLNfDfg')->asString()
         );
     }
+
+    /**
+     * @test
+     */
+    public function it_can_be_compared_to_another_id(): void
+    {
+        self::assertTrue(
+            LeanpubInvoiceId::fromString('jP6LfQ3UkfOvZTLZLNfDfg')->equals(
+                LeanpubInvoiceId::fromString('jP6LfQ3UkfOvZTLZLNfDfg')
+            )
+        );
+        self::assertFalse(
+            LeanpubInvoiceId::fromString('jP6LfQ3UkfOvZTLZLNfDfg')->equals(
+                LeanpubInvoiceId::fromString('6gbXPEDMOEMKCNwOykPvpg')
+            )
+        );
+    }
 }

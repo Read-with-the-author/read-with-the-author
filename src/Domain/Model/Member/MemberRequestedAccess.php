@@ -22,4 +22,9 @@ final class MemberRequestedAccess
     {
         return $this->memberId;
     }
+
+    public function leanpubInvoiceId(): LeanpubInvoiceId
+    {
+        return $this->leanpubInvoiceId;
+    }
 }
