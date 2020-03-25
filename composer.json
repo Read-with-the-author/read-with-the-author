@@ -1,0 +1,34 @@
+{
+    "authors": [
+        {
+            "name": "Matthias Noback",
+            "email": "matthiasnoback@gmail.com"
+        }
+    ],
+    "require-dev": {
+        "symfony/var-dumper": "^4.2",
+        "phpstan/phpstan": "^0.11.1",
+        "phpstan/phpstan-beberlei-assert": "^0.11.0",
+        "phpstan/phpstan-phpunit": "^0.11.0",
+        "behat/behat": "^3.6",
+        "matthiasnoback/behat-expect-exception": "^0.3",
+        "phpunit/phpunit": "^9.0"
+    },
+    "require": {
+        "php": ">=7.4",
+        "beberlei/assert": "^3.2",
+        "ramsey/uuid": "^4.0",
+        "roave/security-advisories": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "LeanpubBookClub\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Test\\Acceptance\\": "test/Acceptance",
+            "": ["test/Unit"]
+        }
+    }
+}
