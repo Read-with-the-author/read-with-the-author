@@ -7,6 +7,7 @@ use LeanpubBookClub\Domain\Model\Member\Member;
 use LeanpubBookClub\Domain\Model\Member\MemberId;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use Ramsey\Uuid\Uuid;
+use RuntimeException;
 
 final class MemberRepositoryInMemory implements MemberRepository
 {
@@ -23,5 +24,14 @@ final class MemberRepositoryInMemory implements MemberRepository
     public function save(Member $member): void
     {
         $this->members[$member->memberId()->asString()] = $member;
+    }
+
+    public function getById(MemberId $memberId): Member
+    {
+        if (!isset($this->members[$memberId->asString()])) {
+            throw new RuntimeException('Could not find member with ID ' . $memberId->asString());
+        }
+
+        return $this->members[$memberId->asString()];
     }
 }
