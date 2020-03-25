@@ -17,4 +17,9 @@ final class MemberRequestedAccess
         $this->emailAddress = $emailAddress;
         $this->leanpubInvoiceId = $leanpubInvoiceId;
     }
+
+    public function memberId(): MemberId
+    {
+        return $this->memberId;
+    }
 }
