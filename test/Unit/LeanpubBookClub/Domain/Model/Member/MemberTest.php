@@ -41,6 +41,18 @@ final class MemberTest extends TestCase
         self::assertArrayContainsObjectOfType(AccessGrantedToMember::class, $member->releaseEvents());
     }
 
+    /**
+     * @test
+     */
+    public function it_releases_events_only_once(): void
+    {
+        $member = $this->aMember();
+
+        self::assertNotEmpty($member->releaseEvents());
+
+        self::assertEmpty($member->releaseEvents());
+    }
+
     private function aNewMemberId(): MemberId
     {
         return MemberId::fromString('d3ab365c-b594-4f49-8fd0-bb0bfa584703');
