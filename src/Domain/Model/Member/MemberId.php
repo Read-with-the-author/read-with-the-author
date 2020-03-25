@@ -25,4 +25,9 @@ final class MemberId
     {
         return $this->id;
     }
+
+    public function equals(MemberId $other): bool
+    {
+        return $this->id === $other->id;
+    }
 }

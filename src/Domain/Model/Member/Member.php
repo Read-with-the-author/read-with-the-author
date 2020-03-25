@@ -32,6 +32,11 @@ final class Member
         return $member;
     }
 
+    public function grantAccess(): void
+    {
+        $this->events[] = new AccessGrantedToMember($this->memberId, $this->emailAddress);
+    }
+
     public function memberId(): MemberId
     {
         return $this->memberId;
