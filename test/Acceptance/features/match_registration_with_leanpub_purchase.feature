@@ -4,8 +4,8 @@ Feature:
   they have to provide their Leanpub invoice ID (which they can find on their invoice).
 
   Scenario: The provided invoice ID matches a purchase
-    Given someone has bought a copy of the book
-    When they request access to the club providing the correct invoice ID
+    Given someone has bought a copy of the book and the invoice ID was "jP6LfQ3UkfOvZTLZLNfDfg"
+    When they request access to the club providing the same invoice ID
     Then they should be granted access to the club
 
   Scenario: The provided invoice ID does not match a purchase

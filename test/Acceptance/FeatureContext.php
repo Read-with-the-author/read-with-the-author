@@ -5,10 +5,10 @@ namespace Test\Acceptance;
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Tester\Exception\PendingException;
-use LeanpubBookClub\Application\LeanpubSales;
+use LeanpubBookClub\Application\Application;
+use LeanpubBookClub\Application\ImportPurchase;
 use LeanpubBookClub\Application\RequestAccess;
 use LeanpubBookClub\Domain\Model\Member\AccessGrantedToMember;
-use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Member\MemberId;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
@@ -22,7 +22,7 @@ final class FeatureContext implements Context
 
     private ?string $buyerLeanpubInvoiceId;
 
-    private ?string $buyerEmailAddress;
+    private string $buyerEmailAddress = 'info@matthiasnoback.nl';
 
     private ?MemberId $memberId;
 
@@ -32,23 +32,21 @@ final class FeatureContext implements Context
     }
 
     /**
-     * @Given someone has bought a copy of the book
+     * @Given someone has bought a copy of the book and the invoice ID was :invoiceId
      */
-    public function someoneHasBoughtACopyOfTheBook(): void
+    public function someoneHasBoughtACopyOfTheBook(string $invoiceId): void
     {
-        $this->buyerEmailAddress = 'info@matthiasnoback.nl';
-        $this->buyerLeanpubInvoiceId = 'jP6LfQ3UkfOvZTLZLNfDfg';
+        $this->application()->importPurchase(new ImportPurchase($invoiceId));
+
+        $this->buyerLeanpubInvoiceId = $invoiceId;
     }
 
     /**
-     * @When they request access to the club providing the correct invoice ID
+     * @When they request access to the club providing the same invoice ID
      */
-    public function theySignUpForTheClubProvidingTheCorrectInvoiceID()
+    public function theySignUpForTheClubProvidingTheCorrectInvoiceID(): void
     {
         Assert::assertNotNull($this->buyerLeanpubInvoiceId);
-        Assert::assertNotNull($this->buyerEmailAddress);
-
-        $this->invoiceIdIsOfAnActualPurchase(LeanpubInvoiceId::fromString($this->buyerLeanpubInvoiceId));
 
         $this->memberId = $this->serviceContainer->application()->requestAccess(
             new RequestAccess($this->buyerEmailAddress, $this->buyerLeanpubInvoiceId)
@@ -58,7 +56,7 @@ final class FeatureContext implements Context
     /**
      * @Then they should be granted access to the club
      */
-    public function theyShouldBeGrantedAccessToTheClub()
+    public function theyShouldBeGrantedAccessToTheClub(): void
     {
         Assert::assertNotNull($this->memberId);
 
@@ -74,15 +72,20 @@ final class FeatureContext implements Context
     /**
      * @When someone requests access to the club providing an invoice ID that does not match an actual purchase
      */
-    public function someoneRequestsAccessToTheClubProvidingAnInvoiceIDThatDoesNotMatchAnActualPurchase()
+    public function someoneRequestsAccessToTheClubProvidingAnInvoiceIDThatDoesNotMatchAnActualPurchase(): void
     {
-
+        $this->memberId = $this->serviceContainer->application()->requestAccess(
+            new RequestAccess(
+                $this->buyerEmailAddress,
+                $unknownInvoiceId = '6gbXPEDMOEMKCNwOykPvpg'
+            )
+        );
     }
 
     /**
      * @Then they should not be granted access to the club
      */
-    public function theyShouldNotBeGrantedAccessToTheClub()
+    public function theyShouldNotBeGrantedAccessToTheClub(): void
     {
         foreach ($this->dispatchedEvents() as $event) {
             if ($event instanceof AccessGrantedToMember) {
@@ -99,8 +102,8 @@ final class FeatureContext implements Context
         return $this->serviceContainer->eventDispatcher()->dispatchedEvents();
     }
 
-    private function invoiceIdIsOfAnActualPurchase(LeanpubInvoiceId $leanpubInvoiceId): void
+    private function application(): Application
     {
-        $this->serviceContainer->leanpubSales()->invoiceIdIsOfAnActualPurchase($leanpubInvoiceId);
+        return $this->serviceContainer->application();
     }
 }
