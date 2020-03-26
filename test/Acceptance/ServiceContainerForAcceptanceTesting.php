@@ -11,6 +11,7 @@ use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
+use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
 
@@ -44,6 +45,10 @@ final class ServiceContainerForAcceptanceTesting
             $eventDispatcher->addSubscriber(
                 SessionWasPlanned::class,
                 [$this->upcomingSessions(), 'whenSessionWasPlanned']
+            );
+            $eventDispatcher->addSubscriber(
+                AttendeeRegisteredForSession::class,
+                [$this->upcomingSessions(), 'whenAttendeeRegisteredForSession']
             );
         }
 

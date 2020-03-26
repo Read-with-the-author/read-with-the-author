@@ -16,4 +16,14 @@ final class AttendeeRegisteredForSession
         $this->sessionId = $sessionId;
         $this->memberId = $memberId;
     }
+
+    public function sessionId(): SessionId
+    {
+        return $this->sessionId;
+    }
+
+    public function memberId(): MemberId
+    {
+        return $this->memberId;
+    }
 }

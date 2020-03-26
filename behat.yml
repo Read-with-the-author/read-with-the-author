@@ -4,4 +4,4 @@ default:
             paths: ["%paths.base%/test/Acceptance/features"]
             contexts:
                 - Test\Acceptance\RegistrationContext
-                - Test\Acceptance\SessionContext
+                - Test\Acceptance\ParticipationContext

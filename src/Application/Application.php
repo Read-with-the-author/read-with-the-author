@@ -123,8 +123,19 @@ final class Application
     /**
      * @return array<UpcomingSession> & UpcomingSession[]
      */
-    public function listUpcomingSessions(): array
+    public function listUpcomingSessions(MemberId $activeMemberId): array
     {
-        return $this->listUpcomingSessions->upcomingSessions($this->clock->currentTime());
+        return $this->listUpcomingSessions->upcomingSessions($this->clock->currentTime(), $activeMemberId);
+    }
+
+    public function attendSession(AttendSession $command): void
+    {
+        $session = $this->sessionRepository->getById($command->sessionId());
+
+        $session->attend($command->memberId());
+
+        $this->sessionRepository->save($session);
+
+        $this->eventDispatcher->dispatchAll($session->releaseEvents());
     }
 }
