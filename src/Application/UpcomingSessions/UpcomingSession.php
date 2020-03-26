@@ -1,32 +1,29 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub\Domain\Model\Session;
+namespace LeanpubBookClub\Application\UpcomingSessions;
 
-final class SessionWasPlanned
+final class UpcomingSession
 {
-    private SessionId $sessionId;
+    private string $sessionId;
 
-    private ScheduledDate $date;
+    private string $date;
 
     private string $description;
 
-    public function __construct(
-        SessionId $sessionId,
-        ScheduledDate $date,
-        string $description
-    ) {
+    public function __construct(string $sessionId, string $date, string $description)
+    {
         $this->sessionId = $sessionId;
         $this->date = $date;
         $this->description = $description;
     }
 
-    public function sessionId(): SessionId
+    public function sessionId(): string
     {
         return $this->sessionId;
     }
 
-    public function date(): ScheduledDate
+    public function date(): string
     {
         return $this->date;
     }

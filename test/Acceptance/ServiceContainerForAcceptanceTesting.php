@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Test\Acceptance;
 
+use DateTimeImmutable;
 use LeanpubBookClub\Application\AccessPolicy;
 use LeanpubBookClub\Application\Application;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
@@ -10,6 +11,8 @@ use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
+use LeanpubBookClub\Domain\Model\Session\SessionRepository;
+use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
 
 final class ServiceContainerForAcceptanceTesting
 {
@@ -17,6 +20,9 @@ final class ServiceContainerForAcceptanceTesting
     private ?EventDispatcherSpy $eventDispatcher = null;
     private ?MemberRepository $memberRepository = null;
     private ?PurchaseRepository $purchaseRepository = null;
+    private ?SessionRepository $sessionRepository = null;
+    private ?FakeClock $clock = null;
+    private ?UpcomingSessionsInMemory $upcomingSessions = null;
 
     public function eventDispatcher(): EventDispatcherSpy
     {
@@ -33,6 +39,12 @@ final class ServiceContainerForAcceptanceTesting
                 PurchaseWasClaimed::class,
                 [$this->accessPolicy(), 'whenPurchaseWasClaimed']
             );
+
+            // Test-specific listeners:
+            $eventDispatcher->addSubscriber(
+                SessionWasPlanned::class,
+                [$this->upcomingSessions(), 'whenSessionWasPlanned']
+            );
         }
 
         return $this->eventDispatcher;
@@ -44,11 +56,19 @@ final class ServiceContainerForAcceptanceTesting
             $this->application = new Application(
                 $this->memberRepository(),
                 $this->eventDispatcher(),
-                $this->purchaseRepository()
+                $this->purchaseRepository(),
+                $this->sessionRepository(),
+                $this->clock(),
+                $this->upcomingSessions()
             );
         }
 
         return $this->application;
+    }
+
+    public function setCurrentTime(DateTimeImmutable $currentTime): void
+    {
+        $this->clock()->setCurrentTime($currentTime);
     }
 
     private function purchaseRepository(): PurchaseRepository
@@ -69,6 +89,24 @@ final class ServiceContainerForAcceptanceTesting
         return $this->memberRepository;
     }
 
+    private function sessionRepository(): SessionRepository
+    {
+        if ($this->sessionRepository === null) {
+            $this->sessionRepository = new SessionRepositoryInMemory();
+        }
+
+        return $this->sessionRepository;
+    }
+
+    private function upcomingSessions(): UpcomingSessionsInMemory
+    {
+        if ($this->upcomingSessions === null) {
+            $this->upcomingSessions = new UpcomingSessionsInMemory();
+        }
+
+        return $this->upcomingSessions;
+    }
+
     private function accessPolicy(): AccessPolicy
     {
         return new AccessPolicy(
@@ -77,5 +115,14 @@ final class ServiceContainerForAcceptanceTesting
             $this->memberRepository(),
             $this->eventDispatcher()
         );
+    }
+
+    private function clock(): FakeClock
+    {
+        if ($this->clock === null) {
+            $this->clock = new FakeClock();
+        }
+
+        return $this->clock;
     }
 }
