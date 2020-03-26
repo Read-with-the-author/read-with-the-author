@@ -5,3 +5,4 @@ default:
             contexts:
                 - Test\Acceptance\RegistrationContext
                 - Test\Acceptance\ParticipationContext
+                - Test\Acceptance\ImportingContext

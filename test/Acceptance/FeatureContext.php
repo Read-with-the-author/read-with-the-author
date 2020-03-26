@@ -26,6 +26,11 @@ abstract class FeatureContext implements Context
         return $this->serviceContainer->eventDispatcher()->dispatchedEvents();
     }
 
+    protected function clearEvents(): void
+    {
+        $this->serviceContainer->eventDispatcher()->clearEvents();
+    }
+
     protected function application(): Application
     {
         return $this->serviceContainer->application();

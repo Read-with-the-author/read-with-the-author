@@ -16,4 +16,9 @@ final class PurchaseImported
     {
         $this->leanpubInvoiceId = $leanpubInvoiceId;
     }
+
+    public function leanpubInvoiceId(): LeanpubInvoiceId
+    {
+        return $this->leanpubInvoiceId;
+    }
 }

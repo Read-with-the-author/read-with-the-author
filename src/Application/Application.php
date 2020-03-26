@@ -16,6 +16,7 @@ use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Session\Session;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
+use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
 
 final class Application
 {
@@ -31,13 +32,16 @@ final class Application
 
     private ListUpcomingSessions $listUpcomingSessions;
 
+    private IndividualPurchases $individualPurchases;
+
     public function __construct(
         MemberRepository $memberRepository,
         EventDispatcher $eventDispatcher,
         PurchaseRepository $purchaseRepository,
         SessionRepository $sessionRepository,
         Clock $clock,
-        ListUpcomingSessions $listUpcomingSessions
+        ListUpcomingSessions $listUpcomingSessions,
+        IndividualPurchases $individualPurchases
     ) {
         $this->memberRepository = $memberRepository;
         $this->eventDispatcher = $eventDispatcher;
@@ -45,6 +49,18 @@ final class Application
         $this->sessionRepository = $sessionRepository;
         $this->clock = $clock;
         $this->listUpcomingSessions = $listUpcomingSessions;
+        $this->individualPurchases = $individualPurchases;
+    }
+
+    public function importAllPurchases(): void
+    {
+        foreach ($this->individualPurchases->all() as $purchase) {
+            $this->importPurchase(
+                new ImportPurchase(
+                    $purchase->invoiceId()
+                )
+            );
+        }
     }
 
     public function importPurchase(ImportPurchase $command): void

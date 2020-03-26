@@ -24,6 +24,7 @@ final class ServiceContainerForAcceptanceTesting
     private ?SessionRepository $sessionRepository = null;
     private ?FakeClock $clock = null;
     private ?UpcomingSessionsInMemory $upcomingSessions = null;
+    private ?IndividualPurchasesInMemory $individualPurchases = null;
 
     public function eventDispatcher(): EventDispatcherSpy
     {
@@ -64,7 +65,8 @@ final class ServiceContainerForAcceptanceTesting
                 $this->purchaseRepository(),
                 $this->sessionRepository(),
                 $this->clock(),
-                $this->upcomingSessions()
+                $this->upcomingSessions(),
+                $this->individualPurchases()
             );
         }
 
@@ -129,5 +131,14 @@ final class ServiceContainerForAcceptanceTesting
         }
 
         return $this->clock;
+    }
+
+    public function individualPurchases(): IndividualPurchasesInMemory
+    {
+        if ($this->individualPurchases === null) {
+            $this->individualPurchases = new IndividualPurchasesInMemory();
+        }
+
+        return $this->individualPurchases;
     }
 }

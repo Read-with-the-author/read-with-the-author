@@ -56,4 +56,9 @@ final class EventDispatcherSpy implements EventDispatcher
 
         return get_class($event);
     }
+
+    public function clearEvents(): void
+    {
+        $this->dispatchedEvents = [];
+    }
 }
