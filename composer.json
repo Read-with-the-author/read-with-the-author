@@ -18,7 +18,9 @@
         "php": ">=7.4",
         "beberlei/assert": "^3.2",
         "ramsey/uuid": "^4.0",
-        "roave/security-advisories": "dev-master"
+        "roave/security-advisories": "dev-master",
+        "thecodingmachine/safe": "^1.1",
+        "ext-json": "^7.4"
     },
     "autoload": {
         "psr-4": {

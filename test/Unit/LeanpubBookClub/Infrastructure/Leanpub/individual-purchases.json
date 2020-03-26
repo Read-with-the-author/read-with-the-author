@@ -1,0 +1,38 @@
+[
+    {
+        "cause_royalty_percentage": "0.0",
+        "author_royalty_percentage": "100.0",
+        "author_royalties": "16.0",
+        "cause_royalties": "0.0",
+        "author_paid_out_at": "2019-06-01T00:00:00.000Z",
+        "cause_paid_out_at": null,
+        "created_at": "2019-04-15T06:36:54.000Z",
+        "royalty_days_hold": 45,
+        "publisher_royalties": "0.0",
+        "publisher_paid_out_at": null,
+        "author_username": "matthiasnoback",
+        "publisher_slug": "",
+        "user_email": "",
+        "purchase_uuid": "P3-oyxuZ1pPdueS1OPWuuA",
+        "invoice_id": "jP6LfQ3UkfOvZTLZLNfDfg",
+        "date_purchased": "2019-04-15T06:36:54.000Z"
+    },
+    {
+        "cause_royalty_percentage": "0.0",
+        "author_royalty_percentage": "100.0",
+        "author_royalties": "16.0",
+        "cause_royalties": "0.0",
+        "author_paid_out_at": "2019-06-01T00:00:00.000Z",
+        "cause_paid_out_at": null,
+        "created_at": "2019-04-15T03:06:11.000Z",
+        "royalty_days_hold": 45,
+        "publisher_royalties": "0.0",
+        "publisher_paid_out_at": null,
+        "author_username": "matthiasnoback",
+        "publisher_slug": "",
+        "user_email": "",
+        "purchase_uuid": "3zBpsCx9nwy7hUeEHpju8Q",
+        "invoice_id": "6gbXPEDMOEMKCNwOykPvpg",
+        "date_purchased": "2019-04-15T03:06:11.000Z"
+    }
+]
