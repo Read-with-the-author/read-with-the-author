@@ -21,6 +21,8 @@ final class EventDispatcherSpy implements EventDispatcher
 
     public function dispatch(object $event): void
     {
+        $this->printEventOnSingleLine($event);
+
         $this->wrappedEventDispatcher->dispatch($event);
 
         $this->dispatchedEvents[] = $event;
@@ -39,5 +41,19 @@ final class EventDispatcherSpy implements EventDispatcher
     public function dispatchedEvents(): array
     {
         return $this->dispatchedEvents;
+    }
+
+    private function printEventOnSingleLine(object $event): void
+    {
+        echo $this->eventAsString($event) . "\n";
+    }
+
+    private function eventAsString(object $event): string
+    {
+        if (method_exists($event, '__toString')) {
+            return (string)$event;
+        }
+
+        return get_class($event);
     }
 }
