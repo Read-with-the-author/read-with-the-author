@@ -80,6 +80,61 @@ final class SessionTest extends EntityTestCase
         );
     }
 
+    /**
+     * @test
+     */
+    public function if_the_maximum_number_of_attendees_was_reached_the_session_is_closed_for_registration(): void
+    {
+        $session = $this->aSessionWithMaximumNumberOfAttendees(1);
+
+        $memberId = $this->aMemberId();
+        $session->attend($memberId);
+
+        self::assertEquals(
+            [
+                new AttendeeRegisteredForSession($session->sessionId(), $memberId),
+                new SessionWasClosedForRegistration($session->sessionId())
+            ],
+            $session->releaseEvents()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function a_second_registration_for_the_same_member_gets_ignored(): void
+    {
+        $session = $this->aSessionWithMaximumNumberOfAttendees(2);
+
+        $memberId = $this->aMemberId();
+        $session->attend($memberId);
+
+        $sameMemberId = $memberId;
+        $session->attend($sameMemberId);
+
+        self::assertEquals(
+            [
+                new AttendeeRegisteredForSession($session->sessionId(), $memberId)
+                // The registration wasn't closed
+            ],
+            $session->releaseEvents()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function when_a_session_was_closed_it_is_impossible_to_register_as_an_attendee(): void
+    {
+        $session = $this->aSessionWithMaximumNumberOfAttendees(1);
+        $session->attend($this->aMemberId());
+        $session->releaseEvents();
+
+        $session->attend($this->anotherMemberId());
+
+        self::assertEquals([], $session->releaseEvents());
+    }
+
     private function aSessionId(): SessionId
     {
         return SessionId::fromString('48e42502-79ee-47ac-b085-4571fc0f719c');
@@ -100,13 +155,13 @@ final class SessionTest extends EntityTestCase
         return 10;
     }
 
-    private function aSession(): Session
+    private function aSession(int $maximumNumberOfParticipants = null): Session
     {
         $session = Session::plan(
             $this->aSessionId(),
             $this->aDate(),
             $this->aDescription(),
-            $this->aMaximumNumberOfParticipants()
+            $maximumNumberOfParticipants ?? $this->aMaximumNumberOfParticipants()
         );
 
         $session->releaseEvents();
@@ -114,8 +169,18 @@ final class SessionTest extends EntityTestCase
         return $session;
     }
 
+    private function aSessionWithMaximumNumberOfAttendees(int $number): Session
+    {
+        return $this->aSession($number);
+    }
+
     private function aMemberId(): MemberId
     {
         return MemberId::fromString('d3ab365c-b594-4f49-8fd0-bb0bfa584703');
+    }
+
+    private function anotherMemberId(): MemberId
+    {
+        return MemberId::fromString('9aec8d8d-6cbc-4502-9583-06512e18ff86');
     }
 }

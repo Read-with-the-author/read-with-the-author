@@ -19,6 +19,13 @@ final class Session
 
     private int $maximumNumberOfParticipantsAllowed;
 
+    /**
+     * @var array<MemberId> & MemberId[]
+     */
+    private array $attendees = [];
+
+    private bool $wasClosed = false;
+
     private function __construct(
         SessionId $sessionId,
         ScheduledDate $date,
@@ -55,6 +62,31 @@ final class Session
 
     public function attend(MemberId $memberId): void
     {
+        if ($this->wasClosed) {
+            // When the session was closed, we don't accept new attendees
+            return;
+        }
+
+        foreach ($this->attendees as $attendee) {
+            if ($attendee->equals($memberId)) {
+                // No need to register the same attendee again
+                return;
+            }
+        }
+
+        $this->attendees[] = $memberId;
+
         $this->events[] = new AttendeeRegisteredForSession($this->sessionId, $memberId);
+
+        if (count($this->attendees) >= $this->maximumNumberOfParticipantsAllowed) {
+            $this->close();
+        }
+    }
+
+    private function close(): void
+    {
+        $this->wasClosed = true;
+
+        $this->events[] = new SessionWasClosedForRegistration($this->sessionId);
     }
 }
