@@ -87,8 +87,10 @@ final class FeatureContext implements Context
      */
     public function theyShouldNotBeGrantedAccessToTheClub(): void
     {
+        Assert::assertNotNull($this->memberId);
+
         foreach ($this->dispatchedEvents() as $event) {
-            if ($event instanceof AccessGrantedToMember) {
+            if ($event instanceof AccessGrantedToMember && $event->memberId()->equals($this->memberId)) {
                 throw new RuntimeException('We did not expect an AccessGrantedToMember event to have been dispatched');
             }
         }
@@ -105,5 +107,27 @@ final class FeatureContext implements Context
     private function application(): Application
     {
         return $this->serviceContainer->application();
+    }
+
+    /**
+     * @Given someone has been granted access to the club
+     */
+    public function someoneHasBeenGrantedAccessToTheClub(): void
+    {
+        $this->buyerLeanpubInvoiceId = 'jP6LfQ3UkfOvZTLZLNfDfg';
+        $this->application()->importPurchase(new ImportPurchase($this->buyerLeanpubInvoiceId));
+        $this->application()->requestAccess(new RequestAccess($this->buyerEmailAddress, $this->buyerLeanpubInvoiceId));
+    }
+
+    /**
+     * @When someone else requests access providing the same invoice ID
+     */
+    public function someoneElseRequestsAccessProvidingTheSameInvoiceID(): void
+    {
+        Assert::assertNotNull($this->buyerLeanpubInvoiceId);
+
+        $this->memberId = $this->application()->requestAccess(
+            new RequestAccess('someoneelse@matthiasnoback.nl', $this->buyerLeanpubInvoiceId)
+        );
     }
 }

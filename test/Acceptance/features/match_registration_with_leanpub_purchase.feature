@@ -11,3 +11,8 @@ Feature:
   Scenario: The provided invoice ID does not match a purchase
     When someone requests access to the club providing an invoice ID that does not match an actual purchase
     Then they should not be granted access to the club
+
+  Scenario: The provided invoice ID has been used before
+    Given someone has been granted access to the club
+    When someone else requests access providing the same invoice ID
+    Then they should not be granted access to the club
