@@ -2,4 +2,6 @@
 
 set -eu
 
-docker-compose run --rm php sh ./run_tests.sh
+bin/fast_tests.sh
+bin/slow_tests.sh
+
