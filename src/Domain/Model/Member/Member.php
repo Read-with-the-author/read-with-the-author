@@ -3,18 +3,17 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Domain\Model\Member;
 
+use LeanpubBookClub\Domain\Model\Common\Entity;
+
 final class Member
 {
+    use Entity;
+
     private EmailAddress $emailAddress;
 
     private MemberId $memberId;
 
     private LeanpubInvoiceId $leanpubInvoiceId;
-
-    /**
-     * @var array<object>
-     */
-    private array $events = [];
 
     private function __construct(MemberId $memberId, EmailAddress $emailAddress, LeanpubInvoiceId $leanpubInvoiceId)
     {
@@ -40,14 +39,5 @@ final class Member
     public function memberId(): MemberId
     {
         return $this->memberId;
-    }
-
-    public function releaseEvents(): array
-    {
-        $events = $this->events;
-
-        $this->events = [];
-
-        return $events;
     }
 }

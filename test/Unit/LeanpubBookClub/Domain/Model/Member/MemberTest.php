@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Domain\Model\Member;
 
-use PHPUnit\Framework\Assert;
-use PHPUnit\Framework\TestCase;
+use LeanpubBookClub\Domain\Model\Common\EntityTestCase;
 
-final class MemberTest extends TestCase
+final class MemberTest extends EntityTestCase
 {
     /**
      * @test
@@ -71,14 +70,5 @@ final class MemberTest extends TestCase
     private function aMember(): Member
     {
         return Member::requestAccess($this->aNewMemberId(), $this->anEmailAddress(), $this->aLeanpubInvoiceId());
-    }
-
-    private static function assertArrayContainsObjectOfType(string $expectedClass, array $objects): void
-    {
-        $objectsOfExpectedType = array_filter($objects, function ($object) use ($expectedClass) {
-            return $object instanceof $expectedClass;
-        });
-
-        self::assertNotEmpty($objectsOfExpectedType, 'Expected array to contain object of type ' . $expectedClass);
     }
 }
