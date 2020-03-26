@@ -5,6 +5,7 @@ namespace LeanpubBookClub\Domain\Model\Session;
 
 use Assert\Assert;
 use LeanpubBookClub\Domain\Model\Common\Entity;
+use LeanpubBookClub\Domain\Model\Member\MemberId;
 
 final class Session
 {
@@ -16,24 +17,31 @@ final class Session
 
     private string $description;
 
+    private int $maximumNumberOfParticipantsAllowed;
+
     private function __construct(
         SessionId $sessionId,
         ScheduledDate $date,
-        string $description
+        string $description,
+        int $maximumNumberOfParticipantsAllowed
     ) {
         Assert::that($description)->notEmpty('The session description should not be empty');
+        Assert::that($maximumNumberOfParticipantsAllowed)
+            ->greaterThan(0, 'The maximum number of participants should be greater than 0');
 
         $this->sessionId = $sessionId;
         $this->date = $date;
         $this->description = $description;
+        $this->maximumNumberOfParticipantsAllowed = $maximumNumberOfParticipantsAllowed;
     }
 
     public static function plan(
         SessionId $sessionId,
         ScheduledDate $date,
-        string $description
+        string $description,
+        int $maximumNumberOfParticipantsAllowed
     ): self {
-        $session = new self($sessionId, $date, $description);
+        $session = new self($sessionId, $date, $description, $maximumNumberOfParticipantsAllowed);
 
         $session->events[] = new SessionWasPlanned($sessionId, $date, $description);
 
@@ -43,5 +51,10 @@ final class Session
     public function sessionId(): SessionId
     {
         return $this->sessionId;
+    }
+
+    public function attend(MemberId $memberId): void
+    {
+        $this->events[] = new AttendeeRegisteredForSession($this->sessionId, $memberId);
     }
 }

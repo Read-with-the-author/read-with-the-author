@@ -109,7 +109,8 @@ final class Application
         $session = Session::plan(
             $sessionId,
             $command->date(),
-            $command->description()
+            $command->description(),
+            $command->maximumNumberOfParticipants()
         );
 
         $this->sessionRepository->save($session);

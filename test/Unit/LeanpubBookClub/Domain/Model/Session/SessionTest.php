@@ -5,6 +5,7 @@ namespace LeanpubBookClub\Domain\Model\Session;
 
 use InvalidArgumentException;
 use LeanpubBookClub\Domain\Model\Common\EntityTestCase;
+use LeanpubBookClub\Domain\Model\Member\MemberId;
 
 final class SessionTest extends EntityTestCase
 {
@@ -20,7 +21,8 @@ final class SessionTest extends EntityTestCase
         $session = Session::plan(
             $aSessionId,
             $aDate,
-            $aDescription
+            $aDescription,
+            $this->aMaximumNumberOfParticipants()
         );
 
         self::assertArrayContainsObjectOfType(SessionWasPlanned::class, $session->releaseEvents());
@@ -39,7 +41,42 @@ final class SessionTest extends EntityTestCase
         Session::plan(
             $this->aSessionId(),
             $this->aDate(),
-            $emptyDescription = ''
+            $emptyDescription = '',
+            $this->aMaximumNumberOfParticipants()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function the_maximum_number_of_participants_should_be_greater_than_0(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('maximum number of participants');
+
+        Session::plan(
+            $this->aSessionId(),
+            $this->aDate(),
+            $this->aDescription(),
+            $tooLow = 0
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function a_member_can_attend_it(): void
+    {
+        $session = $this->aSession();
+
+        $memberId = $this->aMemberId();
+        $session->attend($memberId);
+
+        self::assertEquals(
+            [
+                new AttendeeRegisteredForSession($session->sessionId(), $memberId)
+            ],
+            $session->releaseEvents()
         );
     }
 
@@ -56,5 +93,29 @@ final class SessionTest extends EntityTestCase
     private function aDescription(): string
     {
         return 'Description of this session';
+    }
+
+    private function aMaximumNumberOfParticipants(): int
+    {
+        return 10;
+    }
+
+    private function aSession(): Session
+    {
+        $session = Session::plan(
+            $this->aSessionId(),
+            $this->aDate(),
+            $this->aDescription(),
+            $this->aMaximumNumberOfParticipants()
+        );
+
+        $session->releaseEvents();
+
+        return $session;
+    }
+
+    private function aMemberId(): MemberId
+    {
+        return MemberId::fromString('d3ab365c-b594-4f49-8fd0-bb0bfa584703');
     }
 }

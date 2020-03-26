@@ -11,10 +11,13 @@ final class PlanSession
 
     private string $description;
 
-    public function __construct(string $date, string $description)
+    private int $maximumNumberOfParticipants;
+
+    public function __construct(string $date, string $description, int $maximumNumberOfParticipants)
     {
         $this->date = $date;
         $this->description = $description;
+        $this->maximumNumberOfParticipants = $maximumNumberOfParticipants;
     }
 
     public function date(): ScheduledDate
@@ -25,5 +28,10 @@ final class PlanSession
     public function description(): string
     {
         return $this->description;
+    }
+
+    public function maximumNumberOfParticipants(): int
+    {
+        return $this->maximumNumberOfParticipants;
     }
 }
