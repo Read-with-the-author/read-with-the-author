@@ -29,7 +29,7 @@ final class SessionContext extends FeatureContext
     /**
      * @When the administrator schedules a session for :date with description :description
      */
-    public function theAdministratorSchedulesASessionFor20200420WithDescription(string $date, string $description): void
+    public function theAdministratorSchedulesASessionForDateWithDescription(string $date, string $description): void
     {
         $this->plannedSessionId = $this->application()->planSession(new PlanSession($date, $description));
         $this->plannedSessionDescription = $description;
