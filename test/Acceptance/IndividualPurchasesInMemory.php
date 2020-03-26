@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Test\Acceptance;
 
+use Generator;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
 use LeanpubBookClub\Infrastructure\Leanpub\Purchase;
 
@@ -11,15 +12,17 @@ final class IndividualPurchasesInMemory implements IndividualPurchases
     /**
      * @var array<Purchase>
      */
-    private $purchases = [];
+    private array $purchases = [];
 
     public function add(Purchase $purchase): void
     {
         $this->purchases[] = $purchase;
     }
 
-    public function all(): array
+    public function all(): Generator
     {
-        return $this->purchases;
+        foreach ($this->purchases as $purchase) {
+            yield $purchase;
+        }
     }
 }

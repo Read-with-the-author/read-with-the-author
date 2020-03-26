@@ -7,6 +7,9 @@ use PHPUnit\Framework\TestCase;
 
 abstract class EntityTestCase extends TestCase
 {
+    /**
+     * @param array<object> $objects
+     */
     protected static function assertArrayContainsObjectOfType(string $expectedClass, array $objects): void
     {
         $objectsOfExpectedType = array_filter(

@@ -7,6 +7,8 @@ services:
             - ./:/app:cached
         working_dir: /app
         user: ${HOST_UID}:${HOST_GID}
+        env_file:
+          - .env
 
     composer:
         image: composer:latest

@@ -13,8 +13,9 @@ final class ImportingContext extends FeatureContext
 {
     /**
      * @Given Leanpub returns to us the following list of individual purchases:
+     * @param TableNode<mixed> $table
      */
-    public function leanpubReturnsToUsTheFollowingListOfIndividualPurchases(TableNode $table)
+    public function leanpubReturnsToUsTheFollowingListOfIndividualPurchases(TableNode $table): void
     {
         foreach ($table->getHash() as $purchaseData) {
             $this->serviceContainer()->individualPurchases()->add(
@@ -28,7 +29,7 @@ final class ImportingContext extends FeatureContext
      * @Given the system has imported all purchases
      * @When the system imports all purchases again
      */
-    public function theImporterRuns()
+    public function theImporterRuns(): void
     {
         $this->clearEvents();
 
@@ -37,8 +38,9 @@ final class ImportingContext extends FeatureContext
 
     /**
      * @Then the imported invoice IDs should be:
+     * @param TableNode<mixed> $table
      */
-    public function theImportedInvoiceIdsShouldBe(TableNode $table)
+    public function theImportedInvoiceIdsShouldBe(TableNode $table): void
     {
         $actualInvoiceIds = array_map(
             function (PurchaseImported $event): string {

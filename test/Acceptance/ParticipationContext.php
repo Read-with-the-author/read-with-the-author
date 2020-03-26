@@ -25,7 +25,7 @@ final class ParticipationContext extends FeatureContext
     /**
      * @Given today is :date
      */
-    public function todayIs(string $date)
+    public function todayIs(string $date): void
     {
         $currentTime = DateTimeImmutable::createFromFormat('Y-m-d', $date);
         Assert::assertInstanceOf(DateTimeImmutable::class, $currentTime);
@@ -47,7 +47,7 @@ final class ParticipationContext extends FeatureContext
     /**
      * @Then this session should show up in the list of upcoming sessions for the active member
      */
-    public function thisSessionShouldShowUpInTheListOfUpcomingSessions()
+    public function thisSessionShouldShowUpInTheListOfUpcomingSessions(): void
     {
         Assert::assertNotNull($this->plannedSessionId);
         Assert::assertNotNull($this->plannedSessionDescription);

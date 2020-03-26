@@ -7,7 +7,7 @@ use RuntimeException;
 use Safe\Exceptions\JsonException;
 use function Safe\json_encode;
 
-final class CouldNotCreatePurchaseDtos extends RuntimeException
+final class CouldNotLoadIndividualPurchases extends RuntimeException
 {
     public static function becauseJsonDataIsInvalid(string $jsonData, JsonException $previous): self
     {
@@ -31,13 +31,13 @@ final class CouldNotCreatePurchaseDtos extends RuntimeException
         );
     }
 
-    public static function becauseInvoiceIdIsMissing(array $purchaseData, string $expectedKey): self
+    public static function becauseInvoiceIdIsMissing(string $purchaseData, string $expectedKey): self
     {
         return new self(
             sprintf(
                 'Could not create Purchase DTOs because the key %s is missing: %s',
                 $expectedKey,
-                json_encode($purchaseData)
+                $purchaseData
             )
         );
     }

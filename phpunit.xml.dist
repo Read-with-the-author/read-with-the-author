@@ -7,6 +7,9 @@
         <testsuite name="unit">
             <directory>./test/Unit</directory>
         </testsuite>
+        <testsuite name="integration">
+            <directory>./test/Integration</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist>

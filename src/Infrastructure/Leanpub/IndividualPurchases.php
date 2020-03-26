@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure\Leanpub;
 
+use Generator;
+
 interface IndividualPurchases
 {
     /**
-     * @return array<Purchase>
+     * @return Generator<Purchase>
      */
-    public function all(): array;
+    public function all(): Generator;
 }
