@@ -3,6 +3,8 @@ parameters:
   paths:
     - src/
     - test/
+  excludes_analyse:
+    - src/LeanpubBookClub/Infrastructure/Symfony
 includes:
   - vendor/phpstan/phpstan-beberlei-assert/extension.neon
   - vendor/phpstan/phpstan-phpunit/extension.neon

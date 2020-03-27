@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub\Infrastructure\Leanpub;
+namespace LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
 
 use Generator;
 

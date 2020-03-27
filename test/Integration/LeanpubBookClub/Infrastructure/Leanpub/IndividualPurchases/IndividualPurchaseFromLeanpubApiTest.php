@@ -1,8 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub\Infrastructure\Leanpub;
+namespace LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
 
+use LeanpubBookClub\Infrastructure\Leanpub\ApiKey;
+use LeanpubBookClub\Infrastructure\Leanpub\BookSlug;
 use PHPUnit\Framework\TestCase;
 use LeanpubBookClub\Infrastructure\Env;
 
@@ -15,8 +17,7 @@ final class IndividualPurchaseFromLeanpubApiTest extends TestCase
     {
         $individualPurchases = new IndividualPurchaseFromLeanpubApi(
             BookSlug::fromString('object-design'),
-            ApiKey::fromString(Env::get('LEANPUB_API_KEY')),
-            new PurchaseFactory()
+            ApiKey::fromString(Env::get('LEANPUB_API_KEY'))
         );
 
         $numberOfPurchases = 0;

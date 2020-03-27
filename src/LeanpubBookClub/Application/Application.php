@@ -17,7 +17,7 @@ use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Session\Session;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
-use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
+use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
 
 final class Application
 {

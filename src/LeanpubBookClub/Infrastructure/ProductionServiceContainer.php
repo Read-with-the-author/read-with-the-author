@@ -4,8 +4,10 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure;
 
 use LeanpubBookClub\Application\Clock;
-use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchaseFromLeanpubApi;
-use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
+use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
+use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi;
+use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchaseFromLeanpubApi;
+use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
 
 final class ProductionServiceContainer extends ServiceContainer
 {
@@ -32,8 +34,15 @@ final class ProductionServiceContainer extends ServiceContainer
     {
         return new IndividualPurchaseFromLeanpubApi(
             $this->configuration->leanpubBookSlug(),
-            $this->configuration->leanpubApiKey(),
-            $this->purchaseFactory()
+            $this->configuration->leanpubApiKey()
+        );
+    }
+
+    private function getBookSummary(): GetBookSummary
+    {
+        return new GetBookSummaryFromLeanpubApi(
+            $this->configuration->leanpubBookSlug(),
+            $this->configuration->leanpubApiKey()
         );
     }
 }

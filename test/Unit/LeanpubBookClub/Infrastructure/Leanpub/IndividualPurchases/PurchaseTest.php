@@ -1,19 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub\Infrastructure\Leanpub;
+namespace LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
 
 use PHPUnit\Framework\TestCase;
 
-final class IndividualPurchasesFactoryTest extends TestCase
+final class PurchaseTest extends TestCase
 {
-    private PurchaseFactory $factory;
-
-    protected function setUp(): void
-    {
-        $this->factory = new PurchaseFactory();
-    }
-
     /**
      * @test
      */
@@ -22,7 +15,7 @@ final class IndividualPurchasesFactoryTest extends TestCase
         $this->expectException(CouldNotLoadIndividualPurchases::class);
         $this->expectExceptionMessage('the key invoice_id is missing');
 
-        $this->factory->createFromJsonDecodedData(['date_purchased' => '']);
+        Purchase::createFromJsonDecodedData(['date_purchased' => '']);
     }
 
     /**
@@ -33,6 +26,6 @@ final class IndividualPurchasesFactoryTest extends TestCase
         $this->expectException(CouldNotLoadIndividualPurchases::class);
         $this->expectExceptionMessage('the key date_purchased is missing');
 
-        $this->factory->createFromJsonDecodedData(['invoice_id' => '']);
+        Purchase::createFromJsonDecodedData(['invoice_id' => '']);
     }
 }

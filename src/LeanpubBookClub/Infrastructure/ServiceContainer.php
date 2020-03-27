@@ -14,8 +14,7 @@ use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
-use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
-use LeanpubBookClub\Infrastructure\Leanpub\PurchaseFactory;
+use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
 use Test\Acceptance\FakeClock;
 use Test\Acceptance\IndividualPurchasesInMemory;
 use Test\Acceptance\MemberRepositoryInMemory;
@@ -143,10 +142,5 @@ abstract class ServiceContainer
         }
 
         return $this->upcomingSessions;
-    }
-
-    protected function purchaseFactory(): PurchaseFactory
-    {
-        return new PurchaseFactory();
     }
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Test\Acceptance;
 
 use Generator;
-use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
-use LeanpubBookClub\Infrastructure\Leanpub\Purchase;
+use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
+use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\Purchase;
 
 final class IndividualPurchasesInMemory implements IndividualPurchases
 {

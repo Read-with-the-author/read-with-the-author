@@ -1,11 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub\Infrastructure\Leanpub;
+namespace LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
 
 use Generator;
-use Http\Adapter\Guzzle6\Client as GuzzleAdapter;
 use GuzzleHttp\Psr7\Request;
+use Http\Adapter\Guzzle6\Client as GuzzleAdapter;
+use LeanpubBookClub\Infrastructure\Leanpub\ApiKey;
+use LeanpubBookClub\Infrastructure\Leanpub\BookSlug;
 use Safe\Exceptions\JsonException;
 use function Safe\json_decode;
 use function Safe\json_encode;
@@ -16,13 +18,10 @@ final class IndividualPurchaseFromLeanpubApi implements IndividualPurchases
 
     private ApiKey $apiKey;
 
-    private PurchaseFactory $individualPurchasesFactory;
-
-    public function __construct(BookSlug $bookSlug, ApiKey $apiKey, PurchaseFactory $individualPurchasesFactory)
+    public function __construct(BookSlug $bookSlug, ApiKey $apiKey)
     {
         $this->bookSlug = $bookSlug;
         $this->apiKey = $apiKey;
-        $this->individualPurchasesFactory = $individualPurchasesFactory;
     }
 
     public function all(): Generator
@@ -48,7 +47,7 @@ final class IndividualPurchaseFromLeanpubApi implements IndividualPurchases
                     throw CouldNotLoadIndividualPurchases::becauseJsonDataStructureIsInvalid(json_encode($purchaseData));
                 }
 
-                yield $this->individualPurchasesFactory->createFromJsonDecodedData($purchaseData);
+                yield Purchase::createFromJsonDecodedData($purchaseData);
             }
 
             $page++;

@@ -1,11 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub\Infrastructure\Leanpub;
+namespace LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
 
 use RuntimeException;
 use Safe\Exceptions\JsonException;
-use function Safe\json_encode;
 
 final class CouldNotLoadIndividualPurchases extends RuntimeException
 {

@@ -6,7 +6,7 @@ namespace Test\Acceptance;
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseImported;
-use LeanpubBookClub\Infrastructure\Leanpub\Purchase;
+use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\Purchase;
 use PHPUnit\Framework\Assert;
 
 final class ImportingContext extends FeatureContext
