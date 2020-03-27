@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure\Leanpub;
 
-use Assert\Assert;
 use Generator;
 use Http\Adapter\Guzzle6\Client as GuzzleAdapter;
 use GuzzleHttp\Psr7\Request;
@@ -13,17 +12,14 @@ use function Safe\json_encode;
 
 final class IndividualPurchaseFromLeanpubApi implements IndividualPurchases
 {
-    private string $bookSlug;
+    private BookSlug $bookSlug;
 
-    private string $apiKey;
+    private ApiKey $apiKey;
 
     private PurchaseFactory $individualPurchasesFactory;
 
-    public function __construct(string $bookSlug, string $apiKey, PurchaseFactory $individualPurchasesFactory)
+    public function __construct(BookSlug $bookSlug, ApiKey $apiKey, PurchaseFactory $individualPurchasesFactory)
     {
-        Assert::that($bookSlug)->notEmpty('Leanpub book slug should not be empty');
-        Assert::that($apiKey)->notEmpty('Leanpub API key should not be empty');
-
         $this->bookSlug = $bookSlug;
         $this->apiKey = $apiKey;
         $this->individualPurchasesFactory = $individualPurchasesFactory;
@@ -69,8 +65,8 @@ final class IndividualPurchaseFromLeanpubApi implements IndividualPurchases
                 'GET',
                 sprintf(
                     'https://leanpub.com/%s/individual_purchases.json?api_key=%s&page=%d',
-                    $this->bookSlug,
-                    $this->apiKey,
+                    $this->bookSlug->asString(),
+                    $this->apiKey->asString(),
                     $page
                 )
             )

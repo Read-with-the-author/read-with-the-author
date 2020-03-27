@@ -14,12 +14,14 @@ final class IndividualPurchaseFromLeanpubApiTest extends TestCase
     public function it_loads_all_purchases_from_leanpub(): void
     {
         $individualPurchases = new IndividualPurchaseFromLeanpubApi(
-            'object-design',
-            Env::get('LEANPUB_API_KEY'),
+            BookSlug::fromString('object-design'),
+            ApiKey::fromString(Env::get('LEANPUB_API_KEY')),
             new PurchaseFactory()
         );
 
         $numberOfPurchases = 0;
+
+        // TODO check that the most recent ones come first
 
         foreach ($individualPurchases->all() as $purchase) {
             self::assertInstanceOf(Purchase::class, $purchase);
