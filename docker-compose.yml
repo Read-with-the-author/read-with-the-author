@@ -1,4 +1,4 @@
-version: '3'
+version: '2.2'
 
 services:
     php:
@@ -8,7 +8,7 @@ services:
         working_dir: /app
         user: ${HOST_UID}:${HOST_GID}
         env_file:
-          - .env
+            - .env
 
     composer:
         image: composer:latest
@@ -16,3 +16,16 @@ services:
             - ./:/app:cached
             - ~/.composer:/tmp:cached
         user: ${HOST_UID}:${HOST_GID}
+
+    nginx:
+        image: matthiasnoback/leanpub-book-club-nginx:latest
+        build: docker/nginx/
+        volumes:
+            - ./:/app:cached
+        ports:
+            - "80:80"
+    php-fpm:
+        image: matthiasnoback/leanpub-book-club-php-fpm:latest
+        build: docker/php-fpm/
+        volumes:
+            - ./:/app:cached
