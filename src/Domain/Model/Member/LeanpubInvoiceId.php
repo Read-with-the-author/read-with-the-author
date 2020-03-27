@@ -11,7 +11,7 @@ final class LeanpubInvoiceId
 
     private function __construct(string $leanpubInvoiceId)
     {
-        Assert::that($leanpubInvoiceId)->regex('/^[A-Za-z0-9]{22}$/');
+        Assert::that($leanpubInvoiceId)->regex('/^[A-Za-z0-9_\-]{22}$/');
         $this->leanpubInvoiceId = $leanpubInvoiceId;
     }
 

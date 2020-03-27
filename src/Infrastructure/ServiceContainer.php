@@ -6,6 +6,7 @@ namespace LeanpubBookClub\Infrastructure;
 use Assert\Assert;
 use LeanpubBookClub\Application\AccessPolicy;
 use LeanpubBookClub\Application\Application;
+use LeanpubBookClub\Application\Clock;
 use LeanpubBookClub\Application\EventDispatcher;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
@@ -13,6 +14,8 @@ use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
+use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
+use LeanpubBookClub\Infrastructure\Leanpub\PurchaseFactory;
 use Test\Acceptance\EventDispatcherSpy;
 use Test\Acceptance\FakeClock;
 use Test\Acceptance\IndividualPurchasesInMemory;
@@ -25,14 +28,14 @@ abstract class ServiceContainer
 {
     private ?Application $application = null;
     private ?UpcomingSessionsInMemory $upcomingSessions = null;
-    private ?FakeClock $clock = null;
+    private ?Clock $clock = null;
     private ?EventDispatcherSpy $eventDispatcher = null;
     private ?MemberRepository $memberRepository = null;
     private ?PurchaseRepository $purchaseRepository = null;
     private ?SessionRepository $sessionRepository = null;
     private ?IndividualPurchasesInMemory $individualPurchases = null;
 
-    protected function clock(): FakeClock
+    protected function clock(): Clock
     {
         // TODO Replace with production implementation
         if ($this->clock === null) {
@@ -53,7 +56,7 @@ abstract class ServiceContainer
         }
 
         Assert::that($this->eventDispatcher)->isInstanceOf(EventDispatcher::class);
-        
+
         return $this->eventDispatcher;
     }
 
@@ -69,9 +72,8 @@ abstract class ServiceContainer
         );
     }
 
-    protected function individualPurchases(): IndividualPurchasesInMemory
+    protected function individualPurchases(): IndividualPurchases
     {
-        // TODO Replace with production implementation
         if ($this->individualPurchases === null) {
             $this->individualPurchases = new IndividualPurchasesInMemory();
         }
@@ -144,5 +146,10 @@ abstract class ServiceContainer
         }
 
         return $this->upcomingSessions;
+    }
+
+    protected function purchaseFactory(): PurchaseFactory
+    {
+        return new PurchaseFactory();
     }
 }

@@ -8,6 +8,8 @@ use Generator;
 interface IndividualPurchases
 {
     /**
+     * Returns all individual purchases, most recent purchases first
+     *
      * @return Generator<Purchase>
      */
     public function all(): Generator;

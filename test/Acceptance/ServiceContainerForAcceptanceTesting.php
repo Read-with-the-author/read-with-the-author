@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Test\Acceptance;
 
+use Assert\Assert;
 use DateTimeImmutable;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
@@ -13,7 +14,10 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
 {
     public function setCurrentTime(DateTimeImmutable $currentTime): void
     {
-        $this->clock()->setCurrentTime($currentTime);
+        $clock = $this->clock();
+        Assert::that($clock)->isInstanceOf(FakeClock::class);
+
+        $clock->setCurrentTime($currentTime);
     }
 
     protected function registerEventSubscribers(EventDispatcherWithSubscribers $eventDispatcher): void
@@ -33,6 +37,10 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
 
     public function individualPurchases(): IndividualPurchasesInMemory
     {
-        return parent::individualPurchases();
+        $individualPurchases = parent::individualPurchases();
+        Assert::that($individualPurchases)->isInstanceOf(IndividualPurchasesInMemory::class);
+        /** @var $individualPurchases IndividualPurchasesInMemory */
+
+        return $individualPurchases;
     }
 }

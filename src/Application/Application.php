@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Application;
 
+use LeanpubBookClub\Application\Importing\PurchaseWasAlreadyImported;
 use LeanpubBookClub\Application\UpcomingSessions\ListUpcomingSessions;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
@@ -55,11 +56,15 @@ final class Application
     public function importAllPurchases(): void
     {
         foreach ($this->individualPurchases->all() as $purchase) {
-            $this->importPurchase(
-                new ImportPurchase(
-                    $purchase->invoiceId()
-                )
-            );
+            try {
+                $this->importPurchase(new ImportPurchase($purchase->invoiceId()));
+            } catch (PurchaseWasAlreadyImported $exception) {
+                /*
+                 * We import the most recent purchases first, so we know we can stop as soon as we encounter an older
+                 * purchase that we've already imported.
+                 */
+                return;
+            }
         }
     }
 
@@ -67,8 +72,8 @@ final class Application
     {
         try {
             $this->purchaseRepository->getById($command->leanpubInvoiceId());
-            // This purchase has already been imported
-            return;
+
+            throw new PurchaseWasAlreadyImported($command->leanpubInvoiceId());
         } catch (CouldNotFindPurchase $exception) {
             $purchase = Purchase::import($command->leanpubInvoiceId());
 
