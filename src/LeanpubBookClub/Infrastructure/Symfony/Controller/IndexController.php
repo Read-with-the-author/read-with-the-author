@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -15,7 +16,6 @@ final class IndexController extends AbstractController
 {
     /**
      * @Route("/", methods={"GET"})
-     * @return Response
      */
     public function indexAction(): Response
     {
@@ -26,6 +26,35 @@ final class IndexController extends AbstractController
                 'requestAccessForm' => $this->createRequestAccessForm()->createView()
             ]
         );
+    }
+
+    /**
+     * @Route("/request-access", name="request_access", methods={"POST"})
+     */
+    public function requestAccessAction(Request $request): Response
+    {
+        $form = $this->createRequestAccessForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            return $this->redirectToRoute('access_requested');
+        }
+
+        return $this->render(
+            'index.html.twig',
+            [
+                'requestAccessTokenForm' => $this->createRequestAccessTokenForm()->createView(),
+                'requestAccessForm' => $form->createView()
+            ]
+        );
+    }
+
+    /**
+     * @Route("/access-requested", name="access_requested", methods={"GET"})
+     */
+    public function accessRequestedAction(): Response
+    {
+        return $this->render('access_requested.html.twig');
     }
 
     private function createRequestAccessTokenForm(): FormInterface
@@ -52,6 +81,7 @@ final class IndexController extends AbstractController
     private function createRequestAccessForm(): FormInterface
     {
         return $this->createFormBuilder()
+            ->setAction($this->generateUrl('request_access'))
             ->add(
                 'emailAddress',
                 EmailType::class,
