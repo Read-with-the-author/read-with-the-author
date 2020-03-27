@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Test\Acceptance;
 
+use LeanpubBookClub\Infrastructure\Event;
+
 final class EventDispatcherSpy
 {
     /**
@@ -27,16 +29,7 @@ final class EventDispatcherSpy
 
     private function printEventOnSingleLine(object $event): void
     {
-        echo $this->eventAsString($event) . "\n";
-    }
-
-    private function eventAsString(object $event): string
-    {
-        if (method_exists($event, '__toString')) {
-            return (string)$event;
-        }
-
-        return get_class($event);
+        echo Event::asString($event) . "\n";
     }
 
     public function clearEvents(): void
