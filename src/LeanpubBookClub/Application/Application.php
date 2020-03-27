@@ -17,6 +17,7 @@ use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Session\Session;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
+use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
 
 final class Application
@@ -35,6 +36,12 @@ final class Application
 
     private IndividualPurchases $individualPurchases;
 
+    private GetBookSummary $getBookSummary;
+    /**
+     * @var AssetPublisher
+     */
+    private AssetPublisher $assetPublisher;
+
     public function __construct(
         MemberRepository $memberRepository,
         EventDispatcher $eventDispatcher,
@@ -42,7 +49,9 @@ final class Application
         SessionRepository $sessionRepository,
         Clock $clock,
         ListUpcomingSessions $listUpcomingSessions,
-        IndividualPurchases $individualPurchases
+        IndividualPurchases $individualPurchases,
+        GetBookSummary $getBookSummary,
+        AssetPublisher $assetPublisher
     ) {
         $this->memberRepository = $memberRepository;
         $this->eventDispatcher = $eventDispatcher;
@@ -51,6 +60,8 @@ final class Application
         $this->clock = $clock;
         $this->listUpcomingSessions = $listUpcomingSessions;
         $this->individualPurchases = $individualPurchases;
+        $this->getBookSummary = $getBookSummary;
+        $this->assetPublisher = $assetPublisher;
     }
 
     public function importAllPurchases(): void
@@ -158,5 +169,11 @@ final class Application
         $this->sessionRepository->save($session);
 
         $this->eventDispatcher->dispatchAll($session->releaseEvents());
+    }
+
+    public function refreshBookInformation(): void
+    {
+        $bookSummary = $this->getBookSummary->getBookSummary();
+        $this->assetPublisher->publishTitlePageImageUrl($bookSummary->titlePageUrl());
     }
 }

@@ -6,6 +6,7 @@ namespace LeanpubBookClub\Infrastructure;
 use Assert\Assert;
 use LeanpubBookClub\Application\AccessPolicy;
 use LeanpubBookClub\Application\Application;
+use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
 use LeanpubBookClub\Application\EventDispatcher;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
@@ -14,8 +15,11 @@ use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
+use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
+use Test\Acceptance\AssetPublisherInMemory;
 use Test\Acceptance\FakeClock;
+use Test\Acceptance\GetBookSummaryInMemory;
 use Test\Acceptance\IndividualPurchasesInMemory;
 use Test\Acceptance\MemberRepositoryInMemory;
 use Test\Acceptance\PurchaseRepositoryInMemory;
@@ -87,7 +91,9 @@ abstract class ServiceContainer
                 $this->sessionRepository(),
                 $this->clock(),
                 $this->upcomingSessions(),
-                $this->individualPurchases()
+                $this->individualPurchases(),
+                $this->getBookSummary(),
+                $this->assetPublisher()
             );
         }
 
@@ -142,5 +148,15 @@ abstract class ServiceContainer
         }
 
         return $this->upcomingSessions;
+    }
+
+    protected function getBookSummary(): GetBookSummary
+    {
+        return new GetBookSummaryInMemory();
+    }
+
+    protected function assetPublisher(): AssetPublisher
+    {
+        return new AssetPublisherInMemory();
     }
 }

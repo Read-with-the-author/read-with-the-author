@@ -46,4 +46,9 @@ final class BookSummary
             self::extractString($data, 'url')
         );
     }
+
+    public function titlePageUrl(): string
+    {
+        return $this->titlePageUrl;
+    }
 }

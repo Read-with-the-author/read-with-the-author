@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure;
 
+use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi;
@@ -23,10 +24,10 @@ final class ProductionServiceContainer extends ServiceContainer
         return new SystemClock();
     }
 
-    public static function createFromEnvironmentVariables(): self
+    public static function createFromEnvironmentVariables(string $projectDirectory): self
     {
         return new self(
-            Configuration::createFromEnvironmentVariables()
+            Configuration::createFromEnvironmentVariables($projectDirectory)
         );
     }
 
@@ -38,11 +39,17 @@ final class ProductionServiceContainer extends ServiceContainer
         );
     }
 
-    private function getBookSummary(): GetBookSummary
+    protected function getBookSummary(): GetBookSummary
     {
         return new GetBookSummaryFromLeanpubApi(
             $this->configuration->leanpubBookSlug(),
             $this->configuration->leanpubApiKey()
         );
     }
+
+    protected function assetPublisher(): AssetPublisher
+    {
+        return new PublicAssetPublisher($this->configuration->assetsDirectory());
+    }
+
 }

@@ -35,3 +35,5 @@ services:
     LeanpubBookClub\Infrastructure\ProductionServiceContainer: ~
     LeanpubBookClub\Infrastructure\Configuration:
         factory: ['LeanpubBookClub\Infrastructure\Configuration', 'createFromEnvironmentVariables']
+        arguments:
+            - '%kernel.project_dir%'
