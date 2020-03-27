@@ -37,7 +37,6 @@ abstract class ServiceContainer
 
     protected function clock(): Clock
     {
-        // TODO Replace with production implementation
         if ($this->clock === null) {
             $this->clock = new FakeClock();
         }
