@@ -97,6 +97,9 @@
     "symfony/polyfill-intl-idn": {
         "version": "v1.15.0"
     },
+    "symfony/profiler-pack": {
+        "version": "v1.0.4"
+    },
     "symfony/routing": {
         "version": "4.2",
         "recipe": {
@@ -110,6 +113,9 @@
             "config/packages/routing.yaml",
             "config/routes.yaml"
         ]
+    },
+    "symfony/stopwatch": {
+        "version": "v5.0.5"
     },
     "symfony/twig-bridge": {
         "version": "v5.0.5"
@@ -133,6 +139,20 @@
     },
     "symfony/var-exporter": {
         "version": "v5.0.5"
+    },
+    "symfony/web-profiler-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "6bdfa1a95f6b2e677ab985cd1af2eae35d62e0f6"
+        },
+        "files": [
+            "config/packages/dev/web_profiler.yaml",
+            "config/packages/test/web_profiler.yaml",
+            "config/routes/dev/web_profiler.yaml"
+        ]
     },
     "twig/extra-bundle": {
         "version": "v3.0.3"
