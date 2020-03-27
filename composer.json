@@ -22,7 +22,8 @@
         "thecodingmachine/safe": "^1.1",
         "ext-json": "^7.4",
         "php-http/guzzle6-adapter": "^2.0",
-        "php-http/message": "^1.8"
+        "php-http/message": "^1.8",
+        "twig/twig": "^3.0"
     },
     "autoload": {
         "psr-4": {
