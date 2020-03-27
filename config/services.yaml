@@ -25,3 +25,9 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    LeanpubBookClub\Application\Application:
+        factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'application']
+    LeanpubBookClub\Infrastructure\ProductionServiceContainer: ~
+    LeanpubBookClub\Infrastructure\Configuration:
+        factory: ['LeanpubBookClub\Infrastructure\Configuration', 'createFromEnvironmentVariables']

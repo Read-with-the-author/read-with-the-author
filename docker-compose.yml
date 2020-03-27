@@ -30,3 +30,6 @@ services:
         build: docker/php-fpm/
         volumes:
             - ./:/app:cached
+        env_file:
+            - .env
+            - .env.local

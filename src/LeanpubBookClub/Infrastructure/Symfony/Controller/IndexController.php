@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure\Symfony\Controller;
 
+use LeanpubBookClub\Application\Application;
+use LeanpubBookClub\Application\RequestAccess;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessForm;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessTokenForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,6 +15,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 final class IndexController extends AbstractController
 {
+    private Application $application;
+
+    public function __construct(Application $application)
+    {
+        $this->application = $application;
+    }
+
     /**
      * @Route("/", methods={"GET"})
      */
@@ -36,6 +45,10 @@ final class IndexController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $formData = $form->getData();
+            $command = new RequestAccess($formData['emailAddress'], $formData['leanpubInvoiceId']);
+            $this->application->requestAccess($command);
+
             return $this->redirectToRoute('access_requested');
         }
 
