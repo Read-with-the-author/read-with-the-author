@@ -1,0 +1,26 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-sm-8">
+
+                <h1 class="display-4">Object Design Style Guide</h1>
+                <p class="lead">Read the book together with the author</p>
+                <hr class="my-4">
+
+                <h3>Already a member?</h3>
+                {{ form(requestAccessTokenForm) }}
+            </div>
+            <div class="col-sm-3">
+                <a href="https://leanpub.com/object-design/" target="_blank"><img
+                            src="https://d2sofvawe08yqg.cloudfront.net/object-design/hero2x?1552991369"
+                            class="img-fluid"/></a>
+            </div>
+        </div>
+    </div>
+
+    <h2>Not a member yet? Sign up</h2>
+    {{ form(requestAccessForm) }}
+
+{% endblock body %}

@@ -1,2 +1,3 @@
 twig:
-    default_path: '%kernel.project_dir%/src/LeanpubBookClub/Infrastructure/Symfony/templates'
+    default_path: '%kernel.project_dir%/config/templates'
+    form_themes: ['bootstrap_4_layout.html.twig']
