@@ -21,13 +21,21 @@ final class IndividualPurchaseFromLeanpubApiTest extends TestCase
 
         $numberOfPurchases = 0;
 
-        // TODO check that the most recent ones come first
+        $lastPurchaseDate = null;
 
         foreach ($individualPurchases->all() as $purchase) {
             self::assertInstanceOf(Purchase::class, $purchase);
+            /** @var Purchase $purchase */
 
             // Check that invoice ids have the format we expect them to have
             $purchase->invoiceId();
+
+            if ($lastPurchaseDate !== null) {
+                // Check that the purchases are sorted by purchase date descending
+                self::assertTrue(strcmp($lastPurchaseDate, $purchase->datePurchased()) >= 0);
+            }
+
+            $lastPurchaseDate = $purchase->datePurchased();
 
             $numberOfPurchases++;
         }
