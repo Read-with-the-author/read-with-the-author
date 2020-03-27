@@ -32,10 +32,17 @@ final class EventDispatcherWithSubscribersTest extends TestCase
             $subscriber3WasCalled = true;
         };
 
+        $genericSubscriberWasCalled = false;
+        $genericSubscriber = function ($event) use (&$genericSubscriberWasCalled, &$events) {
+            $events[] = $event;
+            $genericSubscriberWasCalled = true;
+        };
+
         $eventDispatcher = new EventDispatcherWithSubscribers();
-        $eventDispatcher->addSubscriber(DummyEvent::class, $subscriber1);
-        $eventDispatcher->addSubscriber(DummyEvent::class, $subscriber2);
-        $eventDispatcher->addSubscriber(AnotherDummyEvent::class, $subscriber3);
+        $eventDispatcher->subscribeToSpecificEvent(DummyEvent::class, $subscriber1);
+        $eventDispatcher->subscribeToSpecificEvent(DummyEvent::class, $subscriber2);
+        $eventDispatcher->subscribeToSpecificEvent(AnotherDummyEvent::class, $subscriber3);
+        $eventDispatcher->subscribeToAllEvents($genericSubscriber);
 
         $event = new DummyEvent();
         $eventDispatcher->dispatch($event);
@@ -43,6 +50,7 @@ final class EventDispatcherWithSubscribersTest extends TestCase
         self::assertTrue($subscriber1WasCalled);
         self::assertTrue($subscriber2WasCalled);
         self::assertFalse($subscriber3WasCalled);
-        self::assertEquals([$event, $event], $events);
+        self::assertTrue($genericSubscriberWasCalled);
+        self::assertEquals([$event, $event, $event], $events);
     }
 }

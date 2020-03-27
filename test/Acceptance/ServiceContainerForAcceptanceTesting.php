@@ -12,6 +12,8 @@ use LeanpubBookClub\Infrastructure\ServiceContainer;
 
 final class ServiceContainerForAcceptanceTesting extends ServiceContainer
 {
+    private ?EventDispatcherSpy $eventDispatcherSpy = null;
+
     public function setCurrentTime(DateTimeImmutable $currentTime): void
     {
         $clock = $this->clock();
@@ -24,15 +26,26 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
     {
         parent::registerEventSubscribers($eventDispatcher);
 
+        $eventDispatcher->subscribeToAllEvents([$this->eventDispatcherSpy(), 'notify']);
+
         // Test-specific listeners:
-        $eventDispatcher->addSubscriber(
+        $eventDispatcher->subscribeToSpecificEvent(
             SessionWasPlanned::class,
             [$this->upcomingSessions(), 'whenSessionWasPlanned']
         );
-        $eventDispatcher->addSubscriber(
+        $eventDispatcher->subscribeToSpecificEvent(
             AttendeeRegisteredForSession::class,
             [$this->upcomingSessions(), 'whenAttendeeRegisteredForSession']
         );
+    }
+
+    public function eventDispatcherSpy(): EventDispatcherSpy
+    {
+        if ($this->eventDispatcherSpy === null) {
+            $this->eventDispatcherSpy = new EventDispatcherSpy();
+        }
+
+        return $this->eventDispatcherSpy;
     }
 
     public function individualPurchases(): IndividualPurchasesInMemory

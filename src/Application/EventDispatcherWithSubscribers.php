@@ -8,16 +8,31 @@ final class EventDispatcherWithSubscribers implements EventDispatcher
     /**
      * @var array<string,array<int,callable>>
      */
-    private array $subscribers;
+    private array $subscribersForEvent;
 
-    public function addSubscriber(string $eventType, callable $subscriber): void
+
+    /**
+     * @var array<int,callable>
+     */
+    private array $genericSubscribers = [];
+
+    public function subscribeToSpecificEvent(string $eventType, callable $subscriber): void
     {
-        $this->subscribers[$eventType][] = $subscriber;
+        $this->subscribersForEvent[$eventType][] = $subscriber;
+    }
+
+    public function subscribeToAllEvents(callable $subscriber): void
+    {
+        $this->genericSubscribers[] = $subscriber;
     }
 
     public function dispatch(object $event): void
     {
-        foreach ($this->subscribers[get_class($event)] ?? [] as $subscriber) {
+        foreach ($this->genericSubscribers as $subscriber) {
+            $subscriber($event);
+        }
+
+        foreach ($this->subscribersForEvent[get_class($event)] ?? [] as $subscriber) {
             $subscriber($event);
         }
     }

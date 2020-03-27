@@ -23,12 +23,12 @@ abstract class FeatureContext implements Context
      */
     protected function dispatchedEvents(): array
     {
-        return $this->serviceContainer->eventDispatcher()->dispatchedEvents();
+        return $this->serviceContainer->eventDispatcherSpy()->dispatchedEvents();
     }
 
     protected function clearEvents(): void
     {
-        $this->serviceContainer->eventDispatcher()->clearEvents();
+        $this->serviceContainer->eventDispatcherSpy()->clearEvents();
     }
 
     protected function application(): Application

@@ -16,7 +16,6 @@ use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
 use LeanpubBookClub\Infrastructure\Leanpub\PurchaseFactory;
-use Test\Acceptance\EventDispatcherSpy;
 use Test\Acceptance\FakeClock;
 use Test\Acceptance\IndividualPurchasesInMemory;
 use Test\Acceptance\MemberRepositoryInMemory;
@@ -26,10 +25,11 @@ use Test\Acceptance\UpcomingSessionsInMemory;
 
 abstract class ServiceContainer
 {
+    protected ?EventDispatcher $eventDispatcher = null;
+
     private ?Application $application = null;
     private ?UpcomingSessionsInMemory $upcomingSessions = null;
     private ?Clock $clock = null;
-    private ?EventDispatcherSpy $eventDispatcher = null;
     private ?MemberRepository $memberRepository = null;
     private ?PurchaseRepository $purchaseRepository = null;
     private ?SessionRepository $sessionRepository = null;
@@ -44,14 +44,12 @@ abstract class ServiceContainer
         return $this->clock;
     }
 
-    public function eventDispatcher(): EventDispatcherSpy
+    protected function eventDispatcher(): EventDispatcher
     {
         if ($this->eventDispatcher === null) {
-            $eventDispatcher = new EventDispatcherWithSubscribers();
+            $this->eventDispatcher = new EventDispatcherWithSubscribers();
 
-            $this->eventDispatcher = new EventDispatcherSpy($eventDispatcher);
-
-            $this->registerEventSubscribers($eventDispatcher);
+            $this->registerEventSubscribers($this->eventDispatcher);
         }
 
         Assert::that($this->eventDispatcher)->isInstanceOf(EventDispatcher::class);
@@ -61,11 +59,11 @@ abstract class ServiceContainer
 
     protected function registerEventSubscribers(EventDispatcherWithSubscribers $eventDispatcher): void
     {
-        $eventDispatcher->addSubscriber(
+        $eventDispatcher->subscribeToSpecificEvent(
             MemberRequestedAccess::class,
             [$this->accessPolicy(), 'whenMemberRequestedAccess']
         );
-        $eventDispatcher->addSubscriber(
+        $eventDispatcher->subscribeToSpecificEvent(
             PurchaseWasClaimed::class,
             [$this->accessPolicy(), 'whenPurchaseWasClaimed']
         );
