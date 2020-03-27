@@ -1,0 +1,7 @@
+controllers:
+    resource: ../../src/LeanpubBookClub/Infrastructure/Symfony/Controller
+    type: annotation
+
+kernel:
+    resource: ../../src/LeanpubBookClub/Infrastructure/Symfony/Kernel.php
+    type: annotation
