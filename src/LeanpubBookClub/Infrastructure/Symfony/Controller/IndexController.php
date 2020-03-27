@@ -3,10 +3,9 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure\Symfony\Controller;
 
+use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessForm;
+use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessTokenForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,52 +58,17 @@ final class IndexController extends AbstractController
 
     private function createRequestAccessTokenForm(): FormInterface
     {
-        return $this->createFormBuilder()
-            ->add(
-                'emailAddress',
-                EmailType::class,
-                [
-                    'label' => 'request_access_token_form.email_address.label',
-                    'help' => 'request_access_token_form.email_address.help'
-                ]
-            )
-            ->add(
-                'request_access_token',
-                SubmitType::class,
-                [
-                    'label' => 'request_access_token_form.request_access_token.label'
-                ]
-            )
-            ->getForm();
+        return $this->createForm(RequestAccessTokenForm::class);
     }
 
     private function createRequestAccessForm(): FormInterface
     {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('request_access'))
-            ->add(
-                'emailAddress',
-                EmailType::class,
-                [
-                    'label' => 'request_access_form.email_address.label',
-                    'help' => 'request_access_form.email_address.help'
-                ]
-            )
-            ->add(
-                'leanpubInvoiceId',
-                TextType::class,
-                [
-                    'label' => 'request_access_form.leanpub_invoice_id.label',
-                    'help' => 'request_access_form.leanpub_invoice_id.help'
-                ]
-            )
-            ->add(
-                'request_access',
-                SubmitType::class,
-                [
-                    'label' => 'request_access_form.request_access.label'
-                ]
-            )
-            ->getForm();
+        return $this->createForm(
+            RequestAccessForm::class,
+            null,
+            [
+                'action' => $this->generateUrl('request_access')
+            ]
+        );
     }
 }
