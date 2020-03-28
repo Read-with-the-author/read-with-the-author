@@ -19,7 +19,7 @@ use LeanpubBookClub\Domain\Model\Session\SessionRepository;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
 
-final class Application
+final class Application implements ApplicationInterface
 {
     private MemberRepository $memberRepository;
 
@@ -147,9 +147,6 @@ final class Application
         return $session->sessionId();
     }
 
-    /**
-     * @return array<UpcomingSession> & UpcomingSession[]
-     */
     public function listUpcomingSessions(LeanpubInvoiceId $memberId): array
     {
         return $this->listUpcomingSessions->upcomingSessions($this->clock->currentTime(), $memberId);

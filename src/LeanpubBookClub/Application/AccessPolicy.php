@@ -10,7 +10,7 @@ use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
 
 final class AccessPolicy
 {
-    private Application $application;
+    private ApplicationInterface $application;
 
     private PurchaseRepository $purchaseRepository;
 
@@ -19,7 +19,7 @@ final class AccessPolicy
     private EventDispatcher $eventDispatcher;
 
     public function __construct(
-        Application $application,
+        ApplicationInterface $application,
         PurchaseRepository $purchaseRepository,
         MemberRepository $memberRepository,
         EventDispatcher $eventDispatcher

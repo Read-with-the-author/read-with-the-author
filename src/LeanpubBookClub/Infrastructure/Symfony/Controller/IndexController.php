@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure\Symfony\Controller;
 
-use LeanpubBookClub\Application\Application;
+use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\RequestAccess;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessForm;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessTokenForm;
@@ -15,9 +15,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 final class IndexController extends AbstractController
 {
-    private Application $application;
+    private ApplicationInterface $application;
 
-    public function __construct(Application $application)
+    public function __construct(ApplicationInterface $application)
     {
         $this->application = $application;
     }

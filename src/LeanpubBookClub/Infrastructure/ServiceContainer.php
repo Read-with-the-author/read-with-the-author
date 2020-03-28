@@ -6,6 +6,7 @@ namespace LeanpubBookClub\Infrastructure;
 use Assert\Assert;
 use LeanpubBookClub\Application\AccessPolicy;
 use LeanpubBookClub\Application\Application;
+use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
 use LeanpubBookClub\Application\EventDispatcher;
@@ -30,7 +31,7 @@ abstract class ServiceContainer
 {
     protected ?EventDispatcher $eventDispatcher = null;
 
-    private ?Application $application = null;
+    private ?ApplicationInterface $application = null;
     private ?UpcomingSessionsInMemory $upcomingSessions = null;
     private ?Clock $clock = null;
     private ?MemberRepository $memberRepository = null;
@@ -81,7 +82,7 @@ abstract class ServiceContainer
         return $this->individualPurchases;
     }
 
-    public function application(): Application
+    public function application(): ApplicationInterface
     {
         if ($this->application === null) {
             $this->application = new Application(

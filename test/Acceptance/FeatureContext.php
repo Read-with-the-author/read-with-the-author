@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Test\Acceptance;
 
 use Behat\Behat\Context\Context;
-use LeanpubBookClub\Application\Application;
+use LeanpubBookClub\Application\ApplicationInterface;
 
 abstract class FeatureContext implements Context
 {
@@ -31,7 +31,7 @@ abstract class FeatureContext implements Context
         $this->serviceContainer->eventDispatcherSpy()->clearEvents();
     }
 
-    protected function application(): Application
+    protected function application(): ApplicationInterface
     {
         return $this->serviceContainer->application();
     }
