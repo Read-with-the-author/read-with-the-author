@@ -31,6 +31,7 @@ services:
 
     LeanpubBookClub\Application\ApplicationInterface:
         factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'application']
+        public: true
 
     LeanpubBookClub\Infrastructure\ProductionServiceContainer: ~
     LeanpubBookClub\Infrastructure\Configuration:

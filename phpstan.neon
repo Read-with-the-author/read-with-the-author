@@ -5,6 +5,7 @@ parameters:
     - test/
   excludes_analyse:
     - src/LeanpubBookClub/Infrastructure/Symfony
+    - test/bootstrap.php
 includes:
   - vendor/phpstan/phpstan-beberlei-assert/extension.neon
   - vendor/phpstan/phpstan-phpunit/extension.neon
