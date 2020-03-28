@@ -7,7 +7,7 @@ use DateTimeImmutable;
 use LeanpubBookClub\Application\AttendSession;
 use LeanpubBookClub\Application\PlanSession;
 use LeanpubBookClub\Application\RequestAccess;
-use LeanpubBookClub\Domain\Model\Member\MemberId;
+use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
@@ -16,11 +16,11 @@ final class ParticipationContext extends FeatureContext
 {
     private ?SessionId $sessionId = null;
 
-    private ?MemberId $memberId = null;
-
     private ?SessionId $plannedSessionId = null;
 
     private ?string $plannedSessionDescription = null;
+
+    private ?string $leanpubInvoiceId = null;
 
     /**
      * @Given today is :date
@@ -51,9 +51,10 @@ final class ParticipationContext extends FeatureContext
     {
         Assert::assertNotNull($this->plannedSessionId);
         Assert::assertNotNull($this->plannedSessionDescription);
-        Assert::assertNotNull($this->memberId);
+        Assert::assertNotNull($this->leanpubInvoiceId);
 
-        foreach ($this->application()->listUpcomingSessions($this->memberId) as $upcomingSession) {
+        foreach ($this->application()->listUpcomingSessions(
+            LeanpubInvoiceId::fromString($this->leanpubInvoiceId)) as $upcomingSession) {
             if ($this->plannedSessionId->asString() === $upcomingSession->sessionId()
                 && $this->plannedSessionDescription === $upcomingSession->description()) {
                 return;
@@ -78,10 +79,12 @@ final class ParticipationContext extends FeatureContext
      */
     public function aMemberWhoHasBeenGrantedAccess(): void
     {
-        $this->memberId = $this->application()->requestAccess(
-            new RequestAccess('info@matthiasnoback.nl', 'jP6LfQ3UkfOvZTLZLNfDfg')
+        $this->leanpubInvoiceId = 'jP6LfQ3UkfOvZTLZLNfDfg';
+
+        $this->application()->requestAccess(
+            new RequestAccess('info@matthiasnoback.nl', $this->leanpubInvoiceId)
         );
-        $this->application()->grantAccess($this->memberId);
+        $this->application()->grantAccess(LeanpubInvoiceId::fromString($this->leanpubInvoiceId));
     }
 
     /**
@@ -90,10 +93,10 @@ final class ParticipationContext extends FeatureContext
     public function theMemberRegistersThemselvesAsAParticipantOfTheSession(): void
     {
         Assert::assertNotNull($this->sessionId);
-        Assert::assertNotNull($this->memberId);
+        Assert::assertNotNull($this->leanpubInvoiceId);
 
         $this->application()->attendSession(
-            new AttendSession($this->sessionId->asString(), $this->memberId->asString())
+            new AttendSession($this->sessionId->asString(), $this->leanpubInvoiceId)
         );
     }
 
@@ -103,9 +106,13 @@ final class ParticipationContext extends FeatureContext
     public function theListOfUpcomingSessionsIndicatesThatTheyHaveBeenRegisteredAsAParticipant(): void
     {
         Assert::assertNotNull($this->sessionId);
-        Assert::assertNotNull($this->memberId);
+        Assert::assertNotNull($this->leanpubInvoiceId);
 
-        foreach ($this->application()->listUpcomingSessions($this->memberId) as $session) {
+        $upcomingSessions = $this->application()->listUpcomingSessions(
+            LeanpubInvoiceId::fromString($this->leanpubInvoiceId)
+        );
+
+        foreach ($upcomingSessions as $session) {
             if ($session->sessionId() === $this->sessionId->asString()) {
                 Assert::assertTrue($session->memberIsRegisteredAsAttendee());
                 return;

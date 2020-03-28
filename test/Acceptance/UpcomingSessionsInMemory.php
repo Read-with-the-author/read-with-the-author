@@ -6,7 +6,7 @@ namespace Test\Acceptance;
 use DateTimeImmutable;
 use LeanpubBookClub\Application\UpcomingSessions\ListUpcomingSessions;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
-use LeanpubBookClub\Domain\Model\Member\MemberId;
+use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\ScheduledDate;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
@@ -38,7 +38,7 @@ final class UpcomingSessionsInMemory implements ListUpcomingSessions
         $this->attendees[$event->sessionId()->asString()][$event->memberId()->asString()] = true;
     }
 
-    public function upcomingSessions(DateTimeImmutable $currentTime, MemberId $activeMemberId): array
+    public function upcomingSessions(DateTimeImmutable $currentTime, LeanpubInvoiceId $activeMemberId): array
     {
         $currentTimeAsComparableString = ScheduledDate::fromDateTime($currentTime)->asString();
 

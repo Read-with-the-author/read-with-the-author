@@ -12,20 +12,19 @@ final class MemberTest extends EntityTestCase
      */
     public function they_can_request_access(): void
     {
-        $memberId = $this->aNewMemberId();
         $emailAddress = $this->anEmailAddress();
         $leanpubInvoiceId = $this->aLeanpubInvoiceId();
 
-        $member = Member::requestAccess($memberId, $emailAddress, $leanpubInvoiceId);
+        $member = Member::requestAccess($leanpubInvoiceId, $emailAddress);
 
         self::assertEquals(
             [
-                new MemberRequestedAccess($memberId, $emailAddress, $leanpubInvoiceId)
+                new MemberRequestedAccess($leanpubInvoiceId, $emailAddress)
             ],
             $member->releaseEvents()
         );
 
-        self::assertEquals($memberId, $member->memberId());
+        self::assertEquals($leanpubInvoiceId, $member->memberId());
     }
 
     /**
@@ -52,11 +51,6 @@ final class MemberTest extends EntityTestCase
         self::assertEmpty($member->releaseEvents());
     }
 
-    private function aNewMemberId(): MemberId
-    {
-        return MemberId::fromString('d3ab365c-b594-4f49-8fd0-bb0bfa584703');
-    }
-
     private function anEmailAddress(): EmailAddress
     {
         return EmailAddress::fromString('info@matthiasnoback.nl');
@@ -69,6 +63,6 @@ final class MemberTest extends EntityTestCase
 
     private function aMember(): Member
     {
-        return Member::requestAccess($this->aNewMemberId(), $this->anEmailAddress(), $this->aLeanpubInvoiceId());
+        return Member::requestAccess($this->aLeanpubInvoiceId(), $this->anEmailAddress());
     }
 }

@@ -5,7 +5,6 @@ namespace LeanpubBookClub\Domain\Model\Purchase;
 
 use LeanpubBookClub\Domain\Model\Common\Entity;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
-use LeanpubBookClub\Domain\Model\Member\MemberId;
 
 final class Purchase
 {
@@ -13,7 +12,7 @@ final class Purchase
 
     private LeanpubInvoiceId $leanpubInvoiceId;
 
-    private ?MemberId $claimedByMember = null;
+    private bool $wasClaimed = false;
 
     private function __construct(LeanpubInvoiceId $leanpubInvoiceId)
     {
@@ -29,16 +28,16 @@ final class Purchase
         return $purchase;
     }
 
-    public function claim(MemberId $claimedBy): void
+    public function claim(): void
     {
-        if ($this->claimedByMember instanceof MemberId) {
-            $this->events[] = new PurchaseHasAlreadyBeenClaimed($this->leanpubInvoiceId, $this->claimedByMember);
+        if ($this->wasClaimed) {
+            $this->events[] = new PurchaseHasAlreadyBeenClaimed($this->leanpubInvoiceId);
             return;
         }
 
-        $this->claimedByMember = $claimedBy;
+        $this->wasClaimed = true;
 
-        $this->events[] = new PurchaseWasClaimed($this->leanpubInvoiceId, $this->claimedByMember);
+        $this->events[] = new PurchaseWasClaimed($this->leanpubInvoiceId);
     }
 
     public function leanpubInvoiceId(): LeanpubInvoiceId

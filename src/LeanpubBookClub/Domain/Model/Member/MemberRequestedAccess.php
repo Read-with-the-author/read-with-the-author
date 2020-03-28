@@ -9,18 +9,10 @@ final class MemberRequestedAccess
 
     private LeanpubInvoiceId $leanpubInvoiceId;
 
-    private MemberId $memberId;
-
-    public function __construct(MemberId $memberId, EmailAddress $emailAddress, LeanpubInvoiceId $leanpubInvoiceId)
+    public function __construct(LeanpubInvoiceId $memberId, EmailAddress $emailAddress)
     {
-        $this->memberId = $memberId;
         $this->emailAddress = $emailAddress;
-        $this->leanpubInvoiceId = $leanpubInvoiceId;
-    }
-
-    public function memberId(): MemberId
-    {
-        return $this->memberId;
+        $this->leanpubInvoiceId = $memberId;
     }
 
     public function leanpubInvoiceId(): LeanpubInvoiceId

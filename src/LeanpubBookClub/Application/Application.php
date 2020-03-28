@@ -8,7 +8,6 @@ use LeanpubBookClub\Application\UpcomingSessions\ListUpcomingSessions;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Member\Member;
-use LeanpubBookClub\Domain\Model\Member\MemberId;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Purchase\ClaimWasDenied;
 use LeanpubBookClub\Domain\Model\Purchase\CouldNotFindPurchase;
@@ -94,36 +93,32 @@ final class Application
         }
     }
 
-    public function requestAccess(RequestAccess $command): MemberId
+    public function requestAccess(RequestAccess $command): void
     {
-        $memberId = $this->memberRepository->nextIdentity();
-
-        $member = Member::requestAccess($memberId, $command->emailAddress(), $command->leanpubInvoiceId());
+        $member = Member::requestAccess($command->leanpubInvoiceId(), $command->emailAddress());
 
         $this->memberRepository->save($member);
 
         $this->eventDispatcher->dispatchAll($member->releaseEvents());
-
-        return $member->memberId();
     }
 
-    public function claimPurchase(LeanpubInvoiceId $invoiceId, MemberId $memberId): void
+    public function claimPurchase(LeanpubInvoiceId $invoiceId): void
     {
         try {
             $purchase = $this->purchaseRepository->getById($invoiceId);
         } catch (CouldNotFindPurchase $exception) {
-            $this->eventDispatcher->dispatch(new ClaimWasDenied($memberId, $invoiceId, 'invalid_purchase_id'));
+            $this->eventDispatcher->dispatch(new ClaimWasDenied($invoiceId, 'invalid_purchase_id'));
             return;
         }
 
-        $purchase->claim($memberId);
+        $purchase->claim();
 
         $this->purchaseRepository->save($purchase);
 
         $this->eventDispatcher->dispatchAll($purchase->releaseEvents());
     }
 
-    public function grantAccess(MemberId $memberId): void
+    public function grantAccess(LeanpubInvoiceId $memberId): void
     {
         $member = $this->memberRepository->getById($memberId);
 
@@ -155,9 +150,9 @@ final class Application
     /**
      * @return array<UpcomingSession> & UpcomingSession[]
      */
-    public function listUpcomingSessions(MemberId $activeMemberId): array
+    public function listUpcomingSessions(LeanpubInvoiceId $memberId): array
     {
-        return $this->listUpcomingSessions->upcomingSessions($this->clock->currentTime(), $activeMemberId);
+        return $this->listUpcomingSessions->upcomingSessions($this->clock->currentTime(), $memberId);
     }
 
     public function attendSession(AttendSession $command): void

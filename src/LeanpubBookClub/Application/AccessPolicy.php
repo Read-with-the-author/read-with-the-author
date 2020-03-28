@@ -32,11 +32,11 @@ final class AccessPolicy
 
     public function whenMemberRequestedAccess(MemberRequestedAccess $event): void
     {
-        $this->application->claimPurchase($event->leanpubInvoiceId(), $event->memberId());
+        $this->application->claimPurchase($event->leanpubInvoiceId());
     }
 
     public function whenPurchaseWasClaimed(PurchaseWasClaimed $event): void
     {
-        $this->application->grantAccess($event->claimedBy());
+        $this->application->grantAccess($event->memberId());
     }
 }

@@ -7,7 +7,7 @@ use LeanpubBookClub\Application\AssetPublisher;
 
 final class AssetPublisherInMemory implements AssetPublisher
 {
-    public function publishTitlePageImageUrl(string $titlePageUrl)
+    public function publishTitlePageImageUrl(string $titlePageUrl): void
     {
         // noop
     }

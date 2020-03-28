@@ -5,7 +5,6 @@ namespace LeanpubBookClub\Domain\Model\Purchase;
 
 use LeanpubBookClub\Domain\Model\Common\EntityTestCase;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
-use LeanpubBookClub\Domain\Model\Member\MemberId;
 
 final class PurchaseTest extends EntityTestCase
 {
@@ -32,7 +31,7 @@ final class PurchaseTest extends EntityTestCase
     {
         $purchase = $this->aPurchase();
 
-        $purchase->claim($this->aMember());
+        $purchase->claim();
 
         self::assertArrayContainsObjectOfType(
             PurchaseWasClaimed::class,
@@ -46,10 +45,10 @@ final class PurchaseTest extends EntityTestCase
     public function it_can_not_be_claimed_twice(): void
     {
         $purchase = $this->aPurchase();
-        $purchase->claim($this->aMember());
+        $purchase->claim();
         $purchase->releaseEvents();
 
-        $purchase->claim($this->anotherMember());
+        $purchase->claim();
 
         self::assertArrayContainsObjectOfType(
             PurchaseHasAlreadyBeenClaimed::class,
@@ -65,15 +64,5 @@ final class PurchaseTest extends EntityTestCase
     private function aPurchase(): Purchase
     {
         return Purchase::import($this->anInvoiceId());
-    }
-
-    private function aMember(): MemberId
-    {
-        return MemberId::fromString('d3ab365c-b594-4f49-8fd0-bb0bfa584703');
-    }
-
-    private function anotherMember(): MemberId
-    {
-        return MemberId::fromString('9aec8d8d-6cbc-4502-9583-06512e18ff86');
     }
 }

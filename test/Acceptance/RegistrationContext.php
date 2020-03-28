@@ -6,7 +6,7 @@ namespace Test\Acceptance;
 use LeanpubBookClub\Application\ImportPurchase;
 use LeanpubBookClub\Application\RequestAccess;
 use LeanpubBookClub\Domain\Model\Member\AccessGrantedToMember;
-use LeanpubBookClub\Domain\Model\Member\MemberId;
+use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
 
@@ -15,8 +15,6 @@ final class RegistrationContext extends FeatureContext
     private ?string $buyerLeanpubInvoiceId;
 
     private string $buyerEmailAddress = 'info@matthiasnoback.nl';
-
-    private ?MemberId $memberId;
 
 
     /**
@@ -36,7 +34,7 @@ final class RegistrationContext extends FeatureContext
     {
         Assert::assertNotNull($this->buyerLeanpubInvoiceId);
 
-        $this->memberId = $this->application()->requestAccess(
+        $this->application()->requestAccess(
             new RequestAccess($this->buyerEmailAddress, $this->buyerLeanpubInvoiceId)
         );
     }
@@ -46,10 +44,11 @@ final class RegistrationContext extends FeatureContext
      */
     public function theyShouldBeGrantedAccessToTheClub(): void
     {
-        Assert::assertNotNull($this->memberId);
+        Assert::assertNotNull($this->buyerLeanpubInvoiceId);
 
         foreach ($this->dispatchedEvents() as $event) {
-            if ($event instanceof AccessGrantedToMember && $event->memberId()->equals($this->memberId)) {
+            if ($event instanceof AccessGrantedToMember
+                && $event->leanpubInvoiceId()->equals(LeanpubInvoiceId::fromString($this->buyerLeanpubInvoiceId))) {
                 return;
             }
         }
@@ -62,10 +61,12 @@ final class RegistrationContext extends FeatureContext
      */
     public function someoneRequestsAccessToTheClubProvidingAnInvoiceIDThatDoesNotMatchAnActualPurchase(): void
     {
-        $this->memberId = $this->application()->requestAccess(
+        $this->buyerLeanpubInvoiceId = '6gbXPEDMOEMKCNwOykPvpg';
+
+        $this->application()->requestAccess(
             new RequestAccess(
                 $this->buyerEmailAddress,
-                $unknownInvoiceId = '6gbXPEDMOEMKCNwOykPvpg'
+                $unknownInvoiceId = $this->buyerLeanpubInvoiceId
             )
         );
     }
@@ -75,10 +76,11 @@ final class RegistrationContext extends FeatureContext
      */
     public function theyShouldNotBeGrantedAccessToTheClub(): void
     {
-        Assert::assertNotNull($this->memberId);
+        Assert::assertNotNull($this->buyerLeanpubInvoiceId);
 
         foreach ($this->dispatchedEvents() as $event) {
-            if ($event instanceof AccessGrantedToMember && $event->memberId()->equals($this->memberId)) {
+            if ($event instanceof AccessGrantedToMember && $event->leanpubInvoiceId()->equals(
+                    LeanpubInvoiceId::fromString($this->buyerLeanpubInvoiceId))) {
                 throw new RuntimeException('We did not expect an AccessGrantedToMember event to have been dispatched');
             }
         }
@@ -100,8 +102,10 @@ final class RegistrationContext extends FeatureContext
     public function someoneElseRequestsAccessProvidingTheSameInvoiceID(): void
     {
         Assert::assertNotNull($this->buyerLeanpubInvoiceId);
+        
+        $this->serviceContainer()->eventDispatcherSpy()->clearEvents();
 
-        $this->memberId = $this->application()->requestAccess(
+        $this->application()->requestAccess(
             new RequestAccess('someoneelse@matthiasnoback.nl', $this->buyerLeanpubInvoiceId)
         );
     }

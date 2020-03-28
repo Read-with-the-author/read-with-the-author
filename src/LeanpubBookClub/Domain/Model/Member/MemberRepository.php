@@ -7,12 +7,10 @@ use RuntimeException;
 
 interface MemberRepository
 {
-    public function nextIdentity(): MemberId;
-
     public function save(Member $member): void;
 
     /**
      * @throws RuntimeException
      */
-    public function getById(MemberId $memberId): Member;
+    public function getById(LeanpubInvoiceId $memberId): Member;
 }

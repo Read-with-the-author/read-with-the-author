@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Application;
 
-use LeanpubBookClub\Domain\Model\Member\MemberId;
+use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
 
 final class AttendSession
@@ -23,8 +23,8 @@ final class AttendSession
         return SessionId::fromString($this->sessionId);
     }
 
-    public function memberId(): MemberId
+    public function memberId(): LeanpubInvoiceId
     {
-        return MemberId::fromString($this->memberId);
+        return LeanpubInvoiceId::fromString($this->memberId);
     }
 }

@@ -9,24 +9,21 @@ final class Member
 {
     use Entity;
 
+    private LeanpubInvoiceId $memberId;
+
     private EmailAddress $emailAddress;
 
-    private MemberId $memberId;
-
-    private LeanpubInvoiceId $leanpubInvoiceId;
-
-    private function __construct(MemberId $memberId, EmailAddress $emailAddress, LeanpubInvoiceId $leanpubInvoiceId)
+    private function __construct(LeanpubInvoiceId $leanpubInvoiceId, EmailAddress $emailAddress)
     {
-        $this->memberId = $memberId;
+        $this->memberId = $leanpubInvoiceId;
         $this->emailAddress = $emailAddress;
-        $this->leanpubInvoiceId = $leanpubInvoiceId;
     }
 
-    public static function requestAccess(MemberId $memberId, EmailAddress $emailAddress, LeanpubInvoiceId $leanpubInvoiceId): self
+    public static function requestAccess(LeanpubInvoiceId $leanpubInvoiceId, EmailAddress $emailAddress): self
     {
-        $member = new self($memberId, $emailAddress, $leanpubInvoiceId);
+        $member = new self($leanpubInvoiceId, $emailAddress);
 
-        $member->events[] = new MemberRequestedAccess($memberId, $emailAddress, $leanpubInvoiceId);
+        $member->events[] = new MemberRequestedAccess($leanpubInvoiceId, $emailAddress);
 
         return $member;
     }
@@ -36,7 +33,7 @@ final class Member
         $this->events[] = new AccessGrantedToMember($this->memberId, $this->emailAddress);
     }
 
-    public function memberId(): MemberId
+    public function memberId(): LeanpubInvoiceId
     {
         return $this->memberId;
     }

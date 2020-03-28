@@ -5,19 +5,19 @@ namespace LeanpubBookClub\Domain\Model\Member;
 
 final class AccessGrantedToMember
 {
-    private MemberId $memberId;
+    private LeanpubInvoiceId $leanpubInvoiceId;
 
     private EmailAddress $emailAddress;
 
-    public function __construct(MemberId $memberId, EmailAddress $emailAddress)
+    public function __construct(LeanpubInvoiceId $leanpubInvoiceId, EmailAddress $emailAddress)
     {
-        $this->memberId = $memberId;
+        $this->leanpubInvoiceId = $leanpubInvoiceId;
         $this->emailAddress = $emailAddress;
     }
 
-    public function memberId(): MemberId
+    public function leanpubInvoiceId(): LeanpubInvoiceId
     {
-        return $this->memberId;
+        return $this->leanpubInvoiceId;
     }
 
     public function emailAddress(): EmailAddress

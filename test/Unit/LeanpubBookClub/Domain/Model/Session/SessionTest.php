@@ -5,7 +5,7 @@ namespace LeanpubBookClub\Domain\Model\Session;
 
 use InvalidArgumentException;
 use LeanpubBookClub\Domain\Model\Common\EntityTestCase;
-use LeanpubBookClub\Domain\Model\Member\MemberId;
+use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 
 final class SessionTest extends EntityTestCase
 {
@@ -174,13 +174,13 @@ final class SessionTest extends EntityTestCase
         return $this->aSession($number);
     }
 
-    private function aMemberId(): MemberId
+    private function aMemberId(): LeanpubInvoiceId
     {
-        return MemberId::fromString('d3ab365c-b594-4f49-8fd0-bb0bfa584703');
+        return LeanpubInvoiceId::fromString('jP6LfQ3UkfOvZTLZLNfDfg');
     }
 
-    private function anotherMemberId(): MemberId
+    private function anotherMemberId(): LeanpubInvoiceId
     {
-        return MemberId::fromString('9aec8d8d-6cbc-4502-9583-06512e18ff86');
+        return LeanpubInvoiceId::fromString('6gbXPEDMOEMKCNwOykPvpg');
     }
 }

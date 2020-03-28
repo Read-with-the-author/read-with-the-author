@@ -5,7 +5,7 @@ namespace LeanpubBookClub\Domain\Model\Session;
 
 use Assert\Assert;
 use LeanpubBookClub\Domain\Model\Common\Entity;
-use LeanpubBookClub\Domain\Model\Member\MemberId;
+use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 
 final class Session
 {
@@ -20,7 +20,7 @@ final class Session
     private int $maximumNumberOfParticipantsAllowed;
 
     /**
-     * @var array<MemberId> & MemberId[]
+     * @var array<LeanpubInvoiceId> & LeanpubInvoiceId[]
      */
     private array $attendees = [];
 
@@ -60,7 +60,7 @@ final class Session
         return $this->sessionId;
     }
 
-    public function attend(MemberId $memberId): void
+    public function attend(LeanpubInvoiceId $memberId): void
     {
         if ($this->wasClosed) {
             // When the session was closed, we don't accept new attendees
