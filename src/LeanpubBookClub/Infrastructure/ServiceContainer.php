@@ -31,7 +31,7 @@ abstract class ServiceContainer
 {
     protected ?EventDispatcher $eventDispatcher = null;
 
-    private ?ApplicationInterface $application = null;
+    protected ?ApplicationInterface $application = null;
     private ?UpcomingSessionsInMemory $upcomingSessions = null;
     private ?Clock $clock = null;
     private ?MemberRepository $memberRepository = null;

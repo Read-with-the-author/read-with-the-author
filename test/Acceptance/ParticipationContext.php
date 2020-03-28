@@ -82,7 +82,7 @@ final class ParticipationContext extends FeatureContext
         $this->leanpubInvoiceId = 'jP6LfQ3UkfOvZTLZLNfDfg';
 
         $this->application()->requestAccess(
-            new RequestAccess('info@matthiasnoback.nl', $this->leanpubInvoiceId)
+            new RequestAccess($this->leanpubInvoiceId, 'info@matthiasnoback.nl')
         );
         $this->application()->grantAccess(LeanpubInvoiceId::fromString($this->leanpubInvoiceId));
     }

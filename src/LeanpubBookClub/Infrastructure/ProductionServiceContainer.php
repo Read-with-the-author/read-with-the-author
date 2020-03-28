@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure;
 
+use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
@@ -52,4 +53,8 @@ final class ProductionServiceContainer extends ServiceContainer
         return new PublicAssetPublisher($this->configuration->assetsDirectory());
     }
 
+    public function setApplication(ApplicationInterface $application): void
+    {
+        $this->application = $application;
+    }
 }

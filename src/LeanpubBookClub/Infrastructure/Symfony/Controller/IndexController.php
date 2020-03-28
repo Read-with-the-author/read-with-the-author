@@ -46,7 +46,7 @@ final class IndexController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $form->getData();
-            $command = new RequestAccess($formData['emailAddress'], $formData['leanpubInvoiceId']);
+            $command = new RequestAccess($formData['leanpubInvoiceId'], $formData['emailAddress']);
             $this->application->requestAccess($command);
 
             return $this->redirectToRoute('access_requested');

@@ -35,7 +35,7 @@ final class RegistrationContext extends FeatureContext
         Assert::assertNotNull($this->buyerLeanpubInvoiceId);
 
         $this->application()->requestAccess(
-            new RequestAccess($this->buyerEmailAddress, $this->buyerLeanpubInvoiceId)
+            new RequestAccess($this->buyerLeanpubInvoiceId, $this->buyerEmailAddress)
         );
     }
 
@@ -65,8 +65,7 @@ final class RegistrationContext extends FeatureContext
 
         $this->application()->requestAccess(
             new RequestAccess(
-                $this->buyerEmailAddress,
-                $unknownInvoiceId = $this->buyerLeanpubInvoiceId
+                $unknownInvoiceId = $this->buyerLeanpubInvoiceId, $this->buyerEmailAddress
             )
         );
     }
@@ -93,7 +92,7 @@ final class RegistrationContext extends FeatureContext
     {
         $this->buyerLeanpubInvoiceId = 'jP6LfQ3UkfOvZTLZLNfDfg';
         $this->application()->importPurchase(new ImportPurchase($this->buyerLeanpubInvoiceId));
-        $this->application()->requestAccess(new RequestAccess($this->buyerEmailAddress, $this->buyerLeanpubInvoiceId));
+        $this->application()->requestAccess(new RequestAccess($this->buyerLeanpubInvoiceId, $this->buyerEmailAddress));
     }
 
     /**
@@ -106,7 +105,7 @@ final class RegistrationContext extends FeatureContext
         $this->serviceContainer()->eventDispatcherSpy()->clearEvents();
 
         $this->application()->requestAccess(
-            new RequestAccess('someoneelse@matthiasnoback.nl', $this->buyerLeanpubInvoiceId)
+            new RequestAccess($this->buyerLeanpubInvoiceId, 'someoneelse@matthiasnoback.nl')
         );
     }
 }

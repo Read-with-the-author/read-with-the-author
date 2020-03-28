@@ -33,7 +33,9 @@ services:
         factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'application']
         public: true
 
-    LeanpubBookClub\Infrastructure\ProductionServiceContainer: ~
+    LeanpubBookClub\Infrastructure\ProductionServiceContainer:
+        public: '%kernel.debug%'
+
     LeanpubBookClub\Infrastructure\Configuration:
         factory: ['LeanpubBookClub\Infrastructure\Configuration', 'createFromEnvironmentVariables']
         arguments:

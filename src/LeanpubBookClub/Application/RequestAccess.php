@@ -12,7 +12,7 @@ final class RequestAccess
 
     private string $leanpubInvoiceId;
 
-    public function __construct(string $emailAddress, string $leanpubInvoiceId)
+    public function __construct(string $leanpubInvoiceId, string $emailAddress)
     {
         $this->emailAddress = $emailAddress;
         $this->leanpubInvoiceId = $leanpubInvoiceId;
