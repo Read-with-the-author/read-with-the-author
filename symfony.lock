@@ -14,6 +14,9 @@
     "doctrine/lexer": {
         "version": "1.2.0"
     },
+    "monolog/monolog": {
+        "version": "2.0.2"
+    },
     "php": {
         "version": "7.4"
     },
@@ -111,6 +114,23 @@
     },
     "symfony/mime": {
         "version": "v5.0.5"
+    },
+    "symfony/monolog-bridge": {
+        "version": "v5.0.6"
+    },
+    "symfony/monolog-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "877bdb4223245783d00ed1f7429aa7ebc606d914"
+        },
+        "files": [
+            "config/packages/dev/monolog.yaml",
+            "config/packages/prod/monolog.yaml",
+            "config/packages/test/monolog.yaml"
+        ]
     },
     "symfony/options-resolver": {
         "version": "v5.0.5"
