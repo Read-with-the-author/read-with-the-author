@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure\Symfony\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -14,12 +13,8 @@ final class RequestAccessTokenForm extends AbstractType
     {
         $builder
             ->add(
-                'emailAddress',
-                EmailType::class,
-                [
-                    'label' => 'request_access_token_form.email_address.label',
-                    'help' => 'request_access_token_form.email_address.help'
-                ]
+                'leanpubInvoiceId',
+                LeanpubInvoiceIdField::class
             )
             ->add(
                 'request_access_token',

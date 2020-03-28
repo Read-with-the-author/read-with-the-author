@@ -102,7 +102,7 @@ final class RegistrationContext extends FeatureContext
     public function someoneElseRequestsAccessProvidingTheSameInvoiceID(): void
     {
         Assert::assertNotNull($this->buyerLeanpubInvoiceId);
-        
+
         $this->serviceContainer()->eventDispatcherSpy()->clearEvents();
 
         $this->application()->requestAccess(
