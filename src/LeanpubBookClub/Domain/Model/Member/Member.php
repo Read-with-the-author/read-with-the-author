@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Domain\Model\Member;
 
 use LeanpubBookClub\Domain\Model\Common\Entity;
+use LeanpubBookClub\Domain\Service\AccessTokenGenerator;
 
 final class Member
 {
@@ -12,6 +13,8 @@ final class Member
     private LeanpubInvoiceId $memberId;
 
     private EmailAddress $emailAddress;
+
+    private ?AccessToken $accessToken = null;
 
     private function __construct(LeanpubInvoiceId $leanpubInvoiceId, EmailAddress $emailAddress)
     {
@@ -28,13 +31,22 @@ final class Member
         return $member;
     }
 
-    public function grantAccess(): void
+    public function grantAccess(AccessTokenGenerator $accessTokenGenerator): void
     {
         $this->events[] = new AccessGrantedToMember($this->memberId, $this->emailAddress);
+
+        $this->generateAccessToken($accessTokenGenerator);
     }
 
     public function memberId(): LeanpubInvoiceId
     {
         return $this->memberId;
+    }
+
+    private function generateAccessToken(AccessTokenGenerator $accessTokenGenerator): void
+    {
+        $this->accessToken = $accessTokenGenerator->generate();
+
+        $this->events[] = new AnAccessTokenWasGenerated($this->memberId, $this->emailAddress, $this->accessToken);
     }
 }

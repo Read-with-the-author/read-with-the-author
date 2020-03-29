@@ -9,13 +9,18 @@ use LeanpubBookClub\Application\Application;
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
+use LeanpubBookClub\Application\Email\Email;
+use LeanpubBookClub\Application\Email\Mailer;
+use LeanpubBookClub\Application\Email\SendAccessTokenEmail;
 use LeanpubBookClub\Application\EventDispatcher;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
+use LeanpubBookClub\Domain\Model\Member\AnAccessTokenWasGenerated;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
+use LeanpubBookClub\Domain\Service\AccessTokenGenerator;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
 use Test\Acceptance\AssetPublisherInMemory;
@@ -38,6 +43,7 @@ abstract class ServiceContainer
     private ?PurchaseRepository $purchaseRepository = null;
     private ?SessionRepository $sessionRepository = null;
     private ?IndividualPurchasesInMemory $individualPurchases = null;
+    protected ?Mailer $mailer = null;
 
     protected function clock(): Clock
     {
@@ -71,6 +77,10 @@ abstract class ServiceContainer
             PurchaseWasClaimed::class,
             [$this->accessPolicy(), 'whenPurchaseWasClaimed']
         );
+        $eventDispatcher->subscribeToSpecificEvent(
+            AnAccessTokenWasGenerated::class,
+            [new SendAccessTokenEmail($this->mailer()), 'whenAnAccessTokenWasGenerated']
+        );
     }
 
     protected function individualPurchases(): IndividualPurchases
@@ -94,7 +104,8 @@ abstract class ServiceContainer
                 $this->upcomingSessions(),
                 $this->individualPurchases(),
                 $this->getBookSummary(),
-                $this->assetPublisher()
+                $this->assetPublisher(),
+                $this->accessTokenGenerator()
             );
         }
 
@@ -151,6 +162,20 @@ abstract class ServiceContainer
         return $this->upcomingSessions;
     }
 
+    protected function mailer(): Mailer
+    {
+        if ($this->mailer === null) {
+            $this->mailer = new class implements Mailer {
+                // TODO replace with production implementation
+                public function send(Email $email): void
+                {
+                }
+            };
+        }
+
+        return $this->mailer;
+    }
+
     protected function getBookSummary(): GetBookSummary
     {
         return new GetBookSummaryInMemory();
@@ -159,5 +184,10 @@ abstract class ServiceContainer
     protected function assetPublisher(): AssetPublisher
     {
         return new AssetPublisherInMemory();
+    }
+
+    private function accessTokenGenerator(): AccessTokenGenerator
+    {
+        return new RealUuidAccessTokenGenerator();
     }
 }

@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace Test\Acceptance;
 
+use LeanpubBookClub\Application\Email\AccessTokenEmail;
 use LeanpubBookClub\Application\ImportPurchase;
 use LeanpubBookClub\Application\RequestAccess;
 use LeanpubBookClub\Domain\Model\Member\AccessGrantedToMember;
+use LeanpubBookClub\Domain\Model\Member\EmailAddress;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
@@ -37,6 +39,33 @@ final class RegistrationContext extends FeatureContext
         $this->application()->requestAccess(
             new RequestAccess($this->buyerLeanpubInvoiceId, $this->buyerEmailAddress)
         );
+    }
+
+    /**
+     * @When someone requests access to the club providing the correct invoice ID
+     */
+    public function someoneToTheClubProvidingTheCorrectInvoiceId(): void
+    {
+        $invoiceId = 'jP6LfQ3UkfOvZTLZLNfDfg';
+        $this->application()->importPurchase(new ImportPurchase($invoiceId));
+        $this->application()->requestAccess(
+            new RequestAccess($invoiceId, $this->buyerEmailAddress)
+        );
+    }
+
+    /**
+     * @Then they should receive an email with an access token for their dashboard page
+     */
+    public function thenTheyShouldReceiveAnEmailWithAnAccessToken(): void
+    {
+        foreach ($this->serviceContainer()->mailer()->sentEmails() as $email) {
+            if ($email instanceof AccessTokenEmail) {
+                Assert::assertEquals(EmailAddress::fromString($this->buyerEmailAddress), $email->recipient());
+                return;
+            }
+        }
+
+        throw new RuntimeException('Received no such email');
     }
 
     /**

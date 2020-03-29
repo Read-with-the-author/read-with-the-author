@@ -56,4 +56,14 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
 
         return $individualPurchases;
     }
+
+    public function mailer(): MailerSpy
+    {
+        if ($this->mailer === null) {
+            $this->mailer = new MailerSpy();
+        }
+
+        Assert::that($this->mailer)->isInstanceOf(MailerSpy::class);
+        return $this->mailer;
+    }
 }

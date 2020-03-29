@@ -5,7 +5,7 @@ namespace LeanpubBookClub\Domain\Model\Common;
 
 use Assert\Assert;
 
-trait EntityId
+trait Uuid
 {
     private string $id;
 

@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub\Domain\Model\Session;
+namespace LeanpubBookClub\Domain\Model\Member;
 
 use LeanpubBookClub\Domain\Model\Common\Uuid;
 
-final class SessionId
+final class AccessToken
 {
     use Uuid;
 }

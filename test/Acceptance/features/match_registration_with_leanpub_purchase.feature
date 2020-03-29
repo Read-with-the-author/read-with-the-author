@@ -16,3 +16,7 @@ Feature:
     Given someone has been granted access to the club
     When someone else requests access providing the same invoice ID
     Then they should not be granted access to the club
+
+  Scenario: The new member gets an access token by email
+    When someone requests access to the club providing the correct invoice ID
+    Then they should receive an email with an access token for their dashboard page

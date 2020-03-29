@@ -5,7 +5,6 @@ namespace LeanpubBookClub\Application;
 
 use LeanpubBookClub\Application\Importing\PurchaseWasAlreadyImported;
 use LeanpubBookClub\Application\UpcomingSessions\ListUpcomingSessions;
-use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Member\Member;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
@@ -16,6 +15,7 @@ use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Session\Session;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
+use LeanpubBookClub\Domain\Service\AccessTokenGenerator;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
 
@@ -36,10 +36,10 @@ final class Application implements ApplicationInterface
     private IndividualPurchases $individualPurchases;
 
     private GetBookSummary $getBookSummary;
-    /**
-     * @var AssetPublisher
-     */
+
     private AssetPublisher $assetPublisher;
+
+    private AccessTokenGenerator $accessTokenGenerator;
 
     public function __construct(
         MemberRepository $memberRepository,
@@ -50,7 +50,8 @@ final class Application implements ApplicationInterface
         ListUpcomingSessions $listUpcomingSessions,
         IndividualPurchases $individualPurchases,
         GetBookSummary $getBookSummary,
-        AssetPublisher $assetPublisher
+        AssetPublisher $assetPublisher,
+        AccessTokenGenerator $accessTokenGenerator
     ) {
         $this->memberRepository = $memberRepository;
         $this->eventDispatcher = $eventDispatcher;
@@ -61,6 +62,7 @@ final class Application implements ApplicationInterface
         $this->individualPurchases = $individualPurchases;
         $this->getBookSummary = $getBookSummary;
         $this->assetPublisher = $assetPublisher;
+        $this->accessTokenGenerator = $accessTokenGenerator;
     }
 
     public function importAllPurchases(): void
@@ -122,7 +124,7 @@ final class Application implements ApplicationInterface
     {
         $member = $this->memberRepository->getById($memberId);
 
-        $member->grantAccess();
+        $member->grantAccess($this->accessTokenGenerator);
 
         $this->memberRepository->save($member);
 
