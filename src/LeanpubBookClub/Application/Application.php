@@ -132,8 +132,15 @@ final class Application implements ApplicationInterface
         $this->eventDispatcher->dispatchAll($member->releaseEvents());
     }
 
-    public function generateAccessToken(LeanpubInvoiceId $memberId): void
+    /**
+     * @param string|LeanpubInvoiceId $memberId
+     */
+    public function generateAccessToken($memberId): void
     {
+        if (!$memberId instanceof LeanpubInvoiceId) {
+            $memberId = LeanpubInvoiceId::fromString($memberId);
+        }
+
         $member = $this->memberRepository->getById($memberId);
 
         $member->generateAccessToken($this->accessTokenGenerator);

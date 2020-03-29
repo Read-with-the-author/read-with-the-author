@@ -31,5 +31,5 @@ interface ApplicationInterface
 
     public function refreshBookInformation(): void;
 
-    public function generateAccessToken(LeanpubInvoiceId $memberId): void;
+    public function generateAccessToken($memberId): void;
 }

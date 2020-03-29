@@ -46,8 +46,10 @@ final class IndexController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $form->getData();
-            $command = new RequestAccess($formData['leanpubInvoiceId'], $formData['emailAddress']);
-            $this->application->requestAccess($command);
+
+            $this->application->requestAccess(
+                new RequestAccess($formData['leanpubInvoiceId'], $formData['emailAddress'])
+            );
 
             return $this->redirectToRoute('access_requested');
         }
@@ -62,6 +64,33 @@ final class IndexController extends AbstractController
     }
 
     /**
+     * @Route("/request-access-token", name="request_access_token", methods={"POST"})
+     */
+    public function requestAccessTokenAction(Request $request): Response
+    {
+        $form = $this->createRequestAccessTokenForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formData = $form->getData();
+
+            $this->application->generateAccessToken($formData['leanpubInvoiceId']);
+
+            // TODO add Flash message
+
+            return $this->redirectToRoute('index');
+        }
+
+        return $this->render(
+            'index.html.twig',
+            [
+                'requestAccessTokenForm' => $form->createView(),
+                'requestAccessForm' => $this->createRequestAccessForm()->createView()
+            ]
+        );
+    }
+
+    /**
      * @Route("/access-requested", name="access_requested", methods={"GET"})
      */
     public function accessRequestedAction(): Response
@@ -71,7 +100,13 @@ final class IndexController extends AbstractController
 
     private function createRequestAccessTokenForm(): FormInterface
     {
-        return $this->createForm(RequestAccessTokenForm::class);
+        return $this->createForm(
+            RequestAccessTokenForm::class,
+            null,
+            [
+                'action' => $this->generateUrl('request_access_token')
+            ]
+        );
     }
 
     private function createRequestAccessForm(): FormInterface
