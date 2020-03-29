@@ -9,6 +9,15 @@
 </head>
 <body>
 <div class="container">
+    <div class="alerts mb-3 mt-3">
+        {% for key, messages in app.flashes() %}
+            {% for message in messages %}
+                <div class="alert alert-{{ key }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
     {% block body %}{% endblock %}
     {% block javascripts %}{% endblock %}
 </div>

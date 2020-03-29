@@ -6,7 +6,6 @@ namespace LeanpubBookClub;
 use Assert\Assert;
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
-use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Infrastructure\ProductionServiceContainer;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -67,12 +66,14 @@ final class IndexTest extends WebTestCase
 
         $client->request('GET', '/');
 
-        $client->submitForm(
+        $crawler = $client->submitForm(
             'Get an access token',
             [
                 'request_access_token_form[leanpubInvoiceId]' => $leanpubInvoiceId
             ]
         );
+
+        self::assertStringContainsString('A new access token was sent to you by email', $crawler->filter('div.alerts')->text());
     }
 
     private function setApplication(KernelBrowser $client, ApplicationInterface $application): void
@@ -92,6 +93,7 @@ final class IndexTest extends WebTestCase
     {
         $client = self::createClient();
         $client->disableReboot();
+        $client->followRedirects();
 
         $this->application = $this->createMock(ApplicationInterface::class);
         $this->setApplication($client, $this->application);

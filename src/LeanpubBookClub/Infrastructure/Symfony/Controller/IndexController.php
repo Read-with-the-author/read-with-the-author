@@ -12,14 +12,18 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class IndexController extends AbstractController
 {
     private ApplicationInterface $application;
 
-    public function __construct(ApplicationInterface $application)
+    private TranslatorInterface $translator;
+
+    public function __construct(ApplicationInterface $application, TranslatorInterface $translator)
     {
         $this->application = $application;
+        $this->translator = $translator;
     }
 
     /**
@@ -76,7 +80,7 @@ final class IndexController extends AbstractController
 
             $this->application->generateAccessToken($formData['leanpubInvoiceId']);
 
-            // TODO add Flash message
+            $this->addFlash('success', $this->translator->trans('access_token_email_was_sent.flash_message'));
 
             return $this->redirectToRoute('index');
         }
