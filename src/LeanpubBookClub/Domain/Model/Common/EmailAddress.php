@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub\Domain\Model\Member;
+namespace LeanpubBookClub\Domain\Model\Common;
 
 use Assert\Assert;
 

@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Application\Email;
 
-use LeanpubBookClub\Domain\Model\Member\EmailAddress;
-
 interface Email
 {
-    public function recipient(): EmailAddress;
+    public function recipient(): string;
 
     public function subject(): string;
 

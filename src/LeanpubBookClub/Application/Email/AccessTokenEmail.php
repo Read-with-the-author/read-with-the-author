@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Application\Email;
 
 use LeanpubBookClub\Domain\Model\Member\AccessToken;
-use LeanpubBookClub\Domain\Model\Member\EmailAddress;
+use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 
 final class AccessTokenEmail implements Email
 {
@@ -18,9 +18,9 @@ final class AccessTokenEmail implements Email
         $this->accessToken = $accessToken;
     }
 
-    public function recipient(): EmailAddress
+    public function recipient(): string
     {
-        return $this->recipient;
+        return $this->recipient->asString();
     }
 
     public function subject(): string

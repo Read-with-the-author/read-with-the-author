@@ -23,7 +23,7 @@ final class IndexController extends AbstractController
     }
 
     /**
-     * @Route("/", methods={"GET"})
+     * @Route("/", name="index", methods={"GET"})
      */
     public function indexAction(): Response
     {

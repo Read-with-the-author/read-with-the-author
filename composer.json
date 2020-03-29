@@ -29,6 +29,7 @@
         "php-http/message": "^1.8",
         "ramsey/uuid": "^4.0",
         "roave/security-advisories": "dev-master",
+        "rpkamp/mailhog-client": "^0.4.1",
         "sensio/framework-extra-bundle": "^5.5",
         "symfony/console": "5.0.*",
         "symfony/dotenv": "5.0.*",

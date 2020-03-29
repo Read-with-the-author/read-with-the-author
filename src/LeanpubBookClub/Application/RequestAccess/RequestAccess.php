@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Application\RequestAccess;
 
-use LeanpubBookClub\Domain\Model\Member\EmailAddress;
+use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 
 final class RequestAccess

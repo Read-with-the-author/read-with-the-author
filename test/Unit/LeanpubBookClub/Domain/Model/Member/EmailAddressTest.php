@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Domain\Model\Member;
 
 use InvalidArgumentException;
+use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use PHPUnit\Framework\TestCase;
 
 final class EmailAddressTest extends TestCase

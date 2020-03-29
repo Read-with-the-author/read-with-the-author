@@ -1,0 +1,4 @@
+services:
+    LeanpubBookClub\Infrastructure\Symfony\SymfonyMailer:
+        autowire: true
+        public: true

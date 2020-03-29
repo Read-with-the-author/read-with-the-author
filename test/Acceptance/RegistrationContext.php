@@ -7,7 +7,7 @@ use LeanpubBookClub\Application\Email\AccessTokenEmail;
 use LeanpubBookClub\Application\ImportPurchase;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Domain\Model\Member\AccessWasGrantedToMember;
-use LeanpubBookClub\Domain\Model\Member\EmailAddress;
+use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
@@ -70,7 +70,7 @@ final class RegistrationContext extends FeatureContext
     {
         foreach ($this->serviceContainer()->mailer()->sentEmails() as $email) {
             if ($email instanceof AccessTokenEmail) {
-                Assert::assertEquals(EmailAddress::fromString($this->buyerEmailAddress), $email->recipient());
+                Assert::assertEquals($this->buyerEmailAddress, $email->recipient());
                 return;
             }
         }
