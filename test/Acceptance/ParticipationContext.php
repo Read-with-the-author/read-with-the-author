@@ -6,7 +6,7 @@ namespace Test\Acceptance;
 use DateTimeImmutable;
 use LeanpubBookClub\Application\AttendSession;
 use LeanpubBookClub\Application\PlanSession;
-use LeanpubBookClub\Application\RequestAccess;
+use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
 use PHPUnit\Framework\Assert;

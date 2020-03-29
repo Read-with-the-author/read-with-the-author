@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub\Application;
+namespace LeanpubBookClub\Application\RequestAccess;
 
 use LeanpubBookClub\Domain\Model\Member\EmailAddress;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;

@@ -20,3 +20,8 @@ Feature:
   Scenario: The new member gets an access token by email
     When someone requests access to the club providing the correct invoice ID
     Then they should receive an email with an access token for their dashboard page
+
+  Scenario: An existing member requests another access token
+    Given someone has been granted access to the club
+    When they request a new access token
+    Then they should receive an email with an access token for their dashboard page

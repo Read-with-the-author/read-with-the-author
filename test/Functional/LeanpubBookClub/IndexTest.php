@@ -5,7 +5,7 @@ namespace LeanpubBookClub;
 
 use Assert\Assert;
 use LeanpubBookClub\Application\ApplicationInterface;
-use LeanpubBookClub\Application\RequestAccess;
+use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Infrastructure\ProductionServiceContainer;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;

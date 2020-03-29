@@ -5,8 +5,8 @@ namespace Test\Acceptance;
 
 use LeanpubBookClub\Application\Email\AccessTokenEmail;
 use LeanpubBookClub\Application\ImportPurchase;
-use LeanpubBookClub\Application\RequestAccess;
-use LeanpubBookClub\Domain\Model\Member\AccessGrantedToMember;
+use LeanpubBookClub\Application\RequestAccess\RequestAccess;
+use LeanpubBookClub\Domain\Model\Member\AccessWasGrantedToMember;
 use LeanpubBookClub\Domain\Model\Member\EmailAddress;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use PHPUnit\Framework\Assert;
@@ -54,6 +54,16 @@ final class RegistrationContext extends FeatureContext
     }
 
     /**
+     * @When they request a new access token
+     */
+    public function whenTheyRequestNewAccessToken(): void
+    {
+        Assert::assertNotNull($this->buyerLeanpubInvoiceId);
+
+        $this->application()->generateAccessToken(LeanpubInvoiceId::fromString($this->buyerLeanpubInvoiceId));
+    }
+
+    /**
      * @Then they should receive an email with an access token for their dashboard page
      */
     public function thenTheyShouldReceiveAnEmailWithAnAccessToken(): void
@@ -76,7 +86,7 @@ final class RegistrationContext extends FeatureContext
         Assert::assertNotNull($this->buyerLeanpubInvoiceId);
 
         foreach ($this->dispatchedEvents() as $event) {
-            if ($event instanceof AccessGrantedToMember
+            if ($event instanceof AccessWasGrantedToMember
                 && $event->leanpubInvoiceId()->equals(LeanpubInvoiceId::fromString($this->buyerLeanpubInvoiceId))) {
                 return;
             }
@@ -107,7 +117,7 @@ final class RegistrationContext extends FeatureContext
         Assert::assertNotNull($this->buyerLeanpubInvoiceId);
 
         foreach ($this->dispatchedEvents() as $event) {
-            if ($event instanceof AccessGrantedToMember && $event->leanpubInvoiceId()->equals(
+            if ($event instanceof AccessWasGrantedToMember && $event->leanpubInvoiceId()->equals(
                     LeanpubInvoiceId::fromString($this->buyerLeanpubInvoiceId))) {
                 throw new RuntimeException('We did not expect an AccessGrantedToMember event to have been dispatched');
             }

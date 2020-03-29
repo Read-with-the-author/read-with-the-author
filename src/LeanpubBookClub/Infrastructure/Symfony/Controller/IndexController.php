@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure\Symfony\Controller;
 
 use LeanpubBookClub\Application\ApplicationInterface;
-use LeanpubBookClub\Application\RequestAccess;
+use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessForm;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessTokenForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

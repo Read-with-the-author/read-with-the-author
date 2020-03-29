@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Domain\Model\Member;
 
-final class AccessGrantedToMember
+final class AccessWasGrantedToMember
 {
     private LeanpubInvoiceId $leanpubInvoiceId;
 

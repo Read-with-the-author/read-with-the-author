@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Application;
 
+use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
@@ -29,4 +30,6 @@ interface ApplicationInterface
     public function attendSession(AttendSession $command): void;
 
     public function refreshBookInformation(): void;
+
+    public function generateAccessToken(LeanpubInvoiceId $memberId): void;
 }

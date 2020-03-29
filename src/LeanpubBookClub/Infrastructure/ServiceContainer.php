@@ -14,6 +14,8 @@ use LeanpubBookClub\Application\Email\Mailer;
 use LeanpubBookClub\Application\Email\SendAccessTokenEmail;
 use LeanpubBookClub\Application\EventDispatcher;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
+use LeanpubBookClub\Application\RequestAccess\GenerateAccessToken;
+use LeanpubBookClub\Domain\Model\Member\AccessWasGrantedToMember;
 use LeanpubBookClub\Domain\Model\Member\AnAccessTokenWasGenerated;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
@@ -76,6 +78,10 @@ abstract class ServiceContainer
         $eventDispatcher->subscribeToSpecificEvent(
             PurchaseWasClaimed::class,
             [$this->accessPolicy(), 'whenPurchaseWasClaimed']
+        );
+        $eventDispatcher->subscribeToSpecificEvent(
+            AccessWasGrantedToMember::class,
+            [new GenerateAccessToken($this->application()), 'whenAccessWasGrantedToMember']
         );
         $eventDispatcher->subscribeToSpecificEvent(
             AnAccessTokenWasGenerated::class,

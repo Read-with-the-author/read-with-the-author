@@ -31,11 +31,9 @@ final class Member
         return $member;
     }
 
-    public function grantAccess(AccessTokenGenerator $accessTokenGenerator): void
+    public function grantAccess(): void
     {
-        $this->events[] = new AccessGrantedToMember($this->memberId, $this->emailAddress);
-
-        $this->generateAccessToken($accessTokenGenerator);
+        $this->events[] = new AccessWasGrantedToMember($this->memberId, $this->emailAddress);
     }
 
     public function memberId(): LeanpubInvoiceId
@@ -43,7 +41,7 @@ final class Member
         return $this->memberId;
     }
 
-    private function generateAccessToken(AccessTokenGenerator $accessTokenGenerator): void
+    public function generateAccessToken(AccessTokenGenerator $accessTokenGenerator): void
     {
         $this->accessToken = $accessTokenGenerator->generate();
 

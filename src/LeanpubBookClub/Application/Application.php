@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Application;
 
 use LeanpubBookClub\Application\Importing\PurchaseWasAlreadyImported;
+use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\UpcomingSessions\ListUpcomingSessions;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Member\Member;
@@ -124,7 +125,18 @@ final class Application implements ApplicationInterface
     {
         $member = $this->memberRepository->getById($memberId);
 
-        $member->grantAccess($this->accessTokenGenerator);
+        $member->grantAccess();
+
+        $this->memberRepository->save($member);
+
+        $this->eventDispatcher->dispatchAll($member->releaseEvents());
+    }
+
+    public function generateAccessToken(LeanpubInvoiceId $memberId): void
+    {
+        $member = $this->memberRepository->getById($memberId);
+
+        $member->generateAccessToken($this->accessTokenGenerator);
 
         $this->memberRepository->save($member);
 
