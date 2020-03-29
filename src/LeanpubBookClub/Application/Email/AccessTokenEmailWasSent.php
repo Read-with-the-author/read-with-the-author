@@ -1,26 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub\Domain\Model\Member;
+namespace LeanpubBookClub\Application\Email;
 
 use LeanpubBookClub\Application\EventProducesFlashMessage;
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 
-final class MemberRequestedAccess implements EventProducesFlashMessage
+final class AccessTokenEmailWasSent implements EventProducesFlashMessage
 {
     private EmailAddress $emailAddress;
 
-    private LeanpubInvoiceId $leanpubInvoiceId;
-
-    public function __construct(LeanpubInvoiceId $memberId, EmailAddress $emailAddress)
+    public function __construct(EmailAddress $emailAddress)
     {
         $this->emailAddress = $emailAddress;
-        $this->leanpubInvoiceId = $memberId;
-    }
-
-    public function leanpubInvoiceId(): LeanpubInvoiceId
-    {
-        return $this->leanpubInvoiceId;
     }
 
     public function flashType(): string
@@ -30,7 +22,7 @@ final class MemberRequestedAccess implements EventProducesFlashMessage
 
     public function flashTranslatableMessage(): string
     {
-        return 'member_requested_access.flash_message';
+        return 'access_token_email_was_sent.flash_message';
     }
 
     public function flashTranslationVariables(): array

@@ -66,14 +66,12 @@ final class IndexTest extends WebTestCase
 
         $client->request('GET', '/');
 
-        $crawler = $client->submitForm(
+        $client->submitForm(
             'Get an access token',
             [
                 'request_access_token_form[leanpubInvoiceId]' => $leanpubInvoiceId
             ]
         );
-
-        self::assertStringContainsString('A new access token was sent to you by email', $crawler->filter('div.alerts')->text());
     }
 
     private function setApplication(KernelBrowser $client, ApplicationInterface $application): void

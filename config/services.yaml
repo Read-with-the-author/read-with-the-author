@@ -42,7 +42,10 @@ services:
             - '%kernel.project_dir%'
 
     LeanpubBookClub\Infrastructure\Symfony\SymfonyMailer:
-        public: true
+        public: '%kernel.debug%'
 
     LeanpubBookClub\Domain\Model\Common\EmailAddress:
         factory: ['@LeanpubBookClub\Infrastructure\Configuration', 'systemEmailAddress']
+
+    LeanpubBookClub\Infrastructure\Symfony\AddFlashMessageToSession:
+        public: true

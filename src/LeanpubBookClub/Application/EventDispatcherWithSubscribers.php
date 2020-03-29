@@ -10,11 +10,14 @@ final class EventDispatcherWithSubscribers implements EventDispatcher
      */
     private array $subscribersForEvent;
 
-
     /**
      * @var array<int,callable>
      */
     private array $genericSubscribers = [];
+
+    public function __construct()
+    {
+    }
 
     public function subscribeToSpecificEvent(string $eventType, callable $subscriber): void
     {

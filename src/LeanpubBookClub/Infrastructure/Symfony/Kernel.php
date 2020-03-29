@@ -2,6 +2,8 @@
 
 namespace LeanpubBookClub\Infrastructure\Symfony;
 
+use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
+use LeanpubBookClub\Infrastructure\ProductionServiceContainer;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -28,6 +30,16 @@ class Kernel extends BaseKernel
     public function getProjectDir(): string
     {
         return dirname(dirname(dirname(dirname(__DIR__))));
+    }
+
+    public function boot(): void
+    {
+        parent::boot();
+
+        $eventDispatcher = $this->getContainer()->get(ProductionServiceContainer::class)->eventDispatcher();
+        $eventDispatcher->subscribeToAllEvents(
+            [$this->getContainer()->get(AddFlashMessageToSession::class), 'notify']
+        );
     }
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void

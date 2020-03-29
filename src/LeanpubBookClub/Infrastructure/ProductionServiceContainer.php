@@ -6,6 +6,7 @@ namespace LeanpubBookClub\Infrastructure;
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
+use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchaseFromLeanpubApi;

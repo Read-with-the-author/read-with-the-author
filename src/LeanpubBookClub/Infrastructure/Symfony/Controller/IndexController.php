@@ -80,8 +80,6 @@ final class IndexController extends AbstractController
 
             $this->application->generateAccessToken($formData['leanpubInvoiceId']);
 
-            $this->addFlash('success', $this->translator->trans('access_token_email_was_sent.flash_message'));
-
             return $this->redirectToRoute('index');
         }
 

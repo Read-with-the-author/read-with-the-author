@@ -56,7 +56,7 @@ abstract class ServiceContainer
         return $this->clock;
     }
 
-    protected function eventDispatcher(): EventDispatcher
+    public function eventDispatcher(): EventDispatcher
     {
         if ($this->eventDispatcher === null) {
             $this->eventDispatcher = new EventDispatcherWithSubscribers();
@@ -85,7 +85,7 @@ abstract class ServiceContainer
         );
         $eventDispatcher->subscribeToSpecificEvent(
             AnAccessTokenWasGenerated::class,
-            [new SendAccessTokenEmail($this->mailer()), 'whenAnAccessTokenWasGenerated']
+            [new SendAccessTokenEmail($this->mailer(), $this->eventDispatcher()), 'whenAnAccessTokenWasGenerated']
         );
     }
 

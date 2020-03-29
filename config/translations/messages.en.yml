@@ -5,4 +5,5 @@ form.leanpub_invoice_id.help: You can find your Purchase ID in the email you rec
 request_access_form.request_access.label: Request access
 request_access_token_form.request_access_token.label: Get an access token
 access_token_email.subject: Your access token
-access_token_email_was_sent.flash_message: A new access token was sent to you by email
+access_token_email_was_sent.flash_message: "A new access token was sent to {emailAddress}"
+member_requested_access.flash_message: "We have received your request and will send you an email at {emailAddress}"
