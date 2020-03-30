@@ -89,6 +89,8 @@ final class MemberAreaTest extends WebTestCase
             $sessionElement = self::sessionElement($crawler, $sessionId);
 
             self::assertEquals($upcomingSession->description(), $sessionElement->filter('.session-description')->text());
+            self::assertEquals($upcomingSession->date(), $sessionElement->filter('.session-date')->text());
+            self::assertEquals($upcomingSession->time(), $sessionElement->filter('.session-time')->text());
         }
     }
 

@@ -13,6 +13,7 @@
             <thead>
             <tr>
                 <th>Date</th>
+                <th>Time</th>
                 <th>Description</th>
                 <th>Actions</th>
             </tr>
@@ -20,7 +21,8 @@
             <tbody>
             {% for upcomingSession in upcomingSessions %}
                 <tr class="session-{{ upcomingSession.sessionId }}{% if upcomingSession.memberIsRegisteredAsAttendee() %} table-success{% endif %}">
-                    <td>{{ upcomingSession.date }}</td>
+                    <td class="session-date">{{ upcomingSession.date }}</td>
+                    <td class="session-time">{{ upcomingSession.time }}</td>
                     <td class="session-description">{{ upcomingSession.description }}</td>
                     <td class="session-actions">
                         {% if upcomingSession.memberIsRegisteredAsAttendee %}

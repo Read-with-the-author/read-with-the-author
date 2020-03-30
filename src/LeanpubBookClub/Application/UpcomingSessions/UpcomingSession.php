@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Application\UpcomingSessions;
 
+use DateTimeImmutable;
+
 final class UpcomingSession
 {
     private string $sessionId;
@@ -32,7 +34,12 @@ final class UpcomingSession
 
     public function date(): string
     {
-        return $this->date;
+        return $this->dateTime()->format('l, F jS');
+    }
+
+    public function time(): string
+    {
+        return $this->dateTime()->format('H:i');
     }
 
     public function description(): string
@@ -53,5 +60,10 @@ final class UpcomingSession
             $this->description,
             true
         );
+    }
+
+    private function dateTime(): DateTimeImmutable
+    {
+        return new DateTimeImmutable($this->date);
     }
 }
