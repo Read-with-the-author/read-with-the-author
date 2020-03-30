@@ -8,7 +8,7 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        main:
+        member_area:
             anonymous: lazy
             provider: members
             guard:

@@ -3,45 +3,16 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub;
 
-use Assert\Assert;
-use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\FlashType;
 use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
-use LeanpubBookClub\Infrastructure\ProductionServiceContainer;
-use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DomCrawler\Crawler;
 
 final class IndexTest extends WebTestCase
 {
-    /**
-     * @var ApplicationInterface & MockObject
-     */
-    private $application;
-
-    private static function assertResponseHasFlashOfType(
-        Crawler $crawler,
-        string $type,
-        string $messageContains
-    ) {
-        $nodes = $crawler->filter('.alerts .alert-' . $type);
-        self::assertGreaterThan(0, count($nodes), 'Did not find a flash message of type ' . $type);
-
-        self::assertStringContainsString(
-            $messageContains,
-            $nodes->text()
-        );
-    }
-
     public function testIndex(): void
     {
-        $client = static::createClient();
-        $applicationMock = $this->createMock(ApplicationInterface::class);
-        $this->setApplication($client, $applicationMock);
+        $client = $this->createClientWithMockedApplication();
 
         $client->request('GET', '/');
 
@@ -143,9 +114,6 @@ final class IndexTest extends WebTestCase
         self::assertResponseHasFlashOfType($crawler, FlashType::WARNING, 'Authentication failed');
     }
 
-    /**
-     * @group wip
-     */
     public function testRedirectToHomepageWhenAccessingMemberAreaWithoutAToken(): void
     {
         $client = $this->createClientWithMockedApplication();
@@ -154,30 +122,5 @@ final class IndexTest extends WebTestCase
         $client->request('GET', '/login');
 
         self::assertTrue($client->getResponse()->isRedirect('/'));
-    }
-
-    private function setApplication(KernelBrowser $client, ApplicationInterface $application): void
-    {
-        $container = $client->getContainer();
-        Assert::that($container)->isInstanceOf(ContainerInterface::class);
-        /** @var ContainerInterface $container */
-
-        $serviceContainer = $container->get(ProductionServiceContainer::class);
-        Assert::that($serviceContainer)->isInstanceOf(ProductionServiceContainer::class);
-        /** @var ProductionServiceContainer $serviceContainer */
-
-        $serviceContainer->setApplication($application);
-    }
-
-    private function createClientWithMockedApplication(): KernelBrowser
-    {
-        $client = self::createClient();
-        $client->disableReboot();
-        $client->followRedirects();
-
-        $this->application = $this->createMock(ApplicationInterface::class);
-        $this->setApplication($client, $this->application);
-
-        return $client;
     }
 }
