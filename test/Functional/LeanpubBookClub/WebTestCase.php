@@ -5,12 +5,15 @@ namespace LeanpubBookClub;
 
 use Assert\Assert;
 use LeanpubBookClub\Application\ApplicationInterface;
+use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Infrastructure\ProductionServiceContainer;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as SymfonyWebTestCase;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
 abstract class WebTestCase extends SymfonyWebTestCase
 {
@@ -18,6 +21,15 @@ abstract class WebTestCase extends SymfonyWebTestCase
      * @var ApplicationInterface & MockObject
      */
     protected $application;
+
+    protected KernelBrowser $client;
+
+    protected string $memberId = 'jP6LfQ3UkfOvZTLZLNfDfg';
+
+    protected function setUp(): void
+    {
+        $this->client = $this->createClientWithMockedApplication();
+    }
 
     protected static function assertResponseHasFlashOfType(
         Crawler $crawler,
@@ -56,5 +68,34 @@ abstract class WebTestCase extends SymfonyWebTestCase
         /** @var ProductionServiceContainer $serviceContainer */
 
         $serviceContainer->setApplication($application);
+    }
+
+    protected function logInMember(): void
+    {
+        $session = self::$container->get('session');
+
+        $firewallName = 'member_area';
+        $firewallContext = $firewallName;
+
+        $member = new Member($this->memberId);
+
+        // you may need to use a different token class depending on your application.
+        // for example, when using Guard authentication you must instantiate PostAuthenticationGuardToken
+        $token = new PostAuthenticationGuardToken($member, $firewallName, ['ROLE_MEMBER']);
+        $session->set('_security_' . $firewallContext, serialize($token));
+        $session->save();
+
+        $cookie = new Cookie($session->getName(), $session->getId());
+        $this->client->getCookieJar()->set($cookie);
+
+        $this->memberExists($this->memberId);
+    }
+
+    protected function memberExists(string $memberId): void
+    {
+        $this->application->expects($this->any())
+            ->method('getOneById')
+            ->with($memberId)
+            ->willReturn(new Member($memberId));
     }
 }
