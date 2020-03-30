@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Test\Acceptance;
 
+use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Member\Member;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
-use RuntimeException;
 
 final class MemberRepositoryInMemory implements MemberRepository
 {
@@ -23,7 +23,7 @@ final class MemberRepositoryInMemory implements MemberRepository
     public function getById(LeanpubInvoiceId $memberId): Member
     {
         if (!isset($this->members[$memberId->asString()])) {
-            throw new RuntimeException('Could not find member with ID ' . $memberId->asString());
+            throw CouldNotFindMember::withId($memberId);
         }
 
         return $this->members[$memberId->asString()];

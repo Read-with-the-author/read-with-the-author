@@ -5,28 +5,15 @@ namespace LeanpubBookClub\Application;
 
 interface EventProducesFlashMessage
 {
-    public const PRIMARY = 'primary';
-
-    public const SECONDARY = 'secondary';
-
-    public const SUCCESS = 'success';
-
-    public const DANGER = 'danger';
-
-    public const WARNING = 'warning';
-
-    public const INFO = 'info';
-
-    public const LIGHT = 'light';
-
-    public const DARK = 'dark';
-
     /**
-     * @return string Should be one of the interface constants to make it work with Bootstrap
+     * @return string Should be one of the FlashType interface constants to make it work with Bootstrap
      */
     public function flashType(): string;
 
     public function flashTranslatableMessage(): string;
 
+    /**
+     * @return array<string,mixed>
+     */
     public function flashTranslationVariables(): array;
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Domain\Model\Member;
 
 use LeanpubBookClub\Application\EventProducesFlashMessage;
+use LeanpubBookClub\Application\FlashType;
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 
 final class MemberRequestedAccess implements EventProducesFlashMessage
@@ -25,7 +26,7 @@ final class MemberRequestedAccess implements EventProducesFlashMessage
 
     public function flashType(): string
     {
-        return self::SUCCESS;
+        return FlashType::SUCCESS;
     }
 
     public function flashTranslatableMessage(): string

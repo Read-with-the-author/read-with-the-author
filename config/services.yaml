@@ -49,3 +49,8 @@ services:
 
     LeanpubBookClub\Infrastructure\Symfony\AddFlashMessageToSession:
         public: true
+
+    LeanpubBookClub\Infrastructure\Symfony\Security\AccessTokenAuthenticator: ~
+
+    LeanpubBookClub\Application\Members\Members: '@LeanpubBookClub\Application\ApplicationInterface'
+    LeanpubBookClub\Infrastructure\Symfony\Security\MemberUserProvider: ~

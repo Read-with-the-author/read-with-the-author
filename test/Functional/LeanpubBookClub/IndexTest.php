@@ -5,6 +5,7 @@ namespace LeanpubBookClub;
 
 use Assert\Assert;
 use LeanpubBookClub\Application\ApplicationInterface;
+use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Infrastructure\ProductionServiceContainer;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -74,6 +75,45 @@ final class IndexTest extends WebTestCase
         );
     }
 
+    /**
+     * @group wip
+     */
+    public function testLoginWithAccessToken(): void
+    {
+        $client = $this->createClientWithMockedApplication();
+
+        $accessToken = '048c4168-8a3c-4857-b78e-adafa12069b4';
+
+        $memberId = 'jP6LfQ3UkfOvZTLZLNfDfg';
+        $member = new Member($memberId);
+
+        $this->application->expects($this->any())
+            ->method('getOneByAccessToken')
+            ->with($accessToken)
+            ->willReturn($member);
+
+        $this->application->expects($this->any())
+            ->method('getOneById')
+            ->with($memberId)
+            ->willReturn($member);
+
+        $crawler = $client->request('GET', '/login', ['token' => $accessToken]);
+
+        self::assertTrue($client->getResponse()->isSuccessful());
+
+        self::assertStringContainsString(
+            $memberId,
+            $crawler->filter('.logged_in_username')->text()
+        );
+    }
+
+
+    public function testAccessDeniedWhenAccessingMemberAreaWithoutToken(): void
+    {
+        // @todo
+        $this->markTestIncomplete();
+    }
+
     private function setApplication(KernelBrowser $client, ApplicationInterface $application): void
     {
         $container = $client->getContainer();
@@ -92,6 +132,7 @@ final class IndexTest extends WebTestCase
         $client = self::createClient();
         $client->disableReboot();
         $client->followRedirects();
+        $client->catchExceptions(false);
 
         $this->application = $this->createMock(ApplicationInterface::class);
         $this->setApplication($client, $this->application);

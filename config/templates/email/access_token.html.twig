@@ -1,4 +1,4 @@
 <p>You have requested an access token for the Leanpub Book Club</p>
 
-{% set dashboardUrl = url('index', { token: accessToken }) %}
+{% set dashboardUrl = url('login', { token: accessToken }) %}
 <p>Follow this link to go to the dashboard: <a href="{{ dashboardUrl }}">{{ dashboardUrl }}</a></p>

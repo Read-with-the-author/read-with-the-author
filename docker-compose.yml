@@ -17,6 +17,9 @@ services:
             - ./:/app:cached
             - ~/.composer:/tmp:cached
         user: ${HOST_UID}:${HOST_GID}
+        env_file:
+            - .env
+            - .env.local
 
     nginx:
         image: matthiasnoback/leanpub-book-club-nginx:latest

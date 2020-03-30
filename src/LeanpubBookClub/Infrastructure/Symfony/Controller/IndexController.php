@@ -9,6 +9,7 @@ use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessForm;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessTokenForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -98,6 +99,14 @@ final class IndexController extends AbstractController
     public function accessRequestedAction(): Response
     {
         return $this->render('access_requested.html.twig');
+    }
+
+    /**
+     * @Route("/login", name="login", methods={"GET"})
+     */
+    public function loginAction(): Response
+    {
+        return new RedirectResponse($this->generateUrl('/'));
     }
 
     private function createRequestAccessTokenForm(): FormInterface

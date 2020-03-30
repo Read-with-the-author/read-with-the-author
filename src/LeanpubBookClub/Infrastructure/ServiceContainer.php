@@ -14,6 +14,7 @@ use LeanpubBookClub\Application\Email\Mailer;
 use LeanpubBookClub\Application\Email\SendAccessTokenEmail;
 use LeanpubBookClub\Application\EventDispatcher;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
+use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Application\RequestAccess\GenerateAccessToken;
 use LeanpubBookClub\Domain\Model\Member\AccessWasGrantedToMember;
 use LeanpubBookClub\Domain\Model\Member\AnAccessTokenWasGenerated;
@@ -30,6 +31,7 @@ use Test\Acceptance\FakeClock;
 use Test\Acceptance\GetBookSummaryInMemory;
 use Test\Acceptance\IndividualPurchasesInMemory;
 use Test\Acceptance\MemberRepositoryInMemory;
+use Test\Acceptance\MembersInMemory;
 use Test\Acceptance\PurchaseRepositoryInMemory;
 use Test\Acceptance\SessionRepositoryInMemory;
 use Test\Acceptance\UpcomingSessionsInMemory;
@@ -46,6 +48,7 @@ abstract class ServiceContainer
     private ?SessionRepository $sessionRepository = null;
     private ?IndividualPurchasesInMemory $individualPurchases = null;
     protected ?Mailer $mailer = null;
+    private ?Members $members = null;
 
     protected function clock(): Clock
     {
@@ -111,7 +114,8 @@ abstract class ServiceContainer
                 $this->individualPurchases(),
                 $this->getBookSummary(),
                 $this->assetPublisher(),
-                $this->accessTokenGenerator()
+                $this->accessTokenGenerator(),
+                $this->members()
             );
         }
 
@@ -195,5 +199,14 @@ abstract class ServiceContainer
     private function accessTokenGenerator(): AccessTokenGenerator
     {
         return new RealUuidAccessTokenGenerator();
+    }
+
+    private function members(): Members
+    {
+        if ($this->members ===  null) {
+            $this->members = new MembersInMemory();
+        }
+
+        return $this->members;
     }
 }

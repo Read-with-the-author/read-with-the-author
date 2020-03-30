@@ -194,6 +194,30 @@
             "config/routes.yaml"
         ]
     },
+    "symfony/security-bundle": {
+        "version": "4.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.4",
+            "ref": "7b4408dc203049666fe23fabed23cbadc6d8440f"
+        },
+        "files": [
+            "config/packages/security.yaml"
+        ]
+    },
+    "symfony/security-core": {
+        "version": "v5.0.6"
+    },
+    "symfony/security-csrf": {
+        "version": "v5.0.6"
+    },
+    "symfony/security-guard": {
+        "version": "v5.0.6"
+    },
+    "symfony/security-http": {
+        "version": "v5.0.6"
+    },
     "symfony/stopwatch": {
         "version": "v5.0.5"
     },

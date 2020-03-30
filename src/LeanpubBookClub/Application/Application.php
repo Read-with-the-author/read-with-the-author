@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Application;
 
 use LeanpubBookClub\Application\Importing\PurchaseWasAlreadyImported;
+use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\UpcomingSessions\ListUpcomingSessions;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
@@ -42,6 +43,8 @@ final class Application implements ApplicationInterface
 
     private AccessTokenGenerator $accessTokenGenerator;
 
+    private Members $members;
+
     public function __construct(
         MemberRepository $memberRepository,
         EventDispatcher $eventDispatcher,
@@ -52,7 +55,8 @@ final class Application implements ApplicationInterface
         IndividualPurchases $individualPurchases,
         GetBookSummary $getBookSummary,
         AssetPublisher $assetPublisher,
-        AccessTokenGenerator $accessTokenGenerator
+        AccessTokenGenerator $accessTokenGenerator,
+        Members $members
     ) {
         $this->memberRepository = $memberRepository;
         $this->eventDispatcher = $eventDispatcher;
@@ -64,6 +68,7 @@ final class Application implements ApplicationInterface
         $this->getBookSummary = $getBookSummary;
         $this->assetPublisher = $assetPublisher;
         $this->accessTokenGenerator = $accessTokenGenerator;
+        $this->members = $members;
     }
 
     public function importAllPurchases(): void
@@ -188,5 +193,15 @@ final class Application implements ApplicationInterface
     {
         $bookSummary = $this->getBookSummary->getBookSummary();
         $this->assetPublisher->publishTitlePageImageUrl($bookSummary->titlePageUrl());
+    }
+
+    public function getOneByAccessToken(string $accessToken): \LeanpubBookClub\Application\Members\Member
+    {
+        return $this->members->getOneByAccessToken($accessToken);
+    }
+
+    public function getOneById(string $memberId): \LeanpubBookClub\Application\Members\Member
+    {
+        return $this->members->getOneById($memberId);
     }
 }
