@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Domain\Model\Session;
 
-final class SessionWasPlanned
+use LeanpubBookClub\Application\EventProducesFlashMessage;
+use LeanpubBookClub\Application\FlashType;
+
+final class SessionWasPlanned implements EventProducesFlashMessage
 {
     private SessionId $sessionId;
 
@@ -34,5 +37,20 @@ final class SessionWasPlanned
     public function description(): string
     {
         return $this->description;
+    }
+
+    public function flashType(): string
+    {
+        return FlashType::SUCCESS;
+    }
+
+    public function flashTranslatableMessage(): string
+    {
+        return 'A new session was planned';
+    }
+
+    public function flashTranslationVariables(): array
+    {
+        return [];
     }
 }

@@ -1,28 +1,33 @@
 security:
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    encoders:
+        Symfony\Component\Security\Core\User\User:
+            algorithm: auto
+
     providers:
         members:
             id: LeanpubBookClub\Infrastructure\Symfony\Security\MemberUserProvider
+        admins:
+            memory:
+                users:
+                    admin: { password: '%env(ADMIN_PASSWORD)%', roles: ['ROLE_ADMIN']}
 
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         member_area:
+            pattern: ^/member-area
             anonymous: lazy
             provider: members
             guard:
                 authenticator:
                     - LeanpubBookClub\Infrastructure\Symfony\Security\AccessTokenAuthenticator
+        admin_area:
+            pattern: ^/admin-area
+            http_basic:
+                provider: admins
+                realm: Admin area
 
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#firewalls-authentication
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/admin-area, roles: ROLE_ADMIN }
         - { path: ^/member-area, roles: ROLE_MEMBER }

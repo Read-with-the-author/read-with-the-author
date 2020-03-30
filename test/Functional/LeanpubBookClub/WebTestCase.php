@@ -50,7 +50,6 @@ abstract class WebTestCase extends SymfonyWebTestCase
         $client = WebTestCase::createClient();
         $client->disableReboot();
         $client->followRedirects();
-        $client->catchExceptions(false);
 
         $this->application = $this->createMock(ApplicationInterface::class);
         $this->setApplication($client, $this->application);
@@ -100,8 +99,8 @@ abstract class WebTestCase extends SymfonyWebTestCase
             ->willReturn(new Member($memberId));
     }
 
-    protected function dumpResponseContent(): void
+    protected function dumpResponse(): void
     {
-        dump($this->client->getResponse()->getContent());
+        dump($this->client->getResponse());
     }
 }
