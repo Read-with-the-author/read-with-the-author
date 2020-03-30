@@ -6,12 +6,14 @@ namespace LeanpubBookClub\Infrastructure\Symfony\Security;
 use Assert\Assert;
 use LeanpubBookClub\Application\FlashType;
 use LeanpubBookClub\Application\Members\Members;
+use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
@@ -50,7 +52,7 @@ final class AccessTokenAuthenticator extends AbstractGuardAuthenticator
         return $request->query->get('token');
     }
 
-    public function getUser($credentials, UserProviderInterface $userProvider)
+    public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface
     {
         if ($credentials === null) {
             return null;
@@ -58,7 +60,11 @@ final class AccessTokenAuthenticator extends AbstractGuardAuthenticator
 
         Assert::that($credentials)->string('Expected the access token to be a string');
 
-        return $this->members->getOneByAccessToken($credentials);
+        try {
+            return $this->members->getOneByAccessToken($credentials);
+        } catch (CouldNotFindMember $exception) {
+            return null;
+        }
     }
 
     public function checkCredentials($credentials, UserInterface $user)
@@ -84,12 +90,12 @@ final class AccessTokenAuthenticator extends AbstractGuardAuthenticator
         return $this->redirectToRoute($request, 'member_area_index');
     }
 
-    public function supportsRememberMe()
+    public function supportsRememberMe(): bool
     {
         return false;
     }
 
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null): Response
     {
         return $this->redirectToRoute($request, 'index');
     }

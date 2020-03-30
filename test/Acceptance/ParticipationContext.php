@@ -101,9 +101,9 @@ final class ParticipationContext extends FeatureContext
     }
 
     /**
-     * @Then the list of upcoming sessions indicates that they have been registered as a participant
+     * @Then the list of upcoming sessions should indicate that they have been registered as a participant
      */
-    public function theListOfUpcomingSessionsIndicatesThatTheyHaveBeenRegisteredAsAParticipant(): void
+    public function theListOfUpcomingSessionsShouldIndicateThatTheyHaveBeenRegisteredAsAParticipant(): void
     {
         Assert::assertNotNull($this->sessionId);
         Assert::assertNotNull($this->leanpubInvoiceId);

@@ -5,13 +5,16 @@ namespace LeanpubBookClub;
 
 use Assert\Assert;
 use LeanpubBookClub\Application\ApplicationInterface;
+use LeanpubBookClub\Application\FlashType;
 use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
+use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use LeanpubBookClub\Infrastructure\ProductionServiceContainer;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DomCrawler\Crawler;
 
 final class IndexTest extends WebTestCase
 {
@@ -19,6 +22,20 @@ final class IndexTest extends WebTestCase
      * @var ApplicationInterface & MockObject
      */
     private $application;
+
+    private static function assertResponseHasFlashOfType(
+        Crawler $crawler,
+        string $type,
+        string $messageContains
+    ) {
+        $nodes = $crawler->filter('.alerts .alert-' . $type);
+        self::assertGreaterThan(0, count($nodes), 'Did not find a flash message of type ' . $type);
+
+        self::assertStringContainsString(
+            $messageContains,
+            $nodes->text()
+        );
+    }
 
     public function testIndex(): void
     {
@@ -75,9 +92,6 @@ final class IndexTest extends WebTestCase
         );
     }
 
-    /**
-     * @group wip
-     */
     public function testLoginWithAccessToken(): void
     {
         $client = $this->createClientWithMockedApplication();
@@ -107,11 +121,39 @@ final class IndexTest extends WebTestCase
         );
     }
 
-
-    public function testAccessDeniedWhenAccessingMemberAreaWithoutToken(): void
+    public function testRedirectToHomepageWhenAccessingMemberAreaWithIncorrectToken(): void
     {
-        // @todo
-        $this->markTestIncomplete();
+        $client = $this->createClientWithMockedApplication();
+        $client->followRedirects(false);
+
+        // login with unknown access token
+        $accessToken = '0a56900e-fc10-4fde-b63c-a17ebc3d5002';
+
+        $this->application->expects($this->any())
+            ->method('getOneByAccessToken')
+            ->with($accessToken)
+            ->willThrowException(new CouldNotFindMember());
+
+        $client->request('GET', '/login', ['token' => $accessToken]);
+
+        self::assertTrue($client->getResponse()->isRedirect('http://localhost/'));
+
+        $crawler = $client->followRedirect();
+
+        self::assertResponseHasFlashOfType($crawler, FlashType::WARNING, 'Authentication failed');
+    }
+
+    /**
+     * @group wip
+     */
+    public function testRedirectToHomepageWhenAccessingMemberAreaWithoutAToken(): void
+    {
+        $client = $this->createClientWithMockedApplication();
+        $client->followRedirects(false);
+
+        $client->request('GET', '/login');
+
+        self::assertTrue($client->getResponse()->isRedirect('/'));
     }
 
     private function setApplication(KernelBrowser $client, ApplicationInterface $application): void
@@ -132,7 +174,6 @@ final class IndexTest extends WebTestCase
         $client = self::createClient();
         $client->disableReboot();
         $client->followRedirects();
-        $client->catchExceptions(false);
 
         $this->application = $this->createMock(ApplicationInterface::class);
         $this->setApplication($client, $this->application);

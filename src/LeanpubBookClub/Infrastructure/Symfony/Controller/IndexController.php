@@ -106,7 +106,7 @@ final class IndexController extends AbstractController
      */
     public function loginAction(): Response
     {
-        return new RedirectResponse($this->generateUrl('/'));
+        return new RedirectResponse($this->generateUrl('index'));
     }
 
     private function createRequestAccessTokenForm(): FormInterface
