@@ -50,6 +50,7 @@ abstract class WebTestCase extends SymfonyWebTestCase
         $client = WebTestCase::createClient();
         $client->disableReboot();
         $client->followRedirects();
+        $client->catchExceptions(false);
 
         $this->application = $this->createMock(ApplicationInterface::class);
         $this->setApplication($client, $this->application);
@@ -70,14 +71,14 @@ abstract class WebTestCase extends SymfonyWebTestCase
         $serviceContainer->setApplication($application);
     }
 
-    protected function logInMember(): void
+    protected function logInMember(string $memberId): void
     {
         $session = self::$container->get('session');
 
         $firewallName = 'member_area';
         $firewallContext = $firewallName;
 
-        $member = new Member($this->memberId);
+        $member = new Member($memberId);
 
         // you may need to use a different token class depending on your application.
         // for example, when using Guard authentication you must instantiate PostAuthenticationGuardToken
@@ -88,7 +89,7 @@ abstract class WebTestCase extends SymfonyWebTestCase
         $cookie = new Cookie($session->getName(), $session->getId());
         $this->client->getCookieJar()->set($cookie);
 
-        $this->memberExists($this->memberId);
+        $this->memberExists($memberId);
     }
 
     protected function memberExists(string $memberId): void
@@ -97,5 +98,10 @@ abstract class WebTestCase extends SymfonyWebTestCase
             ->method('getOneById')
             ->with($memberId)
             ->willReturn(new Member($memberId));
+    }
+
+    protected function dumpResponseContent(): void
+    {
+        dump($this->client->getResponse()->getContent());
     }
 }

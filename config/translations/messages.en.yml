@@ -8,3 +8,4 @@ access_token_email.subject: Your access token
 access_token_email_was_sent.flash_message: "A new access token was sent to {emailAddress}"
 member_requested_access.flash_message: "We have received your request and will send you an email at {emailAddress}"
 access_token_authentication_failed.flash_message: "Authentication failed using the provided access token. Please request a new token."
+attend_session.button_label: "Attend this session"
