@@ -20,19 +20,21 @@ final class IndexTest extends WebTestCase
     {
         $emailAddress = 'info@matthiasnoback.nl';
         $leanpubInvoiceId = 'jP6LfQ3UkfOvZTLZLNfDfg';
+        $timeZone = 'Europe/Amsterdam';
+
+        $this->client->request('GET', '/');
 
         $this->application
             ->expects($this->once())
             ->method('requestAccess')
-            ->with(new RequestAccess($leanpubInvoiceId, $emailAddress));
-
-        $this->client->request('GET', '/');
+            ->with(new RequestAccess($leanpubInvoiceId, $emailAddress, $timeZone));
 
         $this->client->submitForm(
             'Request access',
             [
                 'request_access_form[leanpubInvoiceId]' => $leanpubInvoiceId,
-                'request_access_form[emailAddress]' => $emailAddress
+                'request_access_form[emailAddress]' => $emailAddress,
+                'request_access_form[timeZone]' => $timeZone
             ]
         );
     }

@@ -6,6 +6,7 @@ namespace LeanpubBookClub\Domain\Model\Member;
 use LeanpubBookClub\Application\EventProducesFlashMessage;
 use LeanpubBookClub\Application\FlashType;
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
+use LeanpubBookClub\Domain\Model\Common\TimeZone;
 
 final class MemberRequestedAccess implements EventProducesFlashMessage
 {
@@ -13,15 +14,23 @@ final class MemberRequestedAccess implements EventProducesFlashMessage
 
     private LeanpubInvoiceId $leanpubInvoiceId;
 
-    public function __construct(LeanpubInvoiceId $memberId, EmailAddress $emailAddress)
+    private TimeZone $memberTimeZone;
+
+    public function __construct(LeanpubInvoiceId $memberId, EmailAddress $emailAddress, TimeZone $memberTimeZone)
     {
         $this->emailAddress = $emailAddress;
         $this->leanpubInvoiceId = $memberId;
+        $this->memberTimeZone = $memberTimeZone;
     }
 
     public function leanpubInvoiceId(): LeanpubInvoiceId
     {
         return $this->leanpubInvoiceId;
+    }
+
+    public function memberTimeZone(): TimeZone
+    {
+        return $this->memberTimeZone;
     }
 
     public function flashType(): string

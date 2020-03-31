@@ -5,6 +5,7 @@ namespace LeanpubBookClub\Domain\Model\Member;
 
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use LeanpubBookClub\Domain\Model\Common\Entity;
+use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Service\AccessTokenGenerator;
 
 final class Member
@@ -17,17 +18,26 @@ final class Member
 
     private ?AccessToken $accessToken = null;
 
-    private function __construct(LeanpubInvoiceId $leanpubInvoiceId, EmailAddress $emailAddress)
-    {
+    private TimeZone $timeZone;
+
+    private function __construct(
+        LeanpubInvoiceId $leanpubInvoiceId,
+        EmailAddress $emailAddress,
+        TimeZone $timeZone
+    ) {
         $this->memberId = $leanpubInvoiceId;
         $this->emailAddress = $emailAddress;
+        $this->timeZone = $timeZone;
     }
 
-    public static function requestAccess(LeanpubInvoiceId $leanpubInvoiceId, EmailAddress $emailAddress): self
-    {
-        $member = new self($leanpubInvoiceId, $emailAddress);
+    public static function requestAccess(
+        LeanpubInvoiceId $leanpubInvoiceId,
+        EmailAddress $emailAddress,
+        TimeZone $timeZone
+    ): self {
+        $member = new self($leanpubInvoiceId, $emailAddress, $timeZone);
 
-        $member->events[] = new MemberRequestedAccess($leanpubInvoiceId, $emailAddress);
+        $member->events[] = new MemberRequestedAccess($leanpubInvoiceId, $emailAddress, $timeZone);
 
         return $member;
     }

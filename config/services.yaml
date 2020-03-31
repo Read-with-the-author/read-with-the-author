@@ -54,3 +54,7 @@ services:
 
     LeanpubBookClub\Application\Members\Members: '@LeanpubBookClub\Application\ApplicationInterface'
     LeanpubBookClub\Infrastructure\Symfony\Security\MemberUserProvider: ~
+
+    LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessForm: ~
+    LeanpubBookClub\Domain\Model\Common\TimeZone:
+        factory: ['@LeanpubBookClub\Infrastructure\Configuration', 'authorTimeZone']

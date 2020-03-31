@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure;
 
 use Assert\Assert;
-use DateTimeZone;
 use LeanpubBookClub\Application\AccessPolicy;
 use LeanpubBookClub\Application\Application;
 use LeanpubBookClub\Application\ApplicationInterface;
@@ -17,6 +16,7 @@ use LeanpubBookClub\Application\EventDispatcher;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
 use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Application\RequestAccess\GenerateAccessToken;
+use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Model\Member\AccessWasGrantedToMember;
 use LeanpubBookClub\Domain\Model\Member\AnAccessTokenWasGenerated;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
@@ -54,7 +54,7 @@ abstract class ServiceContainer
     protected function clock(): Clock
     {
         if ($this->clock === null) {
-            $this->clock = new FakeClock(new DateTimeZone('Europe/Amsterdam'));
+            $this->clock = new FakeClock(TimeZone::fromString('Europe/Amsterdam'));
         }
 
         return $this->clock;

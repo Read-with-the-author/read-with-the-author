@@ -5,6 +5,7 @@ namespace LeanpubBookClub\Domain\Model\Member;
 
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use LeanpubBookClub\Domain\Model\Common\EntityTestCase;
+use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Service\AccessTokenGenerator;
 
 final class MemberTest extends EntityTestCase
@@ -16,12 +17,13 @@ final class MemberTest extends EntityTestCase
     {
         $emailAddress = $this->anEmailAddress();
         $leanpubInvoiceId = $this->aLeanpubInvoiceId();
+        $timeZone = $this->aTimeZone();
 
-        $member = Member::requestAccess($leanpubInvoiceId, $emailAddress);
+        $member = Member::requestAccess($leanpubInvoiceId, $emailAddress, $timeZone);
 
         self::assertEquals(
             [
-                new MemberRequestedAccess($leanpubInvoiceId, $emailAddress)
+                new MemberRequestedAccess($leanpubInvoiceId, $emailAddress, $timeZone)
             ],
             $member->releaseEvents()
         );
@@ -82,7 +84,7 @@ final class MemberTest extends EntityTestCase
 
     private function aMember(): Member
     {
-        return Member::requestAccess($this->aLeanpubInvoiceId(), $this->anEmailAddress());
+        return Member::requestAccess($this->aLeanpubInvoiceId(), $this->anEmailAddress(), $this->aTimeZone());
     }
 
     private function accessTokenGenerator(AccessToken $accessToken): AccessTokenGenerator
@@ -91,5 +93,10 @@ final class MemberTest extends EntityTestCase
         $accessTokenGenerator->method('generate')->willReturn($accessToken);
 
         return $accessTokenGenerator;
+    }
+
+    private function aTimeZone(): TimeZone
+    {
+        return TimeZone::fromString('Europe/Amsterdam');
     }
 }

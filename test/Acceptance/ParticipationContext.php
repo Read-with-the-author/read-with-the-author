@@ -22,6 +22,8 @@ final class ParticipationContext extends FeatureContext
 
     private ?string $leanpubInvoiceId = null;
 
+    private string $memberTimeZone = 'Europe/Amsterdam';
+
     /**
      * @Given today is :date
      */
@@ -79,7 +81,7 @@ final class ParticipationContext extends FeatureContext
         $this->leanpubInvoiceId = 'jP6LfQ3UkfOvZTLZLNfDfg';
 
         $this->application()->requestAccess(
-            new RequestAccess($this->leanpubInvoiceId, 'info@matthiasnoback.nl')
+            new RequestAccess($this->leanpubInvoiceId, 'info@matthiasnoback.nl', $this->memberTimeZone)
         );
         $this->application()->grantAccess(LeanpubInvoiceId::fromString($this->leanpubInvoiceId));
     }

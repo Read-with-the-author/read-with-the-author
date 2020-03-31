@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure;
 
 use Assert\Assert;
-use DateTimeZone;
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
+use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Infrastructure\Leanpub\ApiKey;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSlug;
 
@@ -44,7 +44,7 @@ final class Configuration
             Env::get('LEANPUB_API_KEY'),
             $projectDirectory,
             Env::get('SYSTEM_EMAIL_ADDRESS'),
-            Env::get('AUTHOR_TIMEZONE', 'CET')
+            Env::get('AUTHOR_TIMEZONE', 'Europe/Amsterdam')
         );
     }
 
@@ -68,8 +68,8 @@ final class Configuration
         return EmailAddress::fromString($this->systemEmailAddress);
     }
 
-    public function authorTimeZone(): DateTimeZone
+    public function authorTimeZone(): TimeZone
     {
-        return new DateTimeZone($this->authorTimeZone);
+        return TimeZone::fromString($this->authorTimeZone);
     }
 }

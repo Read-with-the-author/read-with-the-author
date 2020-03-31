@@ -2,6 +2,6 @@
 
 set -e
 
-export APP_ENV=true
+export APP_ENV=test
 
 vendor/bin/phpunit --testsuite integration -v

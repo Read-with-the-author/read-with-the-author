@@ -53,7 +53,7 @@ final class IndexController extends AbstractController
             $formData = $form->getData();
 
             $this->application->requestAccess(
-                new RequestAccess($formData['leanpubInvoiceId'], $formData['emailAddress'])
+                new RequestAccess($formData['leanpubInvoiceId'], $formData['emailAddress'], $formData['timeZone'])
             );
 
             return $this->redirectToRoute('access_requested');

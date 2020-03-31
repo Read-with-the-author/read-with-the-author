@@ -103,7 +103,7 @@ final class Application implements ApplicationInterface
 
     public function requestAccess(RequestAccess $command): void
     {
-        $member = Member::requestAccess($command->leanpubInvoiceId(), $command->emailAddress());
+        $member = Member::requestAccess($command->leanpubInvoiceId(), $command->emailAddress(), $command->timeZone());
 
         $this->memberRepository->save($member);
 

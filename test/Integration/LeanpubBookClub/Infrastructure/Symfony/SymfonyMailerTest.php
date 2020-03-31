@@ -32,7 +32,7 @@ final class SymfonyMailerTest extends KernelTestCase
 
         self::assertEquals('Your access token', $message->subject);
         self::assertStringContainsString(
-            '/?token=' . $accessToken,
+            '/member-area/login?token=' . $accessToken,
             $message->body
         );
         self::assertTrue($message->recipients->contains(new Contact($email->recipient())));

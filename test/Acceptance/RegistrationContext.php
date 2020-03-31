@@ -18,6 +18,8 @@ final class RegistrationContext extends FeatureContext
 
     private string $buyerEmailAddress = 'info@matthiasnoback.nl';
 
+    private string $memberTimeZone = 'Europe/Amsterdam';
+
 
     /**
      * @Given someone has bought a copy of the book and the invoice ID was :invoiceId
@@ -37,7 +39,7 @@ final class RegistrationContext extends FeatureContext
         Assert::assertNotNull($this->buyerLeanpubInvoiceId);
 
         $this->application()->requestAccess(
-            new RequestAccess($this->buyerLeanpubInvoiceId, $this->buyerEmailAddress)
+            new RequestAccess($this->buyerLeanpubInvoiceId, $this->buyerEmailAddress, $this->memberTimeZone)
         );
     }
 
@@ -49,7 +51,7 @@ final class RegistrationContext extends FeatureContext
         $invoiceId = 'jP6LfQ3UkfOvZTLZLNfDfg';
         $this->application()->importPurchase(new ImportPurchase($invoiceId));
         $this->application()->requestAccess(
-            new RequestAccess($invoiceId, $this->buyerEmailAddress)
+            new RequestAccess($invoiceId, $this->buyerEmailAddress, $this->memberTimeZone)
         );
     }
 
@@ -104,7 +106,7 @@ final class RegistrationContext extends FeatureContext
 
         $this->application()->requestAccess(
             new RequestAccess(
-                $unknownInvoiceId = $this->buyerLeanpubInvoiceId, $this->buyerEmailAddress
+                $unknownInvoiceId = $this->buyerLeanpubInvoiceId, $this->buyerEmailAddress, $this->memberTimeZone
             )
         );
     }
@@ -131,7 +133,9 @@ final class RegistrationContext extends FeatureContext
     {
         $this->buyerLeanpubInvoiceId = 'jP6LfQ3UkfOvZTLZLNfDfg';
         $this->application()->importPurchase(new ImportPurchase($this->buyerLeanpubInvoiceId));
-        $this->application()->requestAccess(new RequestAccess($this->buyerLeanpubInvoiceId, $this->buyerEmailAddress));
+        $this->application()->requestAccess(
+            new RequestAccess($this->buyerLeanpubInvoiceId, $this->buyerEmailAddress, $this->memberTimeZone)
+        );
     }
 
     /**
@@ -144,7 +148,7 @@ final class RegistrationContext extends FeatureContext
         $this->serviceContainer()->eventDispatcherSpy()->clearEvents();
 
         $this->application()->requestAccess(
-            new RequestAccess($this->buyerLeanpubInvoiceId, 'someoneelse@matthiasnoback.nl')
+            new RequestAccess($this->buyerLeanpubInvoiceId, 'someoneelse@matthiasnoback.nl', $this->memberTimeZone)
         );
     }
 }
