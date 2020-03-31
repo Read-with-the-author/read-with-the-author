@@ -101,14 +101,6 @@ final class IndexController extends AbstractController
         return $this->render('access_requested.html.twig');
     }
 
-    /**
-     * @Route("/login", name="login", methods={"GET"})
-     */
-    public function loginAction(): Response
-    {
-        return new RedirectResponse($this->generateUrl('index'));
-    }
-
     private function createRequestAccessTokenForm(): FormInterface
     {
         return $this->createForm(

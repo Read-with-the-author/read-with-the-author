@@ -29,5 +29,6 @@ security:
                 realm: Admin area
 
     access_control:
+        - { path: ^/member-area/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin-area, roles: ROLE_ADMIN }
         - { path: ^/member-area, roles: ROLE_MEMBER }

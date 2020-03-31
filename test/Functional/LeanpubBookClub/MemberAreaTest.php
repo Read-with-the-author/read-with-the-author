@@ -81,6 +81,9 @@ final class MemberAreaTest extends WebTestCase
             ->willReturn($upcomingSessions);
     }
 
+    /**
+     * @param array<UpcomingSession> $upcomingSessions
+     */
     private static function assertResponseContainsUpcomingSessions(Crawler $crawler, array $upcomingSessions)
     {
         foreach ($upcomingSessions as $upcomingSession) {

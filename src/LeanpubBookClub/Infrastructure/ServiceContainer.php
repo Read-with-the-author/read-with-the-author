@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure;
 
 use Assert\Assert;
+use DateTimeZone;
 use LeanpubBookClub\Application\AccessPolicy;
 use LeanpubBookClub\Application\Application;
 use LeanpubBookClub\Application\ApplicationInterface;
@@ -53,7 +54,7 @@ abstract class ServiceContainer
     protected function clock(): Clock
     {
         if ($this->clock === null) {
-            $this->clock = new FakeClock();
+            $this->clock = new FakeClock(new DateTimeZone('Europe/Amsterdam'));
         }
 
         return $this->clock;

@@ -54,6 +54,9 @@ final class AdminAreaTest extends WebTestCase
         self::assertTrue($this->client->getResponse()->isRedirect('/admin-area/'));
     }
 
+    /**
+     * @return array<string,string>
+     */
     protected function serverVariables(): array
     {
         return [

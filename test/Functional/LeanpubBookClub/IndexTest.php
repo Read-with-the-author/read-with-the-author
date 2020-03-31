@@ -64,7 +64,7 @@ final class IndexTest extends WebTestCase
         $this->memberExists($memberId);
         $this->accessTokenIsValidForMember($accessToken, $memberId);
 
-        $crawler = $this->client->request('GET', '/login', ['token' => $accessToken]);
+        $crawler = $this->client->request('GET', '/member-area/login', ['token' => $accessToken]);
 
         self::assertTrue($this->client->getResponse()->isSuccessful());
 
@@ -86,7 +86,7 @@ final class IndexTest extends WebTestCase
             ->with($accessToken)
             ->willThrowException(new CouldNotFindMember());
 
-        $this->client->request('GET', '/login', ['token' => $accessToken]);
+        $this->client->request('GET', '/member-area/login', ['token' => $accessToken]);
 
         self::assertTrue($this->client->getResponse()->isRedirect('http://localhost/'));
 
@@ -99,7 +99,7 @@ final class IndexTest extends WebTestCase
     {
         $this->client->followRedirects(false);
 
-        $this->client->request('GET', '/login');
+        $this->client->request('GET', '/member-area/login');
 
         self::assertTrue($this->client->getResponse()->isRedirect('/'));
     }

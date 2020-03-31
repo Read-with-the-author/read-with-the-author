@@ -27,10 +27,7 @@ final class ParticipationContext extends FeatureContext
      */
     public function todayIs(string $date): void
     {
-        $currentTime = DateTimeImmutable::createFromFormat('Y-m-d', $date);
-        Assert::assertInstanceOf(DateTimeImmutable::class, $currentTime);
-
-        $this->serviceContainer()->setCurrentTime($currentTime);
+        $this->serviceContainer()->setCurrentDate($date);
     }
 
     /**

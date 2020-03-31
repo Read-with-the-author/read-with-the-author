@@ -23,7 +23,7 @@ final class ProductionServiceContainer extends ServiceContainer
 
     protected function clock(): Clock
     {
-        return new SystemClock();
+        return new SystemClock($this->configuration->authorTimeZone());
     }
 
     public static function createFromEnvironmentVariables(string $projectDirectory): self

@@ -14,12 +14,20 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
 {
     private ?EventDispatcherSpy $eventDispatcherSpy = null;
 
-    public function setCurrentTime(DateTimeImmutable $currentTime): void
+    public function setCurrentTime(string $time): void
     {
         $clock = $this->clock();
         Assert::that($clock)->isInstanceOf(FakeClock::class);
 
-        $clock->setCurrentTime($currentTime);
+        $clock->setCurrentTime($time);
+    }
+
+    public function setCurrentDate(string $date): void
+    {
+        $clock = $this->clock();
+        Assert::that($clock)->isInstanceOf(FakeClock::class);
+
+        $clock->setCurrentDate($date);
     }
 
     protected function registerEventSubscribers(EventDispatcherWithSubscribers $eventDispatcher): void
