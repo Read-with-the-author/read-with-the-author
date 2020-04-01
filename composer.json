@@ -43,6 +43,9 @@
         "symfony/validator": "5.0.*",
         "symfony/yaml": "5.0.*",
         "thecodingmachine/safe": "^1.1",
+        "twig/cssinliner-extra": "^3.0",
+        "twig/extra-bundle": "^3.0",
+        "twig/inky-extra": "^3.0",
         "twig/twig": "^3.0"
     },
     "autoload": {

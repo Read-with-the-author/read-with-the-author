@@ -12,6 +12,9 @@ use rpkamp\Mailhog\MailhogClient;
 use rpkamp\Mailhog\Message\Contact;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
+/**
+ * @group email
+ */
 final class SymfonyMailerTest extends KernelTestCase
 {
     /**

@@ -1,4 +1,14 @@
-<p>You have requested an access token for the Leanpub Book Club</p>
+{% apply inky_to_html|inline_css(source('@css/foundation-emails.css')) %}
+    <container>
+        <row>
+            <columns>
+                <spacer size="16"></spacer>
+                <h1>Access token</h1>
+                <p>You have requested access to the {{ websiteTitle }}.</p>
 
-{% set dashboardUrl = url('login', { token: accessToken }) %}
-<p>Follow this link to go to the dashboard: <a href="{{ dashboardUrl }}">{{ dashboardUrl }}</a></p>
+                {% set dashboardUrl = url('login', { token: accessToken }) %}
+                <p>Follow this link to go to the dashboard: <a href="{{ dashboardUrl }}">{{ dashboardUrl }}</a>.</p>
+            </columns>
+        </row>
+    </container>
+{% endapply %}

@@ -4,4 +4,4 @@ set -e
 
 export APP_ENV=test
 
-vendor/bin/phpunit --testsuite integration -v
+vendor/bin/phpunit --testsuite integration -v "$@"
