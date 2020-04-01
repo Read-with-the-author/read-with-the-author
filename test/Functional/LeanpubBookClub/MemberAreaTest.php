@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub;
 
 use LeanpubBookClub\Application\AttendSession;
+use LeanpubBookClub\Application\CancelAttendance;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
 use LeanpubBookClub\Application\UpdateTimeZone;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
@@ -45,6 +46,7 @@ final class MemberAreaTest extends WebTestCase
         $this->assertResponseContainsUpcomingSessions($crawler, $upcomingSessions);
 
         self::assertMemberIsRegisteredAsAttendeeForSession($crawler, 'e44c5dfa-73f5-4355-aba7-21ac67c3c87a');
+        self::assertMemberIsNotRegisteredAsAttendeeForSession($crawler, '336ca07e-b3b8-47c7-a52f-7b67b6f16e49');
     }
 
     public function testAttendSession(): void
@@ -66,6 +68,29 @@ final class MemberAreaTest extends WebTestCase
 
         $this->client->followRedirects(false);
         $this->client->submitForm('Attend this session');
+
+        self::assertTrue($this->client->getResponse()->isRedirect('/member-area/'));
+    }
+
+    public function testCancelAttendance(): void
+    {
+        $this->upcomingSessionsAre($this->memberId, [
+            new UpcomingSession(
+                '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
+                '2020-02-08 20:00',
+                'Chapter 2',
+                true
+            )
+        ]);
+
+        $this->client->request('GET', '/member-area/');
+
+        $this->application->expects($this->once())
+            ->method('cancelAttendance')
+            ->with(new CancelAttendance('336ca07e-b3b8-47c7-a52f-7b67b6f16e49', $this->memberId));
+
+        $this->client->followRedirects(false);
+        $this->client->submitForm('Cancel attendance');
 
         self::assertTrue($this->client->getResponse()->isRedirect('/member-area/'));
     }
@@ -118,7 +143,15 @@ final class MemberAreaTest extends WebTestCase
         $sessionElement = self::sessionElement($crawler, $sessionId);
 
         self::assertStringContainsString('table-success', $sessionElement->first()->attr('class'));
-        self::assertStringContainsString('Attending', $sessionElement->filter('.session-actions')->text());
+        self::assertStringContainsString('Cancel attendance', $sessionElement->filter('.session-actions')->text());
+    }
+
+    private static function assertMemberIsNotRegisteredAsAttendeeForSession(Crawler $crawler, string $sessionId): void
+    {
+        $sessionElement = self::sessionElement($crawler, $sessionId);
+
+        self::assertStringNotContainsString('table-success', $sessionElement->first()->attr('class'));
+        self::assertStringContainsString('Attend this session', $sessionElement->filter('.session-actions')->text());
     }
 
     private static function sessionElement(Crawler $crawler, string $sessionId): Crawler

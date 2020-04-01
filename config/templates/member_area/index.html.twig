@@ -28,7 +28,10 @@
                     <td class="session-description">{{ upcomingSession.description }}</td>
                     <td class="session-actions">
                         {% if upcomingSession.memberIsRegisteredAsAttendee %}
-                            Attending
+                            <form action="{{ url('cancel_attendance') }}" method="post">
+                                <input type="hidden" name="sessionId" value="{{ upcomingSession.sessionId }}"/>
+                                <button class="btn btn-warning">{{ 'cancel_attendance.button_label'|trans }}</button>
+                            </form>
                         {% else %}
                             <form action="{{ url('attend_session') }}" method="post">
                                 <input type="hidden" name="sessionId" value="{{ upcomingSession.sessionId }}"/>

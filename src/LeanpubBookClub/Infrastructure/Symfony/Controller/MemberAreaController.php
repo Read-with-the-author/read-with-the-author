@@ -6,6 +6,7 @@ namespace LeanpubBookClub\Infrastructure\Symfony\Controller;
 use Assert\Assert;
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\AttendSession;
+use LeanpubBookClub\Application\CancelAttendance;
 use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Application\UpdateTimeZone;
 use LeanpubBookClub\Infrastructure\Symfony\Form\UpdateTimeZoneForm;
@@ -84,10 +85,22 @@ final class MemberAreaController extends AbstractController
     /**
      * @Route("/attend-session", name="attend_session", methods={"POST"})
      */
-    public function attendSession(Request $request, UserInterface $user): Response
+    public function attendSessionAction(Request $request, UserInterface $user): Response
     {
         $this->application->attendSession(
             new AttendSession($request->request->get('sessionId'), $user->getUsername())
+        );
+
+        return $this->redirectToRoute('member_area_index');
+    }
+
+    /**
+     * @Route("/cancel-attendance", name="cancel_attendance", methods={"POST"})
+     */
+    public function cancelAttendanceAction(Request $request, UserInterface $user): Response
+    {
+        $this->application->cancelAttendance(
+            new CancelAttendance($request->request->get('sessionId'), $user->getUsername())
         );
 
         return $this->redirectToRoute('member_area_index');
