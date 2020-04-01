@@ -9,6 +9,7 @@ use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Model\Session\AttendeeCancelledTheirAttendance;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
+use LeanpubBookClub\Domain\Model\Session\UrlForCallWasUpdated;
 use LeanpubBookClub\Infrastructure\ServiceContainer;
 
 final class ServiceContainerForAcceptanceTesting extends ServiceContainer
@@ -48,6 +49,11 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
             [$this->upcomingSessions(), 'whenSessionWasPlanned']
         );
         $eventDispatcher->subscribeToSpecificEvent(
+            UrlForCallWasUpdated::class,
+            [$this->sessionCallUrls(), 'whenUrlForCallWasProvided']
+        );
+
+        $eventDispatcher->subscribeToSpecificEvent(
             AttendeeRegisteredForSession::class,
             [$this->upcomingSessions(), 'whenAttendeeRegisteredForSession']
         );
@@ -73,6 +79,16 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
         /** @var $individualPurchases IndividualPurchasesInMemory */
 
         return $individualPurchases;
+    }
+
+    protected function sessionCallUrls(): SessionCallUrlsInMemory
+    {
+        $service = parent::sessionCallUrls();
+
+        Assert::that($service)->isInstanceOf(SessionCallUrlsInMemory::class);
+        /** @var $service SessionCallUrlsInMemory */
+
+        return $service;
     }
 
     public function mailer(): MailerSpy

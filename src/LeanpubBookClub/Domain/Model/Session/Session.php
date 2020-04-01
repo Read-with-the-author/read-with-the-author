@@ -26,6 +26,8 @@ final class Session
 
     private bool $wasClosed = false;
 
+    private ?string $urlForCall = null;
+
     private function __construct(
         SessionId $sessionId,
         ScheduledDate $date,
@@ -98,5 +100,12 @@ final class Session
                 $this->events[] = new AttendeeCancelledTheirAttendance($this->sessionId, $memberId);
             }
         }
+    }
+
+    public function setCallUrl(string $urlForCall): void
+    {
+        $this->urlForCall = $urlForCall;
+
+        $this->events[] = new UrlForCallWasUpdated($this->sessionId, $urlForCall);
     }
 }

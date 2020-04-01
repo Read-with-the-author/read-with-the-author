@@ -16,6 +16,7 @@ use LeanpubBookClub\Application\EventDispatcher;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
 use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Application\RequestAccess\GenerateAccessToken;
+use LeanpubBookClub\Application\SessionCall\SessionCallUrls;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Model\Member\AccessWasGrantedToMember;
 use LeanpubBookClub\Domain\Model\Member\AnAccessTokenWasGenerated;
@@ -34,6 +35,7 @@ use Test\Acceptance\IndividualPurchasesInMemory;
 use Test\Acceptance\MemberRepositoryInMemory;
 use Test\Acceptance\MembersInMemory;
 use Test\Acceptance\PurchaseRepositoryInMemory;
+use Test\Acceptance\SessionCallUrlsInMemory;
 use Test\Acceptance\SessionRepositoryInMemory;
 use Test\Acceptance\UpcomingSessionsInMemory;
 
@@ -50,6 +52,7 @@ abstract class ServiceContainer
     private ?IndividualPurchasesInMemory $individualPurchases = null;
     protected ?Mailer $mailer = null;
     private ?Members $members = null;
+    private ?SessionCallUrls $sessionCallUrls = null;
 
     protected function clock(): Clock
     {
@@ -116,7 +119,8 @@ abstract class ServiceContainer
                 $this->getBookSummary(),
                 $this->assetPublisher(),
                 $this->accessTokenGenerator(),
-                $this->members()
+                $this->members(),
+                $this->sessionCallUrls()
             );
         }
 
@@ -214,5 +218,15 @@ abstract class ServiceContainer
     protected function authorTimeZone(): TimeZone
     {
         return TimeZone::fromString('Europe/Amsterdam');
+    }
+
+    protected function sessionCallUrls(): SessionCallUrls
+    {
+        if ($this->sessionCallUrls === null) {
+            // TODO replace with production implementation
+            $this->sessionCallUrls = new SessionCallUrlsInMemory();
+        }
+
+        return $this->sessionCallUrls;
     }
 }

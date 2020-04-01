@@ -175,6 +175,24 @@ final class SessionTest extends EntityTestCase
         self::assertEquals([], $session->releaseEvents());
     }
 
+    /**
+     * @test
+     */
+    public function the_url_for_the_call_will_be_provided_later(): void
+    {
+        $session = $this->aSession();
+
+        $urlForCall = 'https://whereby.com/matthiasnoback';
+        $session->setCallUrl($urlForCall);
+
+        self::assertEquals(
+            [
+                new UrlForCallWasUpdated($session->sessionId(), $urlForCall)
+            ],
+            $session->releaseEvents()
+        );
+    }
+
     private function aSessionId(): SessionId
     {
         return SessionId::fromString('48e42502-79ee-47ac-b085-4571fc0f719c');

@@ -3,11 +3,15 @@ declare(strict_types=1);
 
 namespace Test\Acceptance;
 
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
+use BehatExpectException\ExpectException;
 use LeanpubBookClub\Application\AttendSession;
 use LeanpubBookClub\Application\CancelAttendance;
 use LeanpubBookClub\Application\PlanSession;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
+use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrlForSession;
+use LeanpubBookClub\Application\SessionCall\SetCallUrl;
 use LeanpubBookClub\Application\UpdateTimeZone;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
@@ -16,6 +20,8 @@ use RuntimeException;
 
 final class ParticipationContext extends FeatureContext
 {
+    use ExpectException;
+
     private ?SessionId $sessionId = null;
 
     private ?SessionId $plannedSessionId = null;
@@ -196,5 +202,49 @@ final class ParticipationContext extends FeatureContext
     private function authorTimeZone(): string
     {
         return $this->serviceContainer()->authorTimeZone()->asString();
+    }
+
+    /**
+     * @When the member requests the call URL for this session
+     */
+    public function theMemberRequestsTheCallURLForThisSession(): void
+    {
+        $this->mayFail(function () {
+            Assert::assertNotNull($this->sessionId);
+
+            $this->application()->getCallUrlForSession($this->sessionId->asString());
+        });
+    }
+
+    /**
+     * @Then the it fails because it has not been provided yet
+     */
+    public function theCallURLCanNotBeDeterminedBecauseItHasNotBeenProvidedYet(): void
+    {
+        $this->assertCaughtExceptionMatches(CouldNotGetCallUrlForSession::class);
+    }
+
+    /**
+     * @When the administrator sets the call URL to :callUrl
+     */
+    public function theMemberTheAdministratorSetTheCallUrlTo(string $callUrl): void
+    {
+        Assert::assertNotNull($this->sessionId);
+
+        $this->application()->setCallUrl(
+            new SetCallUrl($this->sessionId->asString(), $callUrl)
+        );
+    }
+
+    /**
+     * @Then the call URL for this session will be :expectedCallUrl
+     */
+    public function theCallUrlForThisSessionWillBe(string $expectedCallUrl): void
+    {
+        Assert::assertNotNull($this->sessionId);
+
+        $actualUrl = $this->application()->getCallUrlForSession($this->sessionId->asString());
+
+        Assert::assertEquals($expectedCallUrl, $actualUrl);
     }
 }

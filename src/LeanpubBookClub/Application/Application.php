@@ -6,6 +6,8 @@ namespace LeanpubBookClub\Application;
 use LeanpubBookClub\Application\Importing\PurchaseWasAlreadyImported;
 use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
+use LeanpubBookClub\Application\SessionCall\SessionCallUrls;
+use LeanpubBookClub\Application\SessionCall\SetCallUrl;
 use LeanpubBookClub\Application\UpcomingSessions\ListUpcomingSessions;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Member\Member;
@@ -45,6 +47,8 @@ final class Application implements ApplicationInterface
 
     private Members $members;
 
+    private SessionCallUrls $sessionCallUrls;
+
     public function __construct(
         MemberRepository $memberRepository,
         EventDispatcher $eventDispatcher,
@@ -56,7 +60,8 @@ final class Application implements ApplicationInterface
         GetBookSummary $getBookSummary,
         AssetPublisher $assetPublisher,
         AccessTokenGenerator $accessTokenGenerator,
-        Members $members
+        Members $members,
+        SessionCallUrls $sessionCallUrls
     ) {
         $this->memberRepository = $memberRepository;
         $this->eventDispatcher = $eventDispatcher;
@@ -69,6 +74,7 @@ final class Application implements ApplicationInterface
         $this->assetPublisher = $assetPublisher;
         $this->accessTokenGenerator = $accessTokenGenerator;
         $this->members = $members;
+        $this->sessionCallUrls = $sessionCallUrls;
     }
 
     public function importAllPurchases(): void
@@ -173,6 +179,17 @@ final class Application implements ApplicationInterface
         return $session->sessionId();
     }
 
+    public function setCallUrl(SetCallUrl $command): void
+    {
+        $session = $this->sessionRepository->getById($command->sessionId());
+
+        $session->setCallUrl($command->callUrl());
+
+        $this->sessionRepository->save($session);
+
+        $this->eventDispatcher->dispatchAll($session->releaseEvents());
+    }
+
     public function listUpcomingSessions(LeanpubInvoiceId $memberId): array
     {
         return $this->listUpcomingSessions->upcomingSessions($this->clock->currentTime(), $memberId);
@@ -225,5 +242,10 @@ final class Application implements ApplicationInterface
         $this->memberRepository->save($member);
 
         $this->eventDispatcher->dispatchAll($member->releaseEvents());
+    }
+
+    public function getCallUrlForSession(string $sessionId): string
+    {
+        return $this->sessionCallUrls->getCallUrlForSession(SessionId::fromString($sessionId));
     }
 }

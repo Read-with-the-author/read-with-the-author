@@ -31,3 +31,13 @@ Feature:
     And the member has registered themselves as a participant of the session
     When they cancel their attendance
     Then the list of upcoming sessions should indicate that they have not been registered as a participant
+
+  Scenario: An administrator has not provided the URL for the call yet
+    Given an upcoming session
+    When the member requests the call URL for this session
+    Then the it fails because it has not been provided yet
+
+  Scenario: An administrator sets the call URL
+    Given an upcoming session
+    When the administrator sets the call URL to "https://whereby.com/matthiasnoback"
+    Then the call URL for this session will be "https://whereby.com/matthiasnoback"
