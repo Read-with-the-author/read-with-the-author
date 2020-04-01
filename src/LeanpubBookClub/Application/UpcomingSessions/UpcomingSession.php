@@ -72,8 +72,8 @@ final class UpcomingSession
         return $dateTime;
     }
 
-    public function isInTheFuture(DateTimeImmutable $currentTime): bool
+    public function isToBeConsideredUpcoming(DateTimeImmutable $currentTime): bool
     {
-        return $this->dateTime('UTC') >= $currentTime;
+        return $this->dateTime('UTC')->modify('+2 hours') >= $currentTime;
     }
 }

@@ -30,7 +30,7 @@ final class AdminAreaTest extends WebTestCase
                     10
                 )
             )
-            ->willReturn(SessionId::fromString('38a88229-70b6-458c-83e9-77703ca4cca0'));
+            ->willReturn('38a88229-70b6-458c-83e9-77703ca4cca0');
 
         $this->client->followRedirects(false);
         $this->client->submitForm(

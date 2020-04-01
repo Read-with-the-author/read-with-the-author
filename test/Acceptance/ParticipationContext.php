@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Test\Acceptance;
 
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
 use BehatExpectException\ExpectException;
 use LeanpubBookClub\Application\AttendSession;
@@ -14,7 +13,6 @@ use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrlForSession;
 use LeanpubBookClub\Application\SessionCall\SetCallUrl;
 use LeanpubBookClub\Application\UpdateTimeZone;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
-use LeanpubBookClub\Domain\Model\Session\SessionId;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
 
@@ -22,9 +20,9 @@ final class ParticipationContext extends FeatureContext
 {
     use ExpectException;
 
-    private ?SessionId $sessionId = null;
+    private ?string $sessionId = null;
 
-    private ?SessionId $plannedSessionId = null;
+    private ?string $plannedSessionId = null;
 
     private ?string $plannedSessionDescription = null;
 
@@ -65,7 +63,7 @@ final class ParticipationContext extends FeatureContext
         $expectedDetails = $table->getRowsHash();
         foreach ($this->application()->listUpcomingSessions(
             LeanpubInvoiceId::fromString($this->leanpubInvoiceId)) as $upcomingSession) {
-            if ($this->plannedSessionId->asString() === $upcomingSession->sessionId()
+            if ($this->plannedSessionId === $upcomingSession->sessionId()
                 && $this->plannedSessionDescription === $upcomingSession->description()) {
 
                 Assert::assertEquals($expectedDetails['Date'], $upcomingSession->date($this->memberTimeZone));
@@ -111,7 +109,7 @@ final class ParticipationContext extends FeatureContext
         Assert::assertNotNull($this->leanpubInvoiceId);
 
         $this->application()->attendSession(
-            new AttendSession($this->sessionId->asString(), $this->leanpubInvoiceId)
+            new AttendSession($this->sessionId, $this->leanpubInvoiceId)
         );
     }
 
@@ -124,7 +122,7 @@ final class ParticipationContext extends FeatureContext
         Assert::assertNotNull($this->leanpubInvoiceId);
 
         $this->application()->cancelAttendance(
-            new CancelAttendance($this->sessionId->asString(), $this->leanpubInvoiceId)
+            new CancelAttendance($this->sessionId, $this->leanpubInvoiceId)
         );
     }
 
@@ -137,7 +135,7 @@ final class ParticipationContext extends FeatureContext
         Assert::assertNotNull($this->leanpubInvoiceId);
 
         $this->memberShouldBeRegisteredAsParticipantOfSession(
-            $this->sessionId->asString(),
+            $this->sessionId,
             $this->leanpubInvoiceId,
             true
         );
@@ -152,7 +150,7 @@ final class ParticipationContext extends FeatureContext
         Assert::assertNotNull($this->leanpubInvoiceId);
 
         $this->memberShouldBeRegisteredAsParticipantOfSession(
-            $this->sessionId->asString(),
+            $this->sessionId,
             $this->leanpubInvoiceId,
             false
         );
@@ -191,7 +189,7 @@ final class ParticipationContext extends FeatureContext
         );
 
         foreach ($upcomingSessions as $session) {
-            if ($session->sessionId() === $this->plannedSessionId->asString()) {
+            if ($session->sessionId() === $this->plannedSessionId) {
                 throw new RuntimeException('The session should not appear in the list of upcoming sessions');
             }
         }
@@ -220,11 +218,6 @@ final class ParticipationContext extends FeatureContext
         $this->memberTimeZone = $timeZone;
     }
 
-    private function authorTimeZone(): string
-    {
-        return $this->serviceContainer()->authorTimeZone()->asString();
-    }
-
     /**
      * @When the member requests the call URL for this session
      */
@@ -233,7 +226,7 @@ final class ParticipationContext extends FeatureContext
         $this->mayFail(function () {
             Assert::assertNotNull($this->sessionId);
 
-            $this->application()->getCallUrlForSession($this->sessionId->asString());
+            $this->application()->getCallUrlForSession($this->sessionId);
         });
     }
 
@@ -253,7 +246,7 @@ final class ParticipationContext extends FeatureContext
         Assert::assertNotNull($this->sessionId);
 
         $this->application()->setCallUrl(
-            new SetCallUrl($this->sessionId->asString(), $callUrl)
+            new SetCallUrl($this->sessionId, $callUrl)
         );
     }
 
@@ -264,8 +257,32 @@ final class ParticipationContext extends FeatureContext
     {
         Assert::assertNotNull($this->sessionId);
 
-        $actualUrl = $this->application()->getCallUrlForSession($this->sessionId->asString());
+        $actualUrl = $this->application()->getCallUrlForSession($this->sessionId);
 
         Assert::assertEquals($expectedCallUrl, $actualUrl);
+    }
+
+    /**
+     * @Then this session should show up in the list of upcoming sessions for administrators:
+     * @param TableNode<mixed> $table
+     */
+    public function thisSessionShouldShowUpInTheListOfUpcomingSessionsForAdministrators(TableNode $table): void
+    {
+        Assert::assertNotNull($this->plannedSessionId);
+        Assert::assertNotNull($this->plannedSessionDescription);
+
+        $expectedDetails = $table->getRowsHash();
+        foreach ($this->application()->listUpcomingSessionsForAdministrator() as $upcomingSession) {
+            if ($this->plannedSessionId === $upcomingSession->sessionId()
+                && $this->plannedSessionDescription === $upcomingSession->description()) {
+
+                Assert::assertEquals($expectedDetails['Date'], $upcomingSession->date($this->authorTimeZone()));
+                Assert::assertEquals($expectedDetails['Time'], $upcomingSession->time($this->authorTimeZone()));
+
+                return;
+            }
+        }
+
+        throw new RuntimeException('Planned session not found in list of upcoming sessions');
     }
 }

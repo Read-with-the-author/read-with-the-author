@@ -161,7 +161,7 @@ final class Application implements ApplicationInterface
         $this->eventDispatcher->dispatchAll($member->releaseEvents());
     }
 
-    public function planSession(PlanSession $command): SessionId
+    public function planSession(PlanSession $command): string
     {
         $sessionId = $this->sessionRepository->nextIdentity();
 
@@ -176,7 +176,7 @@ final class Application implements ApplicationInterface
 
         $this->eventDispatcher->dispatchAll($session->releaseEvents());
 
-        return $session->sessionId();
+        return $session->sessionId()->asString();
     }
 
     public function setCallUrl(SetCallUrl $command): void
@@ -193,6 +193,11 @@ final class Application implements ApplicationInterface
     public function listUpcomingSessions(LeanpubInvoiceId $memberId): array
     {
         return $this->listUpcomingSessions->upcomingSessions($this->clock->currentTime(), $memberId);
+    }
+
+    public function listUpcomingSessionsForAdministrator(): array
+    {
+        return $this->listUpcomingSessions->upcomingSessionsForAdministrator($this->clock->currentTime());
     }
 
     public function attendSession(AttendSession $command): void

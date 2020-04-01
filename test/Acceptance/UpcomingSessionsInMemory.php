@@ -6,6 +6,7 @@ namespace Test\Acceptance;
 use DateTimeImmutable;
 use LeanpubBookClub\Application\UpcomingSessions\ListUpcomingSessions;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
+use LeanpubBookClub\Application\UpcomingSessions\UpcomingSessionForAdministrator;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\AttendeeCancelledTheirAttendance;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
@@ -14,9 +15,14 @@ use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
 final class UpcomingSessionsInMemory implements ListUpcomingSessions
 {
     /**
-     * @var array<UpcomingSession>
+     * @var array<string,UpcomingSession>
      */
     private array $sessions = [];
+
+    /**
+     * @var array<string,UpcomingSessionForAdministrator>
+     */
+    private array $sessionsForAdministrator = [];
 
     /**
      * @var array<string,array<string,bool>>
@@ -25,11 +31,17 @@ final class UpcomingSessionsInMemory implements ListUpcomingSessions
 
     public function whenSessionWasPlanned(SessionWasPlanned $event): void
     {
-        $this->sessions[] = new UpcomingSession(
+        $this->sessions[$event->sessionId()->asString()] = new UpcomingSession(
             $event->sessionId()->asString(),
             $event->date()->asString(),
             $event->description(),
             false
+        );
+
+        $this->sessionsForAdministrator[$event->sessionId()->asString()] = new UpcomingSessionForAdministrator(
+            $event->sessionId()->asString(),
+            $event->date()->asString(),
+            $event->description()
         );
     }
 
@@ -45,10 +57,6 @@ final class UpcomingSessionsInMemory implements ListUpcomingSessions
 
     public function upcomingSessions(DateTimeImmutable $currentTime, LeanpubInvoiceId $activeMemberId): array
     {
-        $sessionsInTheFuture = array_filter($this->sessions, function (UpcomingSession $session) use ($currentTime): bool {
-            return $session->isInTheFuture($currentTime);
-        });
-
         return array_map(
             function (UpcomingSession $upcomingSession) use ($activeMemberId): UpcomingSession {
                 if ($this->attendees[$upcomingSession->sessionId()][$activeMemberId->asString()] ?? false) {
@@ -57,7 +65,29 @@ final class UpcomingSessionsInMemory implements ListUpcomingSessions
 
                 return $upcomingSession;
             },
-            $sessionsInTheFuture
+            array_filter(
+                $this->sessions,
+                function (UpcomingSession $session) use ($currentTime): bool {
+                    return $session->isToBeConsideredUpcoming($currentTime);
+                }
+            )
+        );
+    }
+
+    public function upcomingSessionsForAdministrator(DateTimeImmutable $currentTime): array
+    {
+        return array_map(
+            function (UpcomingSessionForAdministrator $upcomingSession): UpcomingSessionForAdministrator {
+                $attendeesForSession = $this->attendees[$upcomingSession->sessionId()] ?? [];
+
+                return $upcomingSession->withNumberOfAttendees(count($attendeesForSession));
+            },
+            array_filter(
+                $this->sessionsForAdministrator,
+                function (UpcomingSessionForAdministrator $session) use ($currentTime): bool {
+                    return $session->isToBeConsideredUpcoming($currentTime);
+                }
+            )
         );
     }
 }

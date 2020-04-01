@@ -14,7 +14,10 @@ final class FakeClock implements Clock
 
     public function currentTime(): DateTimeImmutable
     {
-        Assert::that($this->currentTime)->isInstanceOf(DateTimeImmutable::class);
+        Assert::that($this->currentTime)->isInstanceOf(
+            DateTimeImmutable::class,
+            'You should first call FakeClock::setCurrentTime() or setCurrentDate()'
+        );
 
         return $this->currentTime;
     }

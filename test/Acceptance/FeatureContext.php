@@ -40,4 +40,9 @@ abstract class FeatureContext implements Context
     {
         return $this->serviceContainer;
     }
+
+    protected function authorTimeZone(): string
+    {
+        return $this->serviceContainer()->authorTimeZone()->asString();
+    }
 }

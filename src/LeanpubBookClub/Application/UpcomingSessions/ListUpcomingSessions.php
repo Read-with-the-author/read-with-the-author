@@ -12,4 +12,10 @@ interface ListUpcomingSessions
      * @return array<UpcomingSession>
      */
     public function upcomingSessions(DateTimeImmutable $currentTime, LeanpubInvoiceId $activeMemberId): array;
+
+    /**
+     * @param DateTimeImmutable $currentTime
+     * @return array<UpcomingSessionForAdministrator>
+     */
+    public function upcomingSessionsForAdministrator(DateTimeImmutable $currentTime): array;
 }
