@@ -7,18 +7,10 @@ use Assert\Assert;
 use DateTimeImmutable;
 use DateTimeZone;
 use LeanpubBookClub\Application\Clock;
-use LeanpubBookClub\Domain\Model\Common\TimeZone;
 
 final class FakeClock implements Clock
 {
     private ?DateTimeImmutable $currentTime = null;
-
-    private DateTimeZone $authorTimeZone;
-
-    public function __construct(TimeZone $authorTimeZone)
-    {
-        $this->authorTimeZone = $authorTimeZone->asPhpDateTimeZone();
-    }
 
     public function currentTime(): DateTimeImmutable
     {
@@ -39,7 +31,7 @@ final class FakeClock implements Clock
 
     private function setCurrentTimeFromFormattedString(string $format, string $time): void
     {
-        $currentTime = DateTimeImmutable::createFromFormat($format, $time, $this->authorTimeZone);
+        $currentTime = DateTimeImmutable::createFromFormat($format, $time, new DateTimeZone('UTC'));
         Assert::that($currentTime)->isInstanceOf(DateTimeImmutable::class);
 
         $this->currentTime = $currentTime;

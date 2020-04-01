@@ -57,7 +57,7 @@ abstract class ServiceContainer
     protected function clock(): Clock
     {
         if ($this->clock === null) {
-            $this->clock = new FakeClock($this->authorTimeZone());
+            $this->clock = new FakeClock();
         }
 
         return $this->clock;

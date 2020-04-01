@@ -6,7 +6,6 @@ namespace LeanpubBookClub\Infrastructure;
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
-use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi;
@@ -24,7 +23,7 @@ final class ProductionServiceContainer extends ServiceContainer
 
     protected function clock(): Clock
     {
-        return new SystemClock($this->authorTimeZone());
+        return new SystemClock();
     }
 
     protected function authorTimeZone(): TimeZone
