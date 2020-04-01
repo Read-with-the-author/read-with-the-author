@@ -16,4 +16,14 @@ final class AttendeeCancelledTheirAttendance
         $this->sessionId = $sessionId;
         $this->memberId = $memberId;
     }
+
+    public function sessionId(): SessionId
+    {
+        return $this->sessionId;
+    }
+
+    public function memberId(): LeanpubInvoiceId
+    {
+        return $this->memberId;
+    }
 }

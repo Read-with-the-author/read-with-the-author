@@ -6,6 +6,7 @@ namespace Test\Acceptance;
 use Assert\Assert;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
+use LeanpubBookClub\Domain\Model\Session\AttendeeCancelledTheirAttendance;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
 use LeanpubBookClub\Infrastructure\ServiceContainer;
@@ -49,6 +50,10 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
         $eventDispatcher->subscribeToSpecificEvent(
             AttendeeRegisteredForSession::class,
             [$this->upcomingSessions(), 'whenAttendeeRegisteredForSession']
+        );
+        $eventDispatcher->subscribeToSpecificEvent(
+            AttendeeCancelledTheirAttendance::class,
+            [$this->upcomingSessions(), 'whenAttendeeCancelledTheirAttendance']
         );
     }
 

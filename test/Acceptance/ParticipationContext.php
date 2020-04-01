@@ -5,6 +5,7 @@ namespace Test\Acceptance;
 
 use Behat\Gherkin\Node\TableNode;
 use LeanpubBookClub\Application\AttendSession;
+use LeanpubBookClub\Application\CancelAttendance;
 use LeanpubBookClub\Application\PlanSession;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\UpdateTimeZone;
@@ -76,7 +77,7 @@ final class ParticipationContext extends FeatureContext
     public function anUpcomingSession(): void
     {
         $this->sessionId = $this->application()->planSession(
-            new PlanSession('2020-04-01 20:00', $this->authorTimeZone(),'Chapter 1', 10)
+            new PlanSession('2020-04-01 20:00', $this->authorTimeZone(), 'Chapter 1', 10)
         );
     }
 
@@ -95,6 +96,7 @@ final class ParticipationContext extends FeatureContext
 
     /**
      * @When the member registers themselves as a participant of the session
+     * @Given the member has registered themselves as a participant of the session
      */
     public function theMemberRegistersThemselvesAsAParticipantOfTheSession(): void
     {
@@ -107,6 +109,19 @@ final class ParticipationContext extends FeatureContext
     }
 
     /**
+     * @When they cancel their attendance
+     */
+    public function theMemberCancelsTheirAttendance(): void
+    {
+        Assert::assertNotNull($this->sessionId);
+        Assert::assertNotNull($this->leanpubInvoiceId);
+
+        $this->application()->cancelAttendance(
+            new CancelAttendance($this->sessionId->asString(), $this->leanpubInvoiceId)
+        );
+    }
+
+    /**
      * @Then the list of upcoming sessions should indicate that they have been registered as a participant
      */
     public function theListOfUpcomingSessionsShouldIndicateThatTheyHaveBeenRegisteredAsAParticipant(): void
@@ -114,18 +129,45 @@ final class ParticipationContext extends FeatureContext
         Assert::assertNotNull($this->sessionId);
         Assert::assertNotNull($this->leanpubInvoiceId);
 
+        $this->memberShouldBeRegisteredAsParticipantOfSession(
+            $this->sessionId->asString(),
+            $this->leanpubInvoiceId,
+            true
+        );
+    }
+
+    /**
+     * @Then the list of upcoming sessions should indicate that they have not been registered as a participant
+     */
+    public function theListOfUpcomingSessionsShouldIndicateThatTheyHaveNotBeenRegisteredAsAParticipant(): void
+    {
+        Assert::assertNotNull($this->sessionId);
+        Assert::assertNotNull($this->leanpubInvoiceId);
+
+        $this->memberShouldBeRegisteredAsParticipantOfSession(
+            $this->sessionId->asString(),
+            $this->leanpubInvoiceId,
+            false
+        );
+    }
+
+    private function memberShouldBeRegisteredAsParticipantOfSession(
+        string $sessionId,
+        string $memberId,
+        bool $expectedToAttend
+    ): void {
         $upcomingSessions = $this->application()->listUpcomingSessions(
-            LeanpubInvoiceId::fromString($this->leanpubInvoiceId)
+            LeanpubInvoiceId::fromString($memberId)
         );
 
         foreach ($upcomingSessions as $session) {
-            if ($session->sessionId() === $this->sessionId->asString()) {
-                Assert::assertTrue($session->memberIsRegisteredAsAttendee());
+            if ($session->sessionId() === $sessionId) {
+                Assert::assertSame($expectedToAttend, $session->memberIsRegisteredAsAttendee());
                 return;
             }
         }
 
-        throw new RuntimeException('The list of upcoming sessions did not show the active member as an attendee');
+        throw new RuntimeException('The list of upcoming sessions did not contain session ' . $sessionId);
     }
 
     /**

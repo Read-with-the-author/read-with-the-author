@@ -189,6 +189,17 @@ final class Application implements ApplicationInterface
         $this->eventDispatcher->dispatchAll($session->releaseEvents());
     }
 
+    public function cancelAttendance(CancelAttendance $command): void
+    {
+        $session = $this->sessionRepository->getById($command->sessionId());
+
+        $session->cancelAttendance($command->memberId());
+
+        $this->sessionRepository->save($session);
+
+        $this->eventDispatcher->dispatchAll($session->releaseEvents());
+    }
+
     public function refreshBookInformation(): void
     {
         $bookSummary = $this->getBookSummary->getBookSummary();

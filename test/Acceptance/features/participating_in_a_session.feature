@@ -25,3 +25,9 @@ Feature:
     Given an upcoming session
     When the member registers themselves as a participant of the session
     Then the list of upcoming sessions should indicate that they have been registered as a participant
+
+  Scenario: A member registers themselves as a participant of an upcoming session
+    Given an upcoming session
+    And the member has registered themselves as a participant of the session
+    When they cancel their attendance
+    Then the list of upcoming sessions should indicate that they have not been registered as a participant

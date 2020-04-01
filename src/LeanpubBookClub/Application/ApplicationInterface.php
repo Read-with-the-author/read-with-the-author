@@ -30,6 +30,8 @@ interface ApplicationInterface extends Members
 
     public function attendSession(AttendSession $command): void;
 
+    public function cancelAttendance(CancelAttendance $command): void;
+
     public function refreshBookInformation(): void;
 
     /**
