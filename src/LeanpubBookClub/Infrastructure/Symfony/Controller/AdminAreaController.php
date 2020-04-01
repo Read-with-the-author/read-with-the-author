@@ -5,6 +5,7 @@ namespace LeanpubBookClub\Infrastructure\Symfony\Controller;
 
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\PlanSession;
+use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Infrastructure\Symfony\Form\PlanSessionForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -17,14 +18,14 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 final class AdminAreaController extends AbstractController
 {
-    /**
-     * @var ApplicationInterface
-     */
     private ApplicationInterface $application;
 
-    public function __construct(ApplicationInterface $application)
+    private TimeZone $authorTimeZone;
+
+    public function __construct(ApplicationInterface $application, TimeZone $authorTimeZone)
     {
         $this->application = $application;
+        $this->authorTimeZone = $authorTimeZone;
     }
 
     /**
@@ -54,6 +55,7 @@ final class AdminAreaController extends AbstractController
             $this->application->planSession(
                 new PlanSession(
                     $formData['date']->format('Y-m-d H:i'),
+                    $this->authorTimeZone->asString(),
                     $formData['description'],
                     $formData['maximumNumberOfParticipants']
                 )

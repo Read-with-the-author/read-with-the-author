@@ -54,7 +54,7 @@ abstract class ServiceContainer
     protected function clock(): Clock
     {
         if ($this->clock === null) {
-            $this->clock = new FakeClock(TimeZone::fromString('Europe/Amsterdam'));
+            $this->clock = new FakeClock($this->authorTimeZone());
         }
 
         return $this->clock;
@@ -209,5 +209,10 @@ abstract class ServiceContainer
         }
 
         return $this->members;
+    }
+
+    protected function authorTimeZone(): TimeZone
+    {
+        return TimeZone::fromString('Europe/Amsterdam');
     }
 }

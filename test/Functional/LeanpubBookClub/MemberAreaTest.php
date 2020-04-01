@@ -14,7 +14,7 @@ final class MemberAreaTest extends WebTestCase
     {
         parent::setUp();
 
-        $this->logInMember($this->memberId);
+        $this->logInMember($this->memberId, $this->memberTimeZone);
     }
 
     public function testUpcomingEvents(): void
@@ -41,7 +41,7 @@ final class MemberAreaTest extends WebTestCase
         self::assertTrue($this->client->getResponse()->isSuccessful());
         self::assertStringContainsString('Upcoming sessions', $crawler->filter('h2')->text());
 
-        self::assertResponseContainsUpcomingSessions($crawler, $upcomingSessions);
+        $this->assertResponseContainsUpcomingSessions($crawler, $upcomingSessions);
 
         self::assertMemberIsRegisteredAsAttendeeForSession($crawler, 'e44c5dfa-73f5-4355-aba7-21ac67c3c87a');
     }
@@ -84,7 +84,7 @@ final class MemberAreaTest extends WebTestCase
     /**
      * @param array<UpcomingSession> $upcomingSessions
      */
-    private static function assertResponseContainsUpcomingSessions(Crawler $crawler, array $upcomingSessions)
+    private function assertResponseContainsUpcomingSessions(Crawler $crawler, array $upcomingSessions)
     {
         foreach ($upcomingSessions as $upcomingSession) {
             /** @var UpcomingSession $upcomingSession */
@@ -92,8 +92,8 @@ final class MemberAreaTest extends WebTestCase
             $sessionElement = self::sessionElement($crawler, $sessionId);
 
             self::assertEquals($upcomingSession->description(), $sessionElement->filter('.session-description')->text());
-            self::assertEquals($upcomingSession->date(), $sessionElement->filter('.session-date')->text());
-            self::assertEquals($upcomingSession->time(), $sessionElement->filter('.session-time')->text());
+            self::assertEquals($upcomingSession->date($this->memberTimeZone), $sessionElement->filter('.session-date')->text());
+            self::assertEquals($upcomingSession->time($this->memberTimeZone), $sessionElement->filter('.session-time')->text());
         }
     }
 

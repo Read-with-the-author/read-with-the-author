@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Domain\Model\Session;
 
+use Assert\Assert;
 use DateTimeImmutable;
+use DateTimeZone;
 use InvalidArgumentException;
 use Throwable;
 
@@ -13,10 +15,13 @@ final class ScheduledDate
 
     private string $dateTime;
 
-    private function __construct(string $dateTime)
+    private function __construct(string $dateTime, string $timeZone)
     {
         try {
-            $dateTimeImmutable = DateTimeImmutable::createFromFormat(self::DATE_TIME_FORMAT, $dateTime);
+            $dateTimeImmutable = DateTimeImmutable::createFromFormat(
+                self::DATE_TIME_FORMAT,
+                $dateTime,
+                new DateTimeZone($timeZone));
             if ($dateTimeImmutable === false) {
                 throw new InvalidArgumentException('The provided date/time string did not match the expected format');
             }
@@ -32,21 +37,40 @@ final class ScheduledDate
             );
         }
 
-        $this->dateTime = $dateTimeImmutable->format(self::DATE_TIME_FORMAT);
+        $this->dateTime = $dateTimeImmutable
+            ->setTimezone(new DateTimeZone('UTC'))
+            ->format(self::DATE_TIME_FORMAT);
     }
 
-    public static function fromString(string $dateTime): ScheduledDate
+    public static function fromString(string $dateTime, string $timeZone = 'UTC'): ScheduledDate
     {
-        return new self($dateTime);
+        return new self($dateTime, $timeZone);
     }
 
     public static function fromDateTime(DateTimeImmutable $dateTime): ScheduledDate
     {
-        return new self($dateTime->format(self::DATE_TIME_FORMAT));
+        $dateTimeAsString = $dateTime
+            ->setTimezone(new DateTimeZone('UTC'))
+            ->format(self::DATE_TIME_FORMAT);
+
+        return new self($dateTimeAsString, 'UTC');
     }
 
     public function asString(): string
     {
         return $this->dateTime;
+    }
+
+    public function asPhpDateTime(): DateTimeImmutable
+    {
+        $dateTime = DateTimeImmutable::createFromFormat(
+            self::DATE_TIME_FORMAT,
+            $this->dateTime,
+            new DateTimeZone('UTC')
+        );
+
+        Assert::that($dateTime)->isInstanceOf(DateTimeImmutable::class);
+
+        return $dateTime;
     }
 }

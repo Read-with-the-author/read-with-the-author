@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure\Symfony\Form;
 
 use DateTimeImmutable;
+use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -15,6 +16,13 @@ use Symfony\Component\Validator\Constraints\Range;
 
 final class PlanSessionForm extends AbstractType
 {
+    private TimeZone $authorTimeZone;
+
+    public function __construct(TimeZone $authorTimeZone)
+    {
+        $this->authorTimeZone = $authorTimeZone;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -23,7 +31,9 @@ final class PlanSessionForm extends AbstractType
                 DateTimeType::class,
                 [
                     'constraints' => new NotBlank(),
-                    'data' => new DateTimeImmutable()
+                    'data' => new DateTimeImmutable('now', $this->authorTimeZone->asPhpDateTimeZone()),
+                    'model_timezone' => $this->authorTimeZone->asString(),
+                    'view_timezone' => $this->authorTimeZone->asString()
                 ]
             )
             ->add(

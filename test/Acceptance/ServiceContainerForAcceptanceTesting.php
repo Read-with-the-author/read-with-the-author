@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Test\Acceptance;
 
 use Assert\Assert;
-use DateTimeImmutable;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
+use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
 use LeanpubBookClub\Infrastructure\ServiceContainer;
@@ -20,6 +20,11 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
         Assert::that($clock)->isInstanceOf(FakeClock::class);
 
         $clock->setCurrentTime($time);
+    }
+
+    public function authorTimeZone(): TimeZone
+    {
+        return parent::authorTimeZone();
     }
 
     public function setCurrentDate(string $date): void

@@ -204,4 +204,15 @@ final class Application implements ApplicationInterface
     {
         return $this->members->getOneById($memberId);
     }
+
+    public function updateTimeZone(UpdateTimeZone $command): void
+    {
+        $member = $this->memberRepository->getById($command->memberId());
+
+        $member->changeTimeZone($command->timeZone());
+
+        $this->memberRepository->save($member);
+
+        $this->eventDispatcher->dispatchAll($member->releaseEvents());
+    }
 }

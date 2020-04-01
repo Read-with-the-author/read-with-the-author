@@ -2,7 +2,8 @@ version: '2.2'
 
 services:
     php:
-        image: php:7.4-alpine
+        image: matthiasnoback/leanpub-book-club-php:latest
+        build: docker/php/
         volumes:
             - ./:/app:cached
         working_dir: /app
@@ -28,6 +29,7 @@ services:
             - ./:/app:cached
         ports:
             - "80:80"
+
     php-fpm:
         image: matthiasnoback/leanpub-book-club-php-fpm:latest
         build: docker/php-fpm/

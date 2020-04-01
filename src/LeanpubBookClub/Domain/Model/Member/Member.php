@@ -58,4 +58,11 @@ final class Member
 
         $this->events[] = new AnAccessTokenWasGenerated($this->memberId, $this->emailAddress, $this->accessToken);
     }
+
+    public function changeTimeZone(TimeZone $newTimeZone): void
+    {
+        $this->timeZone = $newTimeZone;
+
+        $this->events[] = new MemberTimeZoneChanged($this->memberId, $newTimeZone);
+    }
 }

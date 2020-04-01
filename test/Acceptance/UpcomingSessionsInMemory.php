@@ -8,7 +8,6 @@ use LeanpubBookClub\Application\UpcomingSessions\ListUpcomingSessions;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
-use LeanpubBookClub\Domain\Model\Session\ScheduledDate;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
 
 final class UpcomingSessionsInMemory implements ListUpcomingSessions
@@ -40,15 +39,6 @@ final class UpcomingSessionsInMemory implements ListUpcomingSessions
 
     public function upcomingSessions(DateTimeImmutable $currentTime, LeanpubInvoiceId $activeMemberId): array
     {
-        $currentTimeAsComparableString = ScheduledDate::fromDateTime($currentTime)->asString();
-
-        $upcomingSessions = array_filter(
-            $this->sessions,
-            function (UpcomingSession $session) use ($currentTimeAsComparableString) {
-                return $session->date() >= $currentTimeAsComparableString;
-            }
-        );
-
         return array_map(
             function (UpcomingSession $upcomingSession) use ($activeMemberId): UpcomingSession {
                 if ($this->attendees[$upcomingSession->sessionId()][$activeMemberId->asString()] ?? false) {
@@ -57,7 +47,7 @@ final class UpcomingSessionsInMemory implements ListUpcomingSessions
 
                 return $upcomingSession;
             },
-            $upcomingSessions
+            $this->sessions
         );
     }
 }

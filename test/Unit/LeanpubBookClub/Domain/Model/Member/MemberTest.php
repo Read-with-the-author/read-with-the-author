@@ -63,6 +63,23 @@ final class MemberTest extends EntityTestCase
     /**
      * @test
      */
+    public function they_can_change_their_time_zone(): void
+    {
+        $member = $this->aMember();
+
+        $newTimeZone = TimeZone::fromString('America/New_York');
+
+        $member->changeTimeZone($newTimeZone);
+
+        self::assertContainsEquals(
+            new MemberTimeZoneChanged($member->memberId(), $newTimeZone),
+            $member->releaseEvents()
+        );
+    }
+
+    /**
+     * @test
+     */
     public function it_releases_events_only_once(): void
     {
         $member = $this->aMember();

@@ -9,20 +9,23 @@ final class PlanSession
 {
     private string $date;
 
+    private string $timeZone;
+
     private string $description;
 
     private int $maximumNumberOfParticipants;
 
-    public function __construct(string $date, string $description, int $maximumNumberOfParticipants)
+    public function __construct(string $date, string $timeZone, string $description, int $maximumNumberOfParticipants)
     {
         $this->date = $date;
+        $this->timeZone = $timeZone;
         $this->description = $description;
         $this->maximumNumberOfParticipants = $maximumNumberOfParticipants;
     }
 
     public function date(): ScheduledDate
     {
-        return ScheduledDate::fromString($this->date);
+        return ScheduledDate::fromString($this->date, $this->timeZone);
     }
 
     public function description(): string

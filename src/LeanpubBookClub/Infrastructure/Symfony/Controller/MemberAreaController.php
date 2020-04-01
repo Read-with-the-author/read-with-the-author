@@ -37,15 +37,16 @@ final class MemberAreaController extends AbstractController
     /**
      * @Route("/", name="member_area_index", methods={"GET"})
      */
-    public function indexAction(UserInterface $user): Response
+    public function indexAction(UserInterface $member): Response
     {
-        Assert::that($user)->isInstanceOf(Member::class);
-        /** @var Member $user */
+        Assert::that($member)->isInstanceOf(Member::class);
+        /** @var Member $member */
 
         return $this->render(
             'member_area/index.html.twig',
             [
-                'upcomingSessions' => $this->application->listUpcomingSessions($user->memberId())
+                'upcomingSessions' => $this->application->listUpcomingSessions($member->memberId()),
+                'memberTimeZone' => $member->timeZone()
             ]
         );
     }

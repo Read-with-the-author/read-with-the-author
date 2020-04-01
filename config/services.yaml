@@ -58,3 +58,5 @@ services:
     LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessForm: ~
     LeanpubBookClub\Domain\Model\Common\TimeZone:
         factory: ['@LeanpubBookClub\Infrastructure\Configuration', 'authorTimeZone']
+
+    LeanpubBookClub\Infrastructure\Symfony\Form\PlanSessionForm: ~

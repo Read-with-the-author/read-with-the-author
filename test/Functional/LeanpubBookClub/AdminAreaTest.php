@@ -31,6 +31,7 @@ final class AdminAreaTest extends WebTestCase
             ->with(
                 new PlanSession(
                     '2020-03-30 20:00',
+                    'Europe/Amsterdam',
                     'Description',
                     10
                 )

@@ -3,10 +3,11 @@ declare(strict_types=1);
 
 namespace Test\Acceptance;
 
-use DateTimeImmutable;
+use Behat\Gherkin\Node\TableNode;
 use LeanpubBookClub\Application\AttendSession;
 use LeanpubBookClub\Application\PlanSession;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
+use LeanpubBookClub\Application\UpdateTimeZone;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
 use PHPUnit\Framework\Assert;
@@ -38,24 +39,30 @@ final class ParticipationContext extends FeatureContext
     public function theAdministratorSchedulesASessionForDateWithDescription(string $date, string $description): void
     {
         $this->plannedSessionId = $this->application()->planSession(
-            new PlanSession($date, $description, 10)
+            new PlanSession($date, $this->authorTimeZone(), $description, 10)
         );
         $this->plannedSessionDescription = $description;
     }
 
     /**
-     * @Then this session should show up in the list of upcoming sessions for the active member
+     * @Then this session should show up in the list of upcoming sessions for the active member with the following details:
+     * @param TableNode<mixed> $table
      */
-    public function thisSessionShouldShowUpInTheListOfUpcomingSessions(): void
+    public function thisSessionShouldShowUpInTheListOfUpcomingSessions(TableNode $table): void
     {
         Assert::assertNotNull($this->plannedSessionId);
         Assert::assertNotNull($this->plannedSessionDescription);
         Assert::assertNotNull($this->leanpubInvoiceId);
 
+        $expectedDetails = $table->getRowsHash();
         foreach ($this->application()->listUpcomingSessions(
             LeanpubInvoiceId::fromString($this->leanpubInvoiceId)) as $upcomingSession) {
             if ($this->plannedSessionId->asString() === $upcomingSession->sessionId()
                 && $this->plannedSessionDescription === $upcomingSession->description()) {
+
+                Assert::assertEquals($expectedDetails['Date'], $upcomingSession->date($this->memberTimeZone));
+                Assert::assertEquals($expectedDetails['Time'], $upcomingSession->time($this->memberTimeZone));
+
                 return;
             }
         }
@@ -69,7 +76,7 @@ final class ParticipationContext extends FeatureContext
     public function anUpcomingSession(): void
     {
         $this->sessionId = $this->application()->planSession(
-            new PlanSession('2020-04-01 20:00', 'Chapter 1', 10)
+            new PlanSession('2020-04-01 20:00', $this->authorTimeZone(),'Chapter 1', 10)
         );
     }
 
@@ -119,5 +126,33 @@ final class ParticipationContext extends FeatureContext
         }
 
         throw new RuntimeException('The list of upcoming sessions did not show the active member as an attendee');
+    }
+
+    /**
+     * @Given the author's time zone is :timeZone
+     */
+    public function theAuthorsTimeZoneIs(string $timeZone): void
+    {
+        /*
+         * This is hard-coded in the test environment, and in prod it's a configuration value. Let's at least assert
+         * that the assumption is correct
+         */
+        Assert::assertEquals($timeZone, $this->authorTimeZone());
+    }
+
+    /**
+     * @Given the member's time zone is :timeZone
+     */
+    public function theMembersTimeZoneIs(string $timeZone): void
+    {
+        Assert::assertNotNull($this->leanpubInvoiceId);
+
+        $this->application()->updateTimeZone(new UpdateTimeZone($this->leanpubInvoiceId, $timeZone));
+        $this->memberTimeZone = $timeZone;
+    }
+
+    private function authorTimeZone(): string
+    {
+        return $this->serviceContainer()->authorTimeZone()->asString();
     }
 }

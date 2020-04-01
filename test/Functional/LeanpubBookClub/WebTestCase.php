@@ -25,6 +25,7 @@ abstract class WebTestCase extends SymfonyWebTestCase
     protected KernelBrowser $client;
 
     protected string $memberId = 'jP6LfQ3UkfOvZTLZLNfDfg';
+    protected string $memberTimeZone = 'America/New_York';
 
     protected function setUp(): void
     {
@@ -70,14 +71,14 @@ abstract class WebTestCase extends SymfonyWebTestCase
         $serviceContainer->setApplication($application);
     }
 
-    protected function logInMember(string $memberId): void
+    protected function logInMember(string $memberId, string $timeZone = 'Europe/Amsterdam'): void
     {
         $session = self::$container->get('session');
 
         $firewallName = 'member_area';
         $firewallContext = $firewallName;
 
-        $member = new Member($memberId);
+        $member = new Member($memberId, $timeZone);
 
         // you may need to use a different token class depending on your application.
         // for example, when using Guard authentication you must instantiate PostAuthenticationGuardToken
@@ -88,15 +89,15 @@ abstract class WebTestCase extends SymfonyWebTestCase
         $cookie = new Cookie($session->getName(), $session->getId());
         $this->client->getCookieJar()->set($cookie);
 
-        $this->memberExists($memberId);
+        $this->memberExists($memberId, $timeZone);
     }
 
-    protected function memberExists(string $memberId): void
+    protected function memberExists(string $memberId, string $timeZone = 'Europe/Amsterdam'): void
     {
         $this->application->expects($this->any())
             ->method('getOneById')
             ->with($memberId)
-            ->willReturn(new Member($memberId));
+            ->willReturn(new Member($memberId, $timeZone));
     }
 
     protected function dumpResponse(): void

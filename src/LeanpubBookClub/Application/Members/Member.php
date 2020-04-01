@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Application\Members;
 
+use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -10,9 +11,12 @@ final class Member implements UserInterface
 {
     private string $memberId;
 
-    public function __construct(string $memberId)
+    private string $timeZone;
+
+    public function __construct(string $memberId, string $timeZone)
     {
         $this->memberId = $memberId;
+        $this->timeZone = $timeZone;
     }
 
     /**
@@ -36,6 +40,11 @@ final class Member implements UserInterface
     public function getUsername(): string
     {
         return $this->memberId;
+    }
+
+    public function timeZone(): string
+    {
+        return $this->timeZone;
     }
 
     public function memberId(): LeanpubInvoiceId

@@ -36,4 +36,6 @@ interface ApplicationInterface extends Members
      * @param string|LeanpubInvoiceId $memberId
      */
     public function generateAccessToken($memberId): void;
+
+    public function updateTimeZone(UpdateTimeZone $command): void;
 }
