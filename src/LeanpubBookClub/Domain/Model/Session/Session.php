@@ -89,4 +89,14 @@ final class Session
 
         $this->events[] = new SessionWasClosedForRegistration($this->sessionId);
     }
+
+    public function cancelAttendance(LeanpubInvoiceId $memberId): void
+    {
+        foreach ($this->attendees as $key => $attendee) {
+            if ($attendee->equals($memberId)) {
+                unset($this->attendees[$key]);
+                $this->events[] = new AttendeeCancelledTheirAttendance($this->sessionId, $memberId);
+            }
+        }
+    }
 }

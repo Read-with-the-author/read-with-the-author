@@ -83,6 +83,46 @@ final class SessionTest extends EntityTestCase
     /**
      * @test
      */
+    public function a_member_can_cancel_attendance(): void
+    {
+        $session = $this->aSession();
+        $memberId = $this->aMemberId();
+        $session->attend($memberId);
+        $session->releaseEvents();
+
+        $session->cancelAttendance($memberId);
+
+        self::assertEquals(
+            [
+                new AttendeeCancelledTheirAttendance($session->sessionId(), $memberId)
+            ],
+            $session->releaseEvents()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function cancelling_attendance_again_has_no_effect(): void
+    {
+        $session = $this->aSession();
+        $memberId = $this->aMemberId();
+        $session->attend($memberId);
+        $session->cancelAttendance($memberId);
+
+        $session->releaseEvents();
+
+        $session->cancelAttendance($memberId);
+
+        self::assertEquals(
+            [],
+            $session->releaseEvents()
+        );
+    }
+
+    /**
+     * @test
+     */
     public function if_the_maximum_number_of_attendees_was_reached_the_session_is_closed_for_registration(): void
     {
         $session = $this->aSessionWithMaximumNumberOfAttendees(1);
