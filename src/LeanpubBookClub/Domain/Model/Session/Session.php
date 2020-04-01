@@ -20,7 +20,7 @@ final class Session
     private int $maximumNumberOfParticipantsAllowed;
 
     /**
-     * @var array<LeanpubInvoiceId> & LeanpubInvoiceId[]
+     * @var array<Attendee> & Attendee[]
      */
     private array $attendees = [];
 
@@ -68,13 +68,13 @@ final class Session
         }
 
         foreach ($this->attendees as $attendee) {
-            if ($attendee->equals($memberId)) {
+            if ($attendee->memberId()->equals($memberId)) {
                 // No need to register the same attendee again
                 return;
             }
         }
 
-        $this->attendees[] = $memberId;
+        $this->attendees[] = new Attendee($this->sessionId, $memberId);
 
         $this->events[] = new AttendeeRegisteredForSession($this->sessionId, $memberId);
 
@@ -93,7 +93,7 @@ final class Session
     public function cancelAttendance(LeanpubInvoiceId $memberId): void
     {
         foreach ($this->attendees as $key => $attendee) {
-            if ($attendee->equals($memberId)) {
+            if ($attendee->memberId()->equals($memberId)) {
                 unset($this->attendees[$key]);
                 $this->events[] = new AttendeeCancelledTheirAttendance($this->sessionId, $memberId);
             }
