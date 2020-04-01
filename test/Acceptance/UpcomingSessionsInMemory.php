@@ -45,6 +45,10 @@ final class UpcomingSessionsInMemory implements ListUpcomingSessions
 
     public function upcomingSessions(DateTimeImmutable $currentTime, LeanpubInvoiceId $activeMemberId): array
     {
+        $sessionsInTheFuture = array_filter($this->sessions, function (UpcomingSession $session) use ($currentTime): bool {
+            return $session->isInTheFuture($currentTime);
+        });
+
         return array_map(
             function (UpcomingSession $upcomingSession) use ($activeMemberId): UpcomingSession {
                 if ($this->attendees[$upcomingSession->sessionId()][$activeMemberId->asString()] ?? false) {
@@ -53,7 +57,7 @@ final class UpcomingSessionsInMemory implements ListUpcomingSessions
 
                 return $upcomingSession;
             },
-            $this->sessions
+            $sessionsInTheFuture
         );
     }
 }

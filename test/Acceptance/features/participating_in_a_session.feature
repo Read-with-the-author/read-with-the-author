@@ -13,6 +13,11 @@ Feature:
       | Date | Wednesday, April 1st |
       | Time | 20:00                |
 
+  Scenario: The session's date is in the past
+    Given today is "2020-03-26"
+    And the administrator has scheduled a session for "2020-01-01 20:00"
+    Then this session should not show up in the list of upcoming sessions
+
   Scenario: The member's time zone is different from the author's time zone
     Given the author's time zone is "Europe/Amsterdam"
     And the member's time zone is "America/New_York"

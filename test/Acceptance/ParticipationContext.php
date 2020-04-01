@@ -42,8 +42,9 @@ final class ParticipationContext extends FeatureContext
 
     /**
      * @When the administrator schedules a session for :date with description :description
+     * @Given the administrator has scheduled a session for :date
      */
-    public function theAdministratorSchedulesASessionForDateWithDescription(string $date, string $description): void
+    public function theAdministratorSchedulesASessionForDateWithDescription(string $date, string $description = 'Description'): void
     {
         $this->plannedSessionId = $this->application()->planSession(
             new PlanSession($date, $this->authorTimeZone(), $description, 10)
@@ -174,6 +175,26 @@ final class ParticipationContext extends FeatureContext
         }
 
         throw new RuntimeException('The list of upcoming sessions did not contain session ' . $sessionId);
+    }
+
+
+    /**
+     * @Then this session should not show up in the list of upcoming sessions
+     */
+    public function thisSessionShouldNotShowUpInTheListOfUpcomingSessions(): void
+    {
+        Assert::assertNotNull($this->plannedSessionId);
+        Assert::assertNotNull($this->leanpubInvoiceId);
+
+        $upcomingSessions = $this->application()->listUpcomingSessions(
+            LeanpubInvoiceId::fromString($this->leanpubInvoiceId)
+        );
+
+        foreach ($upcomingSessions as $session) {
+            if ($session->sessionId() === $this->plannedSessionId->asString()) {
+                throw new RuntimeException('The session should not appear in the list of upcoming sessions');
+            }
+        }
     }
 
     /**
