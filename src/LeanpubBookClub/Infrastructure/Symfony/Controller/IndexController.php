@@ -8,8 +8,6 @@ use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessForm;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessTokenForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,8 +33,8 @@ final class IndexController extends AbstractController
         return $this->render(
             'index.html.twig',
             [
-                'requestAccessTokenForm' => $this->createRequestAccessTokenForm()->createView(),
-                'requestAccessForm' => $this->createRequestAccessForm()->createView()
+                'requestAccessTokenForm' => $this->createForm(RequestAccessTokenForm::class)->createView(),
+                'requestAccessForm' => $this->createForm(RequestAccessForm::class)->createView()
             ]
         );
     }
@@ -46,7 +44,7 @@ final class IndexController extends AbstractController
      */
     public function requestAccessAction(Request $request): Response
     {
-        $form = $this->createRequestAccessForm();
+        $form = $this->createForm(RequestAccessForm::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -62,7 +60,7 @@ final class IndexController extends AbstractController
         return $this->render(
             'index.html.twig',
             [
-                'requestAccessTokenForm' => $this->createRequestAccessTokenForm()->createView(),
+                'requestAccessTokenForm' => $this->createForm(RequestAccessTokenForm::class)->createView(),
                 'requestAccessForm' => $form->createView()
             ]
         );
@@ -73,7 +71,7 @@ final class IndexController extends AbstractController
      */
     public function requestAccessTokenAction(Request $request): Response
     {
-        $form = $this->createRequestAccessTokenForm();
+        $form = $this->createForm(RequestAccessTokenForm::class);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -88,7 +86,7 @@ final class IndexController extends AbstractController
             'index.html.twig',
             [
                 'requestAccessTokenForm' => $form->createView(),
-                'requestAccessForm' => $this->createRequestAccessForm()->createView()
+                'requestAccessForm' => $this->createForm(RequestAccessForm::class)->createView()
             ]
         );
     }
@@ -99,27 +97,5 @@ final class IndexController extends AbstractController
     public function accessRequestedAction(): Response
     {
         return $this->render('access_requested.html.twig');
-    }
-
-    private function createRequestAccessTokenForm(): FormInterface
-    {
-        return $this->createForm(
-            RequestAccessTokenForm::class,
-            null,
-            [
-                'action' => $this->generateUrl('request_access_token')
-            ]
-        );
-    }
-
-    private function createRequestAccessForm(): FormInterface
-    {
-        return $this->createForm(
-            RequestAccessForm::class,
-            null,
-            [
-                'action' => $this->generateUrl('request_access')
-            ]
-        );
     }
 }

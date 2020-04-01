@@ -9,5 +9,6 @@ access_token_email_was_sent.flash_message: "A new access token was sent to {emai
 member_requested_access.flash_message: "We have received your request and will send you an email at {emailAddress}"
 access_token_authentication_failed.flash_message: "Authentication failed using the provided access token. Please request a new token."
 attend_session.button_label: "Attend this session"
-request_access_form.time_zone.label: "Your time zone"
+time_zone_field.label: "Your time zone"
+update_time_zone_button.label: "Update time zone"
 request_access_form.time_zone.help: "We need this to show the dates and times of our sessions in your own time zone"

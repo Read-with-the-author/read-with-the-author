@@ -5,6 +5,7 @@ namespace LeanpubBookClub;
 
 use LeanpubBookClub\Application\AttendSession;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
+use LeanpubBookClub\Application\UpdateTimeZone;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -67,6 +68,24 @@ final class MemberAreaTest extends WebTestCase
         $this->client->submitForm('Attend this session');
 
         self::assertTrue($this->client->getResponse()->isRedirect('/member-area/'));
+    }
+
+    /**
+     * @group wip
+     */
+    public function testUpdateTimeZone(): void
+    {
+        $this->client->request('GET', '/member-area/');
+
+        $newTimeZone = 'America/New_York';
+
+        $this->application->expects($this->once())
+            ->method('updateTimeZone')
+            ->with(new UpdateTimeZone($this->memberId, $newTimeZone));
+
+        $this->client->submitForm('Update time zone', [
+            'update_time_zone_form[timeZone]' => $newTimeZone
+        ]);
     }
 
     /**

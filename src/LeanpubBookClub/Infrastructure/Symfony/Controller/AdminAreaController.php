@@ -8,7 +8,6 @@ use LeanpubBookClub\Application\PlanSession;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Infrastructure\Symfony\Form\PlanSessionForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -36,7 +35,7 @@ final class AdminAreaController extends AbstractController
         return $this->render(
             'admin_area/index.html.twig',
             [
-                'form' => $this->createPlanSessionForm()->createView()
+                'form' => $this->createForm(PlanSessionForm::class)->createView()
             ]
         );
     }
@@ -68,15 +67,6 @@ final class AdminAreaController extends AbstractController
             [
                 'form' => $form->createView()
             ]
-        );
-    }
-
-    private function createPlanSessionForm(): FormInterface
-    {
-        return $this->createForm(
-            PlanSessionForm::class,
-            null,
-            ['action' => $this->generateUrl('plan_session')]
         );
     }
 }

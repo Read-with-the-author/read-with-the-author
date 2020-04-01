@@ -26,6 +26,9 @@ services:
     LeanpubBookClub\Infrastructure\Symfony\Command\:
         resource: '../src/LeanpubBookClub/Infrastructure/Symfony/Command'
 
+    LeanpubBookClub\Infrastructure\Symfony\Form\:
+        resource: '../src/LeanpubBookClub/Infrastructure/Symfony/Form'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
@@ -55,8 +58,5 @@ services:
     LeanpubBookClub\Application\Members\Members: '@LeanpubBookClub\Application\ApplicationInterface'
     LeanpubBookClub\Infrastructure\Symfony\Security\MemberUserProvider: ~
 
-    LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessForm: ~
     LeanpubBookClub\Domain\Model\Common\TimeZone:
         factory: ['@LeanpubBookClub\Infrastructure\Configuration', 'authorTimeZone']
-
-    LeanpubBookClub\Infrastructure\Symfony\Form\PlanSessionForm: ~

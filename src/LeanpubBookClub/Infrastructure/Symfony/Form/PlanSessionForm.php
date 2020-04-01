@@ -11,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Range;
 
@@ -18,9 +20,12 @@ final class PlanSessionForm extends AbstractType
 {
     private TimeZone $authorTimeZone;
 
-    public function __construct(TimeZone $authorTimeZone)
+    private UrlGeneratorInterface $urlGenerator;
+
+    public function __construct(TimeZone $authorTimeZone, UrlGeneratorInterface $urlGenerator)
     {
         $this->authorTimeZone = $authorTimeZone;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -56,5 +61,10 @@ final class PlanSessionForm extends AbstractType
                 ]
             )
             ->add('planSession', SubmitType::class);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefault('action', $this->urlGenerator->generate('plan_session'));
     }
 }
