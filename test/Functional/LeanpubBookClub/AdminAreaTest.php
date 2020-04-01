@@ -9,9 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class AdminAreaTest extends WebTestCase
 {
-    /**
-     * @group wip
-     */
     public function testAccessDeniedForNonLoggedInUsers(): void
     {
         $this->client->request('GET', '/admin-area/');
@@ -19,9 +16,6 @@ final class AdminAreaTest extends WebTestCase
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $this->client->getResponse()->getStatusCode());
     }
 
-    /**
-     * @group wip
-     */
     public function testPlanSession(): void
     {
         $this->client->request('GET', '/admin-area/', [], [], $this->serverVariables());

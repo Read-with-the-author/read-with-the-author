@@ -70,9 +70,6 @@ final class MemberAreaTest extends WebTestCase
         self::assertTrue($this->client->getResponse()->isRedirect('/member-area/'));
     }
 
-    /**
-     * @group wip
-     */
     public function testUpdateTimeZone(): void
     {
         $this->client->request('GET', '/member-area/');
