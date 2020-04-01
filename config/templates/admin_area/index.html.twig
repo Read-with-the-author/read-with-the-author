@@ -4,5 +4,47 @@
     <h1>Admin area</h1>
 
     <h2>Plan a new session</h2>
+
     {{ form(form) }}
+
+    <h2>Upcoming sessions</h2>
+
+    {% if upcomingSessions|length > 0 %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Description</th>
+                <th>Attendees</th>
+                <th>URL</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for upcomingSession in upcomingSessions %}
+                <tr class="session-{{ upcomingSession.sessionId }}">
+                    <td class="session-date">{{ upcomingSession.date(authorTimeZone) }}</td>
+                    <td class="session-time">{{ upcomingSession.time(authorTimeZone) }}</td>
+                    <td class="session-description">{{ upcomingSession.description }}</td>
+                    <td class="session-attendees">{{ upcomingSession.attendeeStats }}</td>
+                    <td class="session-url-for-call">
+                        {% if upcomingSession.urlForCall is not null %}
+                            <a href="{{ upcomingSession.urlForCall }}"
+                               target="_blank">{{ upcomingSession.urlForCall }}</a>
+                        {% else %}
+                            SHOW FORM
+                        {% endif %}
+                    </td>
+                    <td class="session-actions">
+
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No sessions have been planned.</p>
+    {% endif %}
+
 {% endblock %}

@@ -14,14 +14,18 @@ final class SessionWasPlanned implements EventProducesFlashMessage
 
     private string $description;
 
+    private int $maximumNumberOfAttendees;
+
     public function __construct(
         SessionId $sessionId,
         ScheduledDate $date,
-        string $description
+        string $description,
+        int $maximumNumberOfAttendees
     ) {
         $this->sessionId = $sessionId;
         $this->date = $date;
         $this->description = $description;
+        $this->maximumNumberOfAttendees = $maximumNumberOfAttendees;
     }
 
     public function sessionId(): SessionId
@@ -37,6 +41,11 @@ final class SessionWasPlanned implements EventProducesFlashMessage
     public function description(): string
     {
         return $this->description;
+    }
+
+    public function maximumNumberOfAttendees(): int
+    {
+        return $this->maximumNumberOfAttendees;
     }
 
     public function flashType(): string

@@ -14,18 +14,22 @@ final class UpcomingSessionForAdministrator
 
     private string $description;
 
-    private ?string $urlForCall;
+    private ?string $urlForCall = null;
 
     private int $numberOfAttendees = 0;
+
+    private int $maximumNumberOfAttendees;
 
     public function __construct(
         string $sessionId,
         string $date,
-        string $description
+        string $description,
+        int $maximumNumberOfAttendees
     ) {
         $this->sessionId = $sessionId;
         $this->date = $date;
         $this->description = $description;
+        $this->maximumNumberOfAttendees = $maximumNumberOfAttendees;
     }
 
     public function sessionId(): string
@@ -48,6 +52,11 @@ final class UpcomingSessionForAdministrator
         return $this->description;
     }
 
+    public function maximumNumberOfAttendees(): int
+    {
+        return $this->maximumNumberOfAttendees;
+    }
+
     public function urlForCall(): ?string
     {
         return $this->urlForCall;
@@ -58,11 +67,16 @@ final class UpcomingSessionForAdministrator
         return $this->numberOfAttendees;
     }
 
-    public function withNumberOfAttendees(int $count): self
+    public function attendeeStats(): string
+    {
+        return sprintf('%d/%d', $this->numberOfAttendees, $this->maximumNumberOfAttendees);
+    }
+
+    public function withNumberOfAttendees(int $numberOfAttendees): self
     {
         $copy = clone $this;
 
-        $this->numberOfAttendees = $count;
+        $copy->numberOfAttendees = $numberOfAttendees;
 
         return $copy;
     }

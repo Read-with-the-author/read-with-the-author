@@ -35,7 +35,9 @@ final class AdminAreaController extends AbstractController
         return $this->render(
             'admin_area/index.html.twig',
             [
-                'form' => $this->createForm(PlanSessionForm::class)->createView()
+                'form' => $this->createForm(PlanSessionForm::class)->createView(),
+                'upcomingSessions' => $this->application->listUpcomingSessionsForAdministrator(),
+                'authorTimeZone' => $this->authorTimeZone->asString()
             ]
         );
     }

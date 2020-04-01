@@ -41,7 +41,8 @@ final class UpcomingSessionsInMemory implements ListUpcomingSessions
         $this->sessionsForAdministrator[$event->sessionId()->asString()] = new UpcomingSessionForAdministrator(
             $event->sessionId()->asString(),
             $event->date()->asString(),
-            $event->description()
+            $event->description(),
+            $event->maximumNumberOfAttendees()
         );
     }
 

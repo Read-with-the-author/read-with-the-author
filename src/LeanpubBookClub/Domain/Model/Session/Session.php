@@ -48,11 +48,11 @@ final class Session
         SessionId $sessionId,
         ScheduledDate $date,
         string $description,
-        int $maximumNumberOfParticipantsAllowed
+        int $maximumNumberOfAttendees
     ): self {
-        $session = new self($sessionId, $date, $description, $maximumNumberOfParticipantsAllowed);
+        $session = new self($sessionId, $date, $description, $maximumNumberOfAttendees);
 
-        $session->events[] = new SessionWasPlanned($sessionId, $date, $description);
+        $session->events[] = new SessionWasPlanned($sessionId, $date, $description, $maximumNumberOfAttendees);
 
         return $session;
     }
