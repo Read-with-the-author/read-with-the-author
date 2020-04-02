@@ -37,7 +37,7 @@
                         {% endif %}
                     </td>
                     <td class="session-actions">
-
+                        <a href="{{ url('edit_session', { sessionId: upcomingSession.sessionId }) }}">Edit</a>
                     </td>
                 </tr>
             {% endfor %}

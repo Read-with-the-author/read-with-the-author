@@ -5,7 +5,9 @@ namespace LeanpubBookClub\Infrastructure\Symfony\Controller;
 
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\PlanSession;
+use LeanpubBookClub\Application\UpdateSession;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
+use LeanpubBookClub\Infrastructure\Symfony\Form\EditSessionForm;
 use LeanpubBookClub\Infrastructure\Symfony\Form\PlanSessionForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,6 +68,43 @@ final class AdminAreaController extends AbstractController
 
         return $this->render(
             'admin_area/index.html.twig',
+            [
+                'form' => $form->createView()
+            ]
+        );
+    }
+
+    /**
+     * @Route("/edit-session/{sessionId}", name="edit_session", methods={"GET", "POST"})
+     */
+    public function editSessionAction(Request $request, string $sessionId): Response
+    {
+        $session = $this->application->getSessionForAdministrator($sessionId);
+
+        $form = $this->createForm(
+            EditSessionForm::class,
+            [
+                'description' => $session->description(),
+                'urlForCall' => $session->urlForCall()
+            ],
+            [
+                'action' => $this->generateUrl('edit_session', ['sessionId' => $sessionId])
+            ]
+        );
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $formData = $form->getData();
+
+            $this->application->updateSession(
+                new UpdateSession($sessionId, $formData['description'], $formData['urlForCall'])
+            );
+
+            return $this->redirectToRoute('admin_area_index');
+        }
+
+        return $this->render(
+            'admin_area/edit_session.html.twig',
             [
                 'form' => $form->createView()
             ]

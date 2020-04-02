@@ -5,6 +5,7 @@ namespace LeanpubBookClub;
 
 use LeanpubBookClub\Application\PlanSession;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSessionForAdministrator;
+use LeanpubBookClub\Application\UpdateSession;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -108,6 +109,50 @@ final class AdminAreaTest extends WebTestCase
                 'plan_session_form[date][time][minute]' => '0',
                 'plan_session_form[description]' => 'Description',
                 'plan_session_form[maximumNumberOfParticipants]' => '10'
+            ]
+        );
+
+        self::assertTrue($this->client->getResponse()->isRedirect('/admin-area/'));
+    }
+
+    public function testUpdateSession(): void
+    {
+        $sessionId = '38a88229-70b6-458c-83e9-77703ca4cca0';
+        $oldDescription = 'Description';
+        $oldUrlForCall = 'https://whereby.com/matthiasnoback';
+
+        $this->application->expects($this->any())
+            ->method('getSessionForAdministrator')
+            ->with($sessionId)
+            ->will(
+                $this->returnValue(
+                    (new UpcomingSessionForAdministrator(
+                        $sessionId,
+                        '2020-03-30 20:00',
+                        $oldDescription,
+                        10
+                    ))->withUrlForCall($oldUrlForCall)
+                )
+            );
+
+        $crawler = $this->client->request('GET', '/admin-area/edit-session/' . $sessionId, [], [], $this->serverVariables());
+
+        self::assertEquals($oldDescription, $crawler->filter('#edit_session_form_description')->attr('value'));
+        self::assertEquals($oldUrlForCall, $crawler->filter('#edit_session_form_urlForCall')->attr('value'));
+
+        $newDescription = 'New description';
+        $newUrl = 'https://whereby.com/new-url';
+
+        $this->application->expects($this->once())
+            ->method('updateSession')
+            ->with(new UpdateSession($sessionId, $newDescription, $newUrl));
+
+        $this->client->followRedirects(false);
+        $this->client->submitForm(
+            'Save',
+            [
+                'edit_session_form[description]' => $newDescription,
+                'edit_session_form[urlForCall]' => $newUrl,
             ]
         );
 

@@ -104,8 +104,30 @@ final class Session
 
     public function setCallUrl(string $urlForCall): void
     {
+        if ($urlForCall === $this->urlForCall) {
+            return;
+        }
+
         $this->urlForCall = $urlForCall;
 
         $this->events[] = new UrlForCallWasUpdated($this->sessionId, $urlForCall);
+    }
+
+    public function update(string $description, string $urlForCall): void
+    {
+        $this->setDescription($description);
+
+        $this->setCallUrl($urlForCall);
+    }
+
+    private function setDescription(string $description): void
+    {
+        if ($this->description === $description) {
+            return;
+        }
+
+        $this->description = $description;
+
+        $this->events[] = new DescriptionWasUpdated($this->sessionId, $description);
     }
 }

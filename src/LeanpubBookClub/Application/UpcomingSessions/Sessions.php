@@ -5,8 +5,9 @@ namespace LeanpubBookClub\Application\UpcomingSessions;
 
 use DateTimeImmutable;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
+use LeanpubBookClub\Domain\Model\Session\SessionId;
 
-interface ListUpcomingSessions
+interface Sessions
 {
     /**
      * @return array<UpcomingSession>
@@ -18,4 +19,9 @@ interface ListUpcomingSessions
      * @return array<UpcomingSessionForAdministrator>
      */
     public function upcomingSessionsForAdministrator(DateTimeImmutable $currentTime): array;
+
+    /**
+     * @throws CouldNotFindSession
+     */
+    public function getSessionForAdministrator(SessionId $sessionId): UpcomingSessionForAdministrator;
 }

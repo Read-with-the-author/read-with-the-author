@@ -4,15 +4,17 @@ declare(strict_types=1);
 namespace Test\Acceptance;
 
 use DateTimeImmutable;
-use LeanpubBookClub\Application\UpcomingSessions\ListUpcomingSessions;
+use LeanpubBookClub\Application\UpcomingSessions\CouldNotFindSession;
+use LeanpubBookClub\Application\UpcomingSessions\Sessions;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSessionForAdministrator;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\AttendeeCancelledTheirAttendance;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
+use LeanpubBookClub\Domain\Model\Session\SessionId;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
 
-final class UpcomingSessionsInMemory implements ListUpcomingSessions
+final class UpcomingSessionsInMemory implements Sessions
 {
     /**
      * @var array<string,UpcomingSession>
@@ -78,11 +80,7 @@ final class UpcomingSessionsInMemory implements ListUpcomingSessions
     public function upcomingSessionsForAdministrator(DateTimeImmutable $currentTime): array
     {
         return array_map(
-            function (UpcomingSessionForAdministrator $upcomingSession): UpcomingSessionForAdministrator {
-                $attendeesForSession = $this->attendees[$upcomingSession->sessionId()] ?? [];
-
-                return $upcomingSession->withNumberOfAttendees(count($attendeesForSession));
-            },
+            [$this, 'updateUpcomingSessionForAdministratorReadModel'],
             array_filter(
                 $this->sessionsForAdministrator,
                 function (UpcomingSessionForAdministrator $session) use ($currentTime): bool {
@@ -90,5 +88,24 @@ final class UpcomingSessionsInMemory implements ListUpcomingSessions
                 }
             )
         );
+    }
+
+    public function getSessionForAdministrator(SessionId $sessionId): UpcomingSessionForAdministrator
+    {
+        if (!isset($this->sessionsForAdministrator[$sessionId->asString()])) {
+            throw CouldNotFindSession::withId($sessionId);
+        }
+
+        return $this->updateUpcomingSessionForAdministratorReadModel(
+            $this->sessionsForAdministrator[$sessionId->asString()]
+        );
+    }
+
+    private function updateUpcomingSessionForAdministratorReadModel(
+        UpcomingSessionForAdministrator $upcomingSession
+    ): UpcomingSessionForAdministrator {
+        $attendeesForSession = $this->attendees[$upcomingSession->sessionId()] ?? [];
+
+        return $upcomingSession->withNumberOfAttendees(count($attendeesForSession));
     }
 }

@@ -10,7 +10,6 @@ use LeanpubBookClub\Application\SessionCall\SetCallUrl;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSessionForAdministrator;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
-use LeanpubBookClub\Domain\Model\Session\SessionId;
 
 interface ApplicationInterface extends Members
 {
@@ -25,6 +24,8 @@ interface ApplicationInterface extends Members
     public function grantAccess(LeanpubInvoiceId $memberId): void;
 
     public function planSession(PlanSession $command): string;
+
+    public function updateSession(UpdateSession $updateSession): void;
 
     /**
      * @return array<UpcomingSession> & UpcomingSession[]
@@ -55,4 +56,6 @@ interface ApplicationInterface extends Members
      * @throws CouldNotGetCallUrl
      */
     public function getCallUrlForSession(string $sessionId): string;
+
+    public function getSessionForAdministrator(string $sessionId): UpcomingSessionForAdministrator;
 }

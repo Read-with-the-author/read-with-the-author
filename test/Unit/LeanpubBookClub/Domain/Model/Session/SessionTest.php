@@ -193,6 +193,32 @@ final class SessionTest extends EntityTestCase
         );
     }
 
+    /**
+     * @test
+     */
+    public function the_description_and_url_for_call_can_be_updated(): void
+    {
+        $session = $this->aSession();
+        $session->setCallUrl('https://whereby.com/matthiasnoback');
+        $session->releaseEvents();
+
+        $newUrl = 'https://whereby.com/new-url-for-call';
+        $newDescription = 'New description';
+        $session->update($newDescription, $newUrl);
+
+        self::assertEquals(
+            [
+                new DescriptionWasUpdated($session->sessionId(), $newDescription),
+                new UrlForCallWasUpdated($session->sessionId(), $newUrl)
+            ],
+            $session->releaseEvents()
+        );
+
+        // Not a real update, produces no events
+        $session->update($newDescription, $newUrl);
+        self::assertEquals([], $session->releaseEvents());
+    }
+
     private function aSessionId(): SessionId
     {
         return SessionId::fromString('48e42502-79ee-47ac-b085-4571fc0f719c');

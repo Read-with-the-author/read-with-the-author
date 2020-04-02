@@ -8,7 +8,8 @@ use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\SessionCall\SessionCallUrls;
 use LeanpubBookClub\Application\SessionCall\SetCallUrl;
-use LeanpubBookClub\Application\UpcomingSessions\ListUpcomingSessions;
+use LeanpubBookClub\Application\UpcomingSessions\Sessions;
+use LeanpubBookClub\Application\UpcomingSessions\UpcomingSessionForAdministrator;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Member\Member;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
@@ -35,7 +36,7 @@ final class Application implements ApplicationInterface
 
     private Clock $clock;
 
-    private ListUpcomingSessions $listUpcomingSessions;
+    private Sessions $listUpcomingSessions;
 
     private IndividualPurchases $individualPurchases;
 
@@ -55,7 +56,7 @@ final class Application implements ApplicationInterface
         PurchaseRepository $purchaseRepository,
         SessionRepository $sessionRepository,
         Clock $clock,
-        ListUpcomingSessions $listUpcomingSessions,
+        Sessions $listUpcomingSessions,
         IndividualPurchases $individualPurchases,
         GetBookSummary $getBookSummary,
         AssetPublisher $assetPublisher,
@@ -179,6 +180,20 @@ final class Application implements ApplicationInterface
         return $session->sessionId()->asString();
     }
 
+    public function updateSession(UpdateSession $command): void
+    {
+        $session = $this->sessionRepository->getById($command->sessionId());
+
+        $session->update(
+            $command->description(),
+            $command->urlForCall()
+        );
+
+        $this->sessionRepository->save($session);
+
+        $this->eventDispatcher->dispatchAll($session->releaseEvents());
+    }
+
     public function setCallUrl(SetCallUrl $command): void
     {
         $session = $this->sessionRepository->getById($command->sessionId());
@@ -252,5 +267,10 @@ final class Application implements ApplicationInterface
     public function getCallUrlForSession(string $sessionId): string
     {
         return $this->sessionCallUrls->getCallUrlForSession(SessionId::fromString($sessionId));
+    }
+
+    public function getSessionForAdministrator(string $sessionId): UpcomingSessionForAdministrator
+    {
+        return $this->listUpcomingSessions->getSessionForAdministrator(SessionId::fromString($sessionId));
     }
 }
