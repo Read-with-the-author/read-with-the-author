@@ -7,7 +7,9 @@ use Assert\Assert;
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\AttendSession;
 use LeanpubBookClub\Application\CancelAttendance;
+use LeanpubBookClub\Application\FlashType;
 use LeanpubBookClub\Application\Members\Member;
+use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\UpdateTimeZone;
 use LeanpubBookClub\Infrastructure\Symfony\Form\UpdateTimeZoneForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,6 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/member-area")
@@ -25,9 +28,12 @@ final class MemberAreaController extends AbstractController
 {
     private ApplicationInterface $application;
 
-    public function __construct(ApplicationInterface $application)
+    private TranslatorInterface $translator;
+
+    public function __construct(ApplicationInterface $application, TranslatorInterface $translator)
     {
         $this->application = $application;
+        $this->translator = $translator;
     }
 
     /**
@@ -104,6 +110,22 @@ final class MemberAreaController extends AbstractController
         );
 
         return $this->redirectToRoute('member_area_index');
+    }
+
+    /**
+     * @Route("/redirect-to-video-call/{sessionId}", name="redirect_to_video_call", methods={"GET"})
+     */
+    public function redirectToVideoCall(string $sessionId): Response
+    {
+        try {
+            $videoCallUrl = $this->application->getCallUrlForSession($sessionId);
+
+            return $this->redirect($videoCallUrl);
+        } catch (CouldNotGetCallUrl $exception) {
+            $this->addFlash(FlashType::WARNING, $this->translator->trans('session_video_call_url_not_available.flash_message'));
+
+            return $this->redirectToRoute('member_area_index');
+        }
     }
 
     private function createUpdateTimeZoneForm(Member $member): FormInterface

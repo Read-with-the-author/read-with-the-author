@@ -5,7 +5,7 @@ namespace LeanpubBookClub\Application;
 
 use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
-use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrlForSession;
+use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\SessionCall\SetCallUrl;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSessionForAdministrator;
@@ -52,7 +52,7 @@ interface ApplicationInterface extends Members
     public function setCallUrl(SetCallUrl $command): void;
 
     /**
-     * @throws CouldNotGetCallUrlForSession
+     * @throws CouldNotGetCallUrl
      */
     public function getCallUrlForSession(string $sessionId): string;
 }

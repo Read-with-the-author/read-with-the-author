@@ -9,7 +9,7 @@ use LeanpubBookClub\Application\AttendSession;
 use LeanpubBookClub\Application\CancelAttendance;
 use LeanpubBookClub\Application\PlanSession;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
-use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrlForSession;
+use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\SessionCall\SetCallUrl;
 use LeanpubBookClub\Application\UpdateTimeZone;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
@@ -235,7 +235,7 @@ final class ParticipationContext extends FeatureContext
      */
     public function theCallURLCanNotBeDeterminedBecauseItHasNotBeenProvidedYet(): void
     {
-        $this->assertCaughtExceptionMatches(CouldNotGetCallUrlForSession::class);
+        $this->assertCaughtExceptionMatches(CouldNotGetCallUrl::class);
     }
 
     /**

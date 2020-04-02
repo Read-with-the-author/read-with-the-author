@@ -5,6 +5,8 @@ namespace LeanpubBookClub;
 
 use LeanpubBookClub\Application\AttendSession;
 use LeanpubBookClub\Application\CancelAttendance;
+use LeanpubBookClub\Application\FlashType;
+use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
 use LeanpubBookClub\Application\UpdateTimeZone;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
@@ -108,6 +110,51 @@ final class MemberAreaTest extends WebTestCase
         $this->client->submitForm('Update time zone', [
             'update_time_zone_form[timeZone]' => $newTimeZone
         ]);
+    }
+
+    /**
+     * @group wip
+     */
+    public function testRedirectToVideoCall(): void
+    {
+        $this->client->request('GET', '/member-area/');
+
+        $sessionId = '336ca07e-b3b8-47c7-a52f-7b67b6f16e49';
+        $callUrl = 'https://whereby.com/matthiasnoback';
+
+        $this->application->expects($this->any())
+            ->method('getCallUrlForSession')
+            ->with($sessionId)
+            ->willReturn($callUrl);
+
+        $this->client->followRedirects(false);
+        $this->client->request('GET', sprintf('/member-area/redirect-to-video-call/%s', $sessionId));
+
+        self::assertTrue($this->client->getResponse()->isRedirect($callUrl));
+    }
+
+    /**
+     * @group wip
+     */
+    public function testCallUrlNotAvailableYet(): void
+    {
+        $this->client->request('GET', '/member-area/');
+
+        $sessionId = '336ca07e-b3b8-47c7-a52f-7b67b6f16e49';
+
+        $this->application->expects($this->any())
+            ->method('getCallUrlForSession')
+            ->with($sessionId)
+            ->willThrowException(new CouldNotGetCallUrl());
+
+        $this->client->followRedirects(false);
+        $this->client->request('GET', sprintf('/member-area/redirect-to-video-call/%s', $sessionId));
+
+        self::assertTrue($this->client->getResponse()->isRedirect('/member-area/'));
+
+        $crawler = $this->client->followRedirect();
+
+        self::assertResponseHasFlashOfType($crawler, FlashType::WARNING, 'not available');
     }
 
     /**
