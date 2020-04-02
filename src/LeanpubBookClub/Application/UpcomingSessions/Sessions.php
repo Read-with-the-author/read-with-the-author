@@ -16,12 +16,12 @@ interface Sessions
 
     /**
      * @param DateTimeImmutable $currentTime
-     * @return array<UpcomingSessionForAdministrator>
+     * @return array<SessionForAdministrator>
      */
     public function upcomingSessionsForAdministrator(DateTimeImmutable $currentTime): array;
 
     /**
      * @throws CouldNotFindSession
      */
-    public function getSessionForAdministrator(SessionId $sessionId): UpcomingSessionForAdministrator;
+    public function getSessionForAdministrator(SessionId $sessionId): SessionForAdministrator;
 }

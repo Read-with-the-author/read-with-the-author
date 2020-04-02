@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub;
 
 use LeanpubBookClub\Application\PlanSession;
-use LeanpubBookClub\Application\UpcomingSessions\UpcomingSessionForAdministrator;
+use LeanpubBookClub\Application\UpcomingSessions\SessionForAdministrator;
 use LeanpubBookClub\Application\UpdateSession;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,13 +21,13 @@ final class AdminAreaTest extends WebTestCase
     public function testListUpcomingSessions(): void
     {
         $upcomingSessions = [
-            (new UpcomingSessionForAdministrator(
+            (new SessionForAdministrator(
                 'e44c5dfa-73f5-4355-aba7-21ac67c3c87a',
                 '2020-02-01 20:00',
                 'Chapter 1',
                 10
             ))->withNumberOfAttendees(5),
-            (new UpcomingSessionForAdministrator(
+            (new SessionForAdministrator(
                 '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
                 '2020-02-08 20:00',
                 'Chapter 2',
@@ -44,7 +44,7 @@ final class AdminAreaTest extends WebTestCase
         self::assertStringContainsString('Upcoming sessions', $crawler->text());
 
         $session1 = $upcomingSessions[0];
-        /** @var UpcomingSessionForAdministrator $session1 */
+        /** @var SessionForAdministrator $session1 */
         self::assertResponseContainsUpcomingSession(
             $crawler,
             $session1->sessionId(),
@@ -55,7 +55,7 @@ final class AdminAreaTest extends WebTestCase
         );
 
         $session2 = $upcomingSessions[1];
-        /** @var UpcomingSessionForAdministrator $session2 */
+        /** @var SessionForAdministrator $session2 */
         self::assertResponseContainsUpcomingSession(
             $crawler,
             $session2->sessionId(),
@@ -126,7 +126,7 @@ final class AdminAreaTest extends WebTestCase
             ->with($sessionId)
             ->will(
                 $this->returnValue(
-                    (new UpcomingSessionForAdministrator(
+                    (new SessionForAdministrator(
                         $sessionId,
                         '2020-03-30 20:00',
                         $oldDescription,

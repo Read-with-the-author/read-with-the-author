@@ -3,15 +3,21 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Application\Email;
 
+use DateTime;
 use LeanpubBookClub\Application\Members\Member;
+use LeanpubBookClub\Application\UpcomingSessions\SessionForAdministrator;
+use Spatie\CalendarLinks\Link;
 
 final class AttendeeRegisteredForSessionEmail implements Email
 {
     private Member $member;
 
-    public function __construct(Member $member)
+    private SessionForAdministrator $session;
+
+    public function __construct(Member $member, SessionForAdministrator $session)
     {
         $this->member = $member;
+        $this->session = $session;
     }
 
     public function recipient(): string
@@ -31,6 +37,21 @@ final class AttendeeRegisteredForSessionEmail implements Email
 
     public function templateVariables(): array
     {
-        return [];
+        $calendarLink = (new Link(
+            'Read with the author session',
+            DateTime::createFromImmutable(
+                $this->session->dateTime('UTC')
+            ),
+            DateTime::createFromImmutable(
+                // @todo make end time explicit
+                $this->session->dateTime('UTC')->modify('+1 hour')
+            )
+        ))->description($this->session->description()); // @todo abbreviate description?
+
+        return [
+            'session' => $this->session,
+            'member' => $this->member,
+            'calendarLink' => $calendarLink
+        ];
     }
 }

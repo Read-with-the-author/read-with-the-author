@@ -12,7 +12,9 @@ use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use rpkamp\Mailhog\MailhogClient;
 use rpkamp\Mailhog\Message\Contact;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Component\DomCrawler\Crawler;
 use Test\Acceptance\MemberBuilder;
+use Test\Acceptance\SessionBuilder;
 
 /**
  * @group email
@@ -45,13 +47,13 @@ final class SymfonyMailerTest extends KernelTestCase
 
     /**
      * @test
-     * @group wip
      */
     public function it_sends_the_attendee_registered_for_session_email(): void
     {
         $member = MemberBuilder::create()->build();
+        $session = SessionBuilder::create()->build();
 
-        $email = new AttendeeRegisteredForSessionEmail($member);
+        $email = new AttendeeRegisteredForSessionEmail($member, $session);
 
         $this->symfonyMailer()->send($email);
 
@@ -59,10 +61,15 @@ final class SymfonyMailerTest extends KernelTestCase
         $message = $client->getLastMessage();
 
         self::assertTrue($message->recipients->contains(new Contact($email->recipient())));
+        self::assertEquals('You are registered for attendance', $message->subject);
 
-        // @todo add more assertions
-        // @todo add calendar links
-        // @todo add ics downloadable file
+        $crawler = new Crawler($message->body);
+
+        // Check that the date in the calendar link uses UTC instead of the member's preferred time zone
+        self::assertStringContainsString(
+            'dates=20200401T200000/20200401T210000&ctz=UTC',
+            (string)$crawler->filter('a:contains("Google calendar")')->attr('href')
+        );
     }
 
     private function symfonyMailer(): SymfonyMailer

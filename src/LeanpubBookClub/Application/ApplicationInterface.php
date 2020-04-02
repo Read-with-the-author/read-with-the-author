@@ -8,7 +8,7 @@ use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\SessionCall\SetCallUrl;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
-use LeanpubBookClub\Application\UpcomingSessions\UpcomingSessionForAdministrator;
+use LeanpubBookClub\Application\UpcomingSessions\SessionForAdministrator;
 use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 
@@ -34,7 +34,7 @@ interface ApplicationInterface
     public function listUpcomingSessions(string $memberId): array;
 
     /**
-     * @return array<UpcomingSessionForAdministrator> & UpcomingSessionForAdministrator[]
+     * @return array<SessionForAdministrator> & SessionForAdministrator[]
      */
     public function listUpcomingSessionsForAdministrator(): array;
 
@@ -58,7 +58,7 @@ interface ApplicationInterface
      */
     public function getCallUrlForSession(string $sessionId): string;
 
-    public function getSessionForAdministrator(string $sessionId): UpcomingSessionForAdministrator;
+    public function getSessionForAdministrator(string $sessionId): SessionForAdministrator;
 
     /**
      * @throws CouldNotFindMember

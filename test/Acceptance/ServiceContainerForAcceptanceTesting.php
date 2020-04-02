@@ -48,7 +48,7 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
         // Test-specific listeners:
         $eventDispatcher->subscribeToSpecificEvent(
             SessionWasPlanned::class,
-            [$this->upcomingSessions(), 'whenSessionWasPlanned']
+            [$this->sessions(), 'whenSessionWasPlanned']
         );
         $eventDispatcher->subscribeToSpecificEvent(
             UrlForCallWasUpdated::class,
@@ -57,11 +57,11 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
 
         $eventDispatcher->subscribeToSpecificEvent(
             AttendeeRegisteredForSession::class,
-            [$this->upcomingSessions(), 'whenAttendeeRegisteredForSession']
+            [$this->sessions(), 'whenAttendeeRegisteredForSession']
         );
         $eventDispatcher->subscribeToSpecificEvent(
             AttendeeCancelledTheirAttendance::class,
-            [$this->upcomingSessions(), 'whenAttendeeCancelledTheirAttendance']
+            [$this->sessions(), 'whenAttendeeCancelledTheirAttendance']
         );
 
         $eventDispatcher->subscribeToSpecificEvent(

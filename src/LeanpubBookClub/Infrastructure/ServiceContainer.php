@@ -119,7 +119,7 @@ abstract class ServiceContainer
                 $this->purchaseRepository(),
                 $this->sessionRepository(),
                 $this->clock(),
-                $this->upcomingSessions(),
+                $this->sessions(),
                 $this->individualPurchases(),
                 $this->getBookSummary(),
                 $this->assetPublisher(),
@@ -172,7 +172,7 @@ abstract class ServiceContainer
         return $this->memberRepository;
     }
 
-    protected function upcomingSessions(): UpcomingSessionsInMemory
+    protected function sessions(): UpcomingSessionsInMemory
     {
         // TODO Replace with production implementation
         if ($this->upcomingSessions === null) {
@@ -237,6 +237,6 @@ abstract class ServiceContainer
 
     private function sendEmail(): SendEmail
     {
-        return new SendEmail($this->mailer(), $this->eventDispatcher(), $this->members());
+        return new SendEmail($this->mailer(), $this->eventDispatcher(), $this->members(), $this->sessions());
     }
 }

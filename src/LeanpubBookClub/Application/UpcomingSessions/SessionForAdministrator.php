@@ -6,7 +6,7 @@ namespace LeanpubBookClub\Application\UpcomingSessions;
 use DateTimeImmutable;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 
-final class UpcomingSessionForAdministrator
+final class SessionForAdministrator
 {
     private string $sessionId;
 
@@ -37,14 +37,14 @@ final class UpcomingSessionForAdministrator
         return $this->sessionId;
     }
 
-    public function date(string $authorTimeZone): string
+    public function date(string $timeZone): string
     {
-        return $this->dateTime($authorTimeZone)->format('l, F jS');
+        return $this->dateTime($timeZone)->format('l, F jS');
     }
 
-    public function time(string $authorTimeZone): string
+    public function time(string $timeZone): string
     {
-        return $this->dateTime($authorTimeZone)->format('H:i');
+        return $this->dateTime($timeZone)->format('H:i');
     }
 
     public function description(): string
@@ -81,7 +81,7 @@ final class UpcomingSessionForAdministrator
         return $copy;
     }
 
-    private function dateTime(string $timeZone): DateTimeImmutable
+    public function dateTime(string $timeZone): DateTimeImmutable
     {
         $dateTime = new DateTimeImmutable($this->date);
 

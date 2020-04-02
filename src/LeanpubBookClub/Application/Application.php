@@ -10,7 +10,7 @@ use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\SessionCall\SessionCallUrls;
 use LeanpubBookClub\Application\SessionCall\SetCallUrl;
 use LeanpubBookClub\Application\UpcomingSessions\Sessions;
-use LeanpubBookClub\Application\UpcomingSessions\UpcomingSessionForAdministrator;
+use LeanpubBookClub\Application\UpcomingSessions\SessionForAdministrator;
 use LeanpubBookClub\Domain\Model\Member\AccessToken;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Member\Member;
@@ -274,7 +274,7 @@ final class Application implements ApplicationInterface
         return $this->sessionCallUrls->getCallUrlForSession(SessionId::fromString($sessionId));
     }
 
-    public function getSessionForAdministrator(string $sessionId): UpcomingSessionForAdministrator
+    public function getSessionForAdministrator(string $sessionId): SessionForAdministrator
     {
         return $this->listUpcomingSessions->getSessionForAdministrator(SessionId::fromString($sessionId));
     }
