@@ -4,7 +4,6 @@
             <columns>
                 <spacer size="16"></spacer>
                 <h1>Access token</h1>
-                <p>You have requested access to the {{ websiteTitle }}.</p>
 
                 {% set dashboardUrl = url('login', { token: accessToken }) %}
                 <p>Follow this link to go to the dashboard: <a href="{{ dashboardUrl }}">{{ dashboardUrl }}</a>.</p>

@@ -17,12 +17,12 @@ final class CouldNotFindMember extends RuntimeException
         );
     }
 
-    public static function withAccessToken(string $accessToken): self
+    public static function withAccessToken(AccessToken $accessToken): self
     {
         return new self(
             sprintf(
                 'Could not find a member with access token %s',
-                $accessToken
+                $accessToken->asString()
             )
         );
     }

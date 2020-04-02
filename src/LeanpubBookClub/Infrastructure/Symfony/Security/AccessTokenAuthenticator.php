@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure\Symfony\Security;
 
 use Assert\Assert;
+use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\FlashType;
-use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
@@ -22,7 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class AccessTokenAuthenticator extends AbstractGuardAuthenticator
 {
-    private Members $members;
+    private ApplicationInterface $application;
 
     private SessionInterface $session;
 
@@ -31,12 +30,12 @@ final class AccessTokenAuthenticator extends AbstractGuardAuthenticator
     private HttpUtils $httpUtils;
 
     public function __construct(
-        Members $members,
+        ApplicationInterface $application,
         SessionInterface $session,
         TranslatorInterface $translator,
         HttpUtils $httpUtils
     ) {
-        $this->members = $members;
+        $this->application = $application;
         $this->session = $session;
         $this->translator = $translator;
         $this->httpUtils = $httpUtils;
@@ -61,7 +60,7 @@ final class AccessTokenAuthenticator extends AbstractGuardAuthenticator
         Assert::that($credentials)->string('Expected the access token to be a string');
 
         try {
-            return $this->members->getOneByAccessToken($credentials);
+            return $this->application->getOneMemberByAccessToken($credentials);
         } catch (CouldNotFindMember $exception) {
             return null;
         }

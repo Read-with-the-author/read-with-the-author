@@ -11,7 +11,7 @@ use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
 use LeanpubBookClub\Application\Email\Email;
 use LeanpubBookClub\Application\Email\Mailer;
-use LeanpubBookClub\Application\Email\SendAccessTokenEmail;
+use LeanpubBookClub\Application\Email\SendEmail;
 use LeanpubBookClub\Application\EventDispatcher;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
 use LeanpubBookClub\Application\Members\Members;
@@ -24,6 +24,7 @@ use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
+use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
 use LeanpubBookClub\Domain\Service\AccessTokenGenerator;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
@@ -92,7 +93,11 @@ abstract class ServiceContainer
         );
         $eventDispatcher->subscribeToSpecificEvent(
             AnAccessTokenWasGenerated::class,
-            [new SendAccessTokenEmail($this->mailer(), $this->eventDispatcher()), 'whenAnAccessTokenWasGenerated']
+            [$this->sendEmail(), 'whenAnAccessTokenWasGenerated']
+        );
+        $eventDispatcher->subscribeToSpecificEvent(
+            AttendeeRegisteredForSession::class,
+            [$this->sendEmail(), 'whenAttendeeRegisteredForSession']
         );
     }
 
@@ -206,7 +211,7 @@ abstract class ServiceContainer
         return new RealUuidAccessTokenGenerator();
     }
 
-    private function members(): Members
+    protected function members(): Members
     {
         if ($this->members ===  null) {
             $this->members = new MembersInMemory();
@@ -228,5 +233,10 @@ abstract class ServiceContainer
         }
 
         return $this->sessionCallUrls;
+    }
+
+    private function sendEmail(): SendEmail
+    {
+        return new SendEmail($this->mailer(), $this->eventDispatcher(), $this->members());
     }
 }

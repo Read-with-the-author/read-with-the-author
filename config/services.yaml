@@ -55,7 +55,6 @@ services:
 
     LeanpubBookClub\Infrastructure\Symfony\Security\AccessTokenAuthenticator: ~
 
-    LeanpubBookClub\Application\Members\Members: '@LeanpubBookClub\Application\ApplicationInterface'
     LeanpubBookClub\Infrastructure\Symfony\Security\MemberUserProvider: ~
 
     LeanpubBookClub\Domain\Model\Common\TimeZone:

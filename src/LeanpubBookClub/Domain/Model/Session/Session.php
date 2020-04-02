@@ -78,7 +78,7 @@ final class Session
 
         $this->attendees[] = new Attendee($this->sessionId, $memberId);
 
-        $this->events[] = new AttendeeRegisteredForSession($this->sessionId, $memberId);
+        $this->events[] = new AttendeeRegisteredForSession($this->sessionId, $memberId, $this->date);
 
         if (count($this->attendees) >= $this->maximumNumberOfParticipantsAllowed) {
             $this->close();

@@ -6,19 +6,83 @@ namespace LeanpubBookClub;
 use LeanpubBookClub\Application\AttendSession;
 use LeanpubBookClub\Application\CancelAttendance;
 use LeanpubBookClub\Application\FlashType;
+use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
 use LeanpubBookClub\Application\UpdateTimeZone;
-use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
+use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
+use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
+use Test\Acceptance\MemberBuilder;
 
 final class MemberAreaTest extends WebTestCase
 {
+    private Member $loggedInMember;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->logInMember($this->memberId, $this->memberTimeZone);
+        $this->logInMember(
+            MemberBuilder::create()->build()
+        );
+    }
+
+    public function testRedirectToHomepageWhenAccessingMemberAreaWithIncorrectToken(): void
+    {
+        $this->client->followRedirects(false);
+
+        // login with unknown access token
+        $accessToken = '0a56900e-fc10-4fde-b63c-a17ebc3d5002';
+
+        $this->application->expects($this->any())
+            ->method('getOneMemberByAccessToken')
+            ->with($accessToken)
+            ->willThrowException(new CouldNotFindMember());
+
+        $this->client->request('GET', '/member-area/login', ['token' => $accessToken]);
+
+        self::assertTrue($this->client->getResponse()->isRedirect('http://localhost/'));
+
+        $crawler = $this->client->followRedirect();
+
+        self::assertResponseHasFlashOfType($crawler, FlashType::WARNING, 'Authentication failed');
+    }
+
+    public function testRedirectToHomepageWhenAccessingMemberAreaWithoutAToken(): void
+    {
+        $this->client->followRedirects(false);
+
+        $this->client->request('GET', '/member-area/login');
+
+        self::assertTrue($this->client->getResponse()->isRedirect('/'));
+    }
+
+    public function testLoginWithAccessToken(): void
+    {
+        $accessToken = '048c4168-8a3c-4857-b78e-adafa12069b4';
+
+        $member = MemberBuilder::create()->build();
+        $this->memberExists($member);
+        $this->accessTokenIsValidForMember($accessToken, $member);
+
+        $crawler = $this->client->request('GET', '/member-area/login', ['token' => $accessToken]);
+
+        self::assertTrue($this->client->getResponse()->isSuccessful());
+
+        self::assertStringContainsString(
+            $member->memberId()->asString(),
+            $crawler->filter('.logged_in_username')->text()
+        );
+    }
+
+    private function accessTokenIsValidForMember(string $accessToken, Member $member): void
+    {
+        $this->application->expects($this->any())
+            ->method('getOneMemberByAccessToken')
+            ->with($accessToken)
+            ->willReturn($member);
     }
 
     public function testUpcomingEvents(): void
@@ -38,7 +102,7 @@ final class MemberAreaTest extends WebTestCase
             )
         ];
 
-        $this->upcomingSessionsAre($this->memberId, $upcomingSessions);
+        $this->upcomingSessionsAre($this->loggedInMember, $upcomingSessions);
 
         $crawler = $this->client->request('GET', '/member-area/');
 
@@ -53,20 +117,24 @@ final class MemberAreaTest extends WebTestCase
 
     public function testAttendSession(): void
     {
-        $this->upcomingSessionsAre($this->memberId, [
-            new UpcomingSession(
-                '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
-                '2020-02-08 20:00',
-                'Chapter 2',
-                false
-            )
-        ]);
+        $this->upcomingSessionsAre(
+            $this->loggedInMember,
+            [
+                new UpcomingSession(
+                    '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
+                    '2020-02-08 20:00',
+                    'Chapter 2',
+                    false
+                )
+            ]);
 
         $this->client->request('GET', '/member-area/');
 
         $this->application->expects($this->once())
             ->method('attendSession')
-            ->with(new AttendSession('336ca07e-b3b8-47c7-a52f-7b67b6f16e49', $this->memberId));
+            ->with(
+                new AttendSession('336ca07e-b3b8-47c7-a52f-7b67b6f16e49', $this->loggedInMember->memberId()->asString())
+            );
 
         $this->client->followRedirects(false);
         $this->client->submitForm('Attend this session');
@@ -76,20 +144,24 @@ final class MemberAreaTest extends WebTestCase
 
     public function testCancelAttendance(): void
     {
-        $this->upcomingSessionsAre($this->memberId, [
-            new UpcomingSession(
-                '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
-                '2020-02-08 20:00',
-                'Chapter 2',
-                true
-            )
-        ]);
+        $this->upcomingSessionsAre(
+            $this->loggedInMember,
+            [
+                new UpcomingSession(
+                    '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
+                    '2020-02-08 20:00',
+                    'Chapter 2',
+                    true
+                )
+            ]);
 
         $this->client->request('GET', '/member-area/');
 
         $this->application->expects($this->once())
             ->method('cancelAttendance')
-            ->with(new CancelAttendance('336ca07e-b3b8-47c7-a52f-7b67b6f16e49', $this->memberId));
+            ->with(
+                new CancelAttendance('336ca07e-b3b8-47c7-a52f-7b67b6f16e49', $this->loggedInMember->memberId()->asString())
+            );
 
         $this->client->followRedirects(false);
         $this->client->submitForm('Cancel attendance');
@@ -105,11 +177,13 @@ final class MemberAreaTest extends WebTestCase
 
         $this->application->expects($this->once())
             ->method('updateTimeZone')
-            ->with(new UpdateTimeZone($this->memberId, $newTimeZone));
+            ->with(new UpdateTimeZone($this->loggedInMember->memberId()->asString(), $newTimeZone));
 
-        $this->client->submitForm('Update time zone', [
-            'update_time_zone_form[timeZone]' => $newTimeZone
-        ]);
+        $this->client->submitForm(
+            'Update time zone',
+            [
+                'update_time_zone_form[timeZone]' => $newTimeZone
+            ]);
     }
 
     public function testRedirectToVideoCall(): void
@@ -154,12 +228,11 @@ final class MemberAreaTest extends WebTestCase
     /**
      * @param array<UpcomingSession> $upcomingSessions
      */
-    private function upcomingSessionsAre(string $memberId, array $upcomingSessions): void
+    private function upcomingSessionsAre(Member $member, array $upcomingSessions): void
     {
-        // @todo let listUpcomingSessions accept a string argument
         $this->application->expects($this->any())
             ->method('listUpcomingSessions')
-            ->with(LeanpubInvoiceId::fromString($memberId))
+            ->with($member->memberId()->asString())
             ->willReturn($upcomingSessions);
     }
 
@@ -173,9 +246,15 @@ final class MemberAreaTest extends WebTestCase
             $sessionId = $upcomingSession->sessionId();
             $sessionElement = self::sessionElement($crawler, $sessionId);
 
-            self::assertEquals($upcomingSession->description(), $sessionElement->filter('.session-description')->text());
-            self::assertEquals($upcomingSession->date($this->memberTimeZone), $sessionElement->filter('.session-date')->text());
-            self::assertEquals($upcomingSession->time($this->memberTimeZone), $sessionElement->filter('.session-time')->text());
+            self::assertEquals(
+                $upcomingSession->description(),
+                $sessionElement->filter('.session-description')->text());
+            self::assertEquals(
+                $upcomingSession->date($this->loggedInMember->timeZone()),
+                $sessionElement->filter('.session-date')->text());
+            self::assertEquals(
+                $upcomingSession->time($this->loggedInMember->timeZone()),
+                $sessionElement->filter('.session-time')->text());
         }
     }
 
@@ -198,5 +277,34 @@ final class MemberAreaTest extends WebTestCase
     private static function sessionElement(Crawler $crawler, string $sessionId): Crawler
     {
         return $crawler->filter('.session-' . $sessionId);
+    }
+
+    private function logInMember(Member $member): void
+    {
+        $this->memberExists($member);
+
+        $session = self::$container->get('session');
+
+        $firewallName = 'member_area';
+        $firewallContext = $firewallName;
+
+        // you may need to use a different token class depending on your application.
+        // for example, when using Guard authentication you must instantiate PostAuthenticationGuardToken
+        $token = new PostAuthenticationGuardToken($member, $firewallName, ['ROLE_MEMBER']);
+        $session->set('_security_' . $firewallContext, serialize($token));
+        $session->save();
+
+        $cookie = new Cookie($session->getName(), $session->getId());
+        $this->client->getCookieJar()->set($cookie);
+    }
+
+    protected function memberExists(Member $member): void
+    {
+        $this->application->expects($this->any())
+            ->method('getOneMemberById')
+            ->with($member->memberId()->asString())
+            ->willReturn($member);
+
+        $this->loggedInMember = $member;
     }
 }

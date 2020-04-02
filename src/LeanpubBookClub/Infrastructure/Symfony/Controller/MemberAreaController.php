@@ -55,7 +55,7 @@ final class MemberAreaController extends AbstractController
         return $this->render(
             'member_area/index.html.twig',
             [
-                'upcomingSessions' => $this->application->listUpcomingSessions($member->memberId()),
+                'upcomingSessions' => $this->application->listUpcomingSessions($member->memberId()->asString()),
                 'memberTimeZone' => $member->timeZone(),
                 'updateTimeZoneForm' => $this->createUpdateTimeZoneForm($member)->createView()
             ]

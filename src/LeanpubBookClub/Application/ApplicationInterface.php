@@ -3,15 +3,16 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Application;
 
-use LeanpubBookClub\Application\Members\Members;
+use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\SessionCall\SetCallUrl;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSessionForAdministrator;
+use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 
-interface ApplicationInterface extends Members
+interface ApplicationInterface
 {
     public function importAllPurchases(): void;
 
@@ -30,7 +31,7 @@ interface ApplicationInterface extends Members
     /**
      * @return array<UpcomingSession> & UpcomingSession[]
      */
-    public function listUpcomingSessions(LeanpubInvoiceId $memberId): array;
+    public function listUpcomingSessions(string $memberId): array;
 
     /**
      * @return array<UpcomingSessionForAdministrator> & UpcomingSessionForAdministrator[]
@@ -58,4 +59,14 @@ interface ApplicationInterface extends Members
     public function getCallUrlForSession(string $sessionId): string;
 
     public function getSessionForAdministrator(string $sessionId): UpcomingSessionForAdministrator;
+
+    /**
+     * @throws CouldNotFindMember
+     */
+    public function getOneMemberByAccessToken(string $accessToken): Member;
+
+    /**
+     * @throws CouldNotFindMember
+     */
+    public function getOneMemberById(string $memberId): Member;
 }

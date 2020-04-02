@@ -6,11 +6,13 @@ namespace LeanpubBookClub\Infrastructure\Symfony;
 use Http\Adapter\Guzzle6\Client as GuzzleAdapter;
 use Http\Message\MessageFactory\GuzzleMessageFactory;
 use LeanpubBookClub\Application\Email\AccessTokenEmail;
+use LeanpubBookClub\Application\Email\AttendeeRegisteredForSessionEmail;
 use LeanpubBookClub\Domain\Model\Member\AccessToken;
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use rpkamp\Mailhog\MailhogClient;
 use rpkamp\Mailhog\Message\Contact;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Test\Acceptance\MemberBuilder;
 
 /**
  * @group email
@@ -39,6 +41,28 @@ final class SymfonyMailerTest extends KernelTestCase
             $message->body
         );
         self::assertTrue($message->recipients->contains(new Contact($email->recipient())));
+    }
+
+    /**
+     * @test
+     * @group wip
+     */
+    public function it_sends_the_attendee_registered_for_session_email(): void
+    {
+        $member = MemberBuilder::create()->build();
+
+        $email = new AttendeeRegisteredForSessionEmail($member);
+
+        $this->symfonyMailer()->send($email);
+
+        $client = $this->mailhogClient();
+        $message = $client->getLastMessage();
+
+        self::assertTrue($message->recipients->contains(new Contact($email->recipient())));
+
+        // @todo add more assertions
+        // @todo add calendar links
+        // @todo add ics downloadable file
     }
 
     private function symfonyMailer(): SymfonyMailer

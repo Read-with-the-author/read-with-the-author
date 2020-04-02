@@ -1,0 +1,18 @@
+{% apply inky_to_html|inline_css(source('@css/foundation-emails.css')) %}
+    <container>
+        <row>
+            <columns>
+                <spacer size="16"></spacer>
+                <h1>Registration</h1>
+                <p>You have been registered to attend the following session: {{ session.description }}</p>
+                <p>This session will take place at: {{ session.date }} (UTC)</p>
+                <p>Use the following links to add the event to your calendar:</p>
+                <ul>
+                    <li>Google: </li>
+                    <li>Apple: </li>
+                </ul>
+
+            </columns>
+        </row>
+    </container>
+{% endapply %}

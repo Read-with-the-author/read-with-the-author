@@ -20,6 +20,11 @@ final class AnAccessTokenWasGenerated
         $this->accessToken = $accessToken;
     }
 
+    public function memberId(): LeanpubInvoiceId
+    {
+        return $this->memberId;
+    }
+
     public function emailAddress(): EmailAddress
     {
         return $this->emailAddress;

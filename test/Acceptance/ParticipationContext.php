@@ -7,6 +7,7 @@ use Behat\Gherkin\Node\TableNode;
 use BehatExpectException\ExpectException;
 use LeanpubBookClub\Application\AttendSession;
 use LeanpubBookClub\Application\CancelAttendance;
+use LeanpubBookClub\Application\Email\AttendeeRegisteredForSessionEmail;
 use LeanpubBookClub\Application\PlanSession;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
@@ -61,8 +62,7 @@ final class ParticipationContext extends FeatureContext
         Assert::assertNotNull($this->leanpubInvoiceId);
 
         $expectedDetails = $table->getRowsHash();
-        foreach ($this->application()->listUpcomingSessions(
-            LeanpubInvoiceId::fromString($this->leanpubInvoiceId)) as $upcomingSession) {
+        foreach ($this->application()->listUpcomingSessions($this->leanpubInvoiceId) as $upcomingSession) {
             if ($this->plannedSessionId === $upcomingSession->sessionId()
                 && $this->plannedSessionDescription === $upcomingSession->description()) {
 
@@ -161,9 +161,7 @@ final class ParticipationContext extends FeatureContext
         string $memberId,
         bool $expectedToAttend
     ): void {
-        $upcomingSessions = $this->application()->listUpcomingSessions(
-            LeanpubInvoiceId::fromString($memberId)
-        );
+        $upcomingSessions = $this->application()->listUpcomingSessions($memberId);
 
         foreach ($upcomingSessions as $session) {
             if ($session->sessionId() === $sessionId) {
@@ -184,9 +182,7 @@ final class ParticipationContext extends FeatureContext
         Assert::assertNotNull($this->plannedSessionId);
         Assert::assertNotNull($this->leanpubInvoiceId);
 
-        $upcomingSessions = $this->application()->listUpcomingSessions(
-            LeanpubInvoiceId::fromString($this->leanpubInvoiceId)
-        );
+        $upcomingSessions = $this->application()->listUpcomingSessions($this->leanpubInvoiceId);
 
         foreach ($upcomingSessions as $session) {
             if ($session->sessionId() === $this->plannedSessionId) {
@@ -284,5 +280,20 @@ final class ParticipationContext extends FeatureContext
         }
 
         throw new RuntimeException('Planned session not found in list of upcoming sessions');
+    }
+
+    /**
+     * @Given they should receive an email confirming their registration
+     */
+    public function theyShouldReceiveAnEmailConfirmingTheirRegistration(): void
+    {
+        foreach ($this->serviceContainer()->mailer()->sentEmails() as $email) {
+            if ($email instanceof AttendeeRegisteredForSessionEmail) {
+                // @todo assert some things
+                return;
+            }
+        }
+
+        throw new RuntimeException('Received no such email');
     }
 }

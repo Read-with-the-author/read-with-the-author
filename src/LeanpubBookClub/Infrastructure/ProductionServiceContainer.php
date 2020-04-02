@@ -6,6 +6,7 @@ namespace LeanpubBookClub\Infrastructure;
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
+use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi;

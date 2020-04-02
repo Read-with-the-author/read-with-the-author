@@ -6,6 +6,8 @@ namespace Test\Acceptance;
 use Assert\Assert;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
+use LeanpubBookClub\Domain\Model\Member\AnAccessTokenWasGenerated;
+use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
 use LeanpubBookClub\Domain\Model\Session\AttendeeCancelledTheirAttendance;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
@@ -61,6 +63,25 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
             AttendeeCancelledTheirAttendance::class,
             [$this->upcomingSessions(), 'whenAttendeeCancelledTheirAttendance']
         );
+
+        $eventDispatcher->subscribeToSpecificEvent(
+            MemberRequestedAccess::class,
+            [$this->members(), 'whenMemberRequestedAccess']
+        );
+        $eventDispatcher->subscribeToSpecificEvent(
+            AnAccessTokenWasGenerated::class,
+            [$this->members(), 'whenAnAccessTokenWasGenerated']
+        );
+    }
+
+    protected function members(): MembersInMemory
+    {
+        $members = parent::members();
+
+        Assert::that($members)->isInstanceOf(MembersInMemory::class);
+        /** @var MembersInMemory $members */
+
+        return $members;
     }
 
     public function eventDispatcherSpy(): EventDispatcherSpy

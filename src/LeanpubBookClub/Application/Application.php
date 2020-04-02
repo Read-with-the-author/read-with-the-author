@@ -4,12 +4,14 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Application;
 
 use LeanpubBookClub\Application\Importing\PurchaseWasAlreadyImported;
+use LeanpubBookClub\Application\Members\Member as MemberReadModel;
 use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\SessionCall\SessionCallUrls;
 use LeanpubBookClub\Application\SessionCall\SetCallUrl;
 use LeanpubBookClub\Application\UpcomingSessions\Sessions;
 use LeanpubBookClub\Application\UpcomingSessions\UpcomingSessionForAdministrator;
+use LeanpubBookClub\Domain\Model\Member\AccessToken;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Member\Member;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
@@ -205,9 +207,12 @@ final class Application implements ApplicationInterface
         $this->eventDispatcher->dispatchAll($session->releaseEvents());
     }
 
-    public function listUpcomingSessions(LeanpubInvoiceId $memberId): array
+    public function listUpcomingSessions(string $memberId): array
     {
-        return $this->listUpcomingSessions->upcomingSessions($this->clock->currentTime(), $memberId);
+        return $this->listUpcomingSessions->upcomingSessions(
+            $this->clock->currentTime(),
+            LeanpubInvoiceId::fromString($memberId)
+        );
     }
 
     public function listUpcomingSessionsForAdministrator(): array
@@ -243,14 +248,14 @@ final class Application implements ApplicationInterface
         $this->assetPublisher->publishTitlePageImageUrl($bookSummary->titlePageUrl());
     }
 
-    public function getOneByAccessToken(string $accessToken): \LeanpubBookClub\Application\Members\Member
+    public function getOneMemberByAccessToken(string $accessToken): MemberReadModel
     {
-        return $this->members->getOneByAccessToken($accessToken);
+        return $this->members->getOneByAccessToken(AccessToken::fromString($accessToken));
     }
 
-    public function getOneById(string $memberId): \LeanpubBookClub\Application\Members\Member
+    public function getOneMemberById(string $memberId): MemberReadModel
     {
-        return $this->members->getOneById($memberId);
+        return $this->members->getOneById(LeanpubInvoiceId::fromString($memberId));
     }
 
     public function updateTimeZone(UpdateTimeZone $command): void

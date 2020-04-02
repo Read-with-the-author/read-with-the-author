@@ -11,10 +11,13 @@ final class AttendeeRegisteredForSession
 
     private LeanpubInvoiceId $memberId;
 
-    public function __construct(SessionId $sessionId, LeanpubInvoiceId $memberId)
+    private ScheduledDate $date;
+
+    public function __construct(SessionId $sessionId, LeanpubInvoiceId $memberId, ScheduledDate $date)
     {
         $this->sessionId = $sessionId;
         $this->memberId = $memberId;
+        $this->date = $date;
     }
 
     public function sessionId(): SessionId

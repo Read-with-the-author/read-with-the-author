@@ -72,12 +72,7 @@ final class SessionTest extends EntityTestCase
         $memberId = $this->aMemberId();
         $session->attend($memberId);
 
-        self::assertEquals(
-            [
-                new AttendeeRegisteredForSession($session->sessionId(), $memberId)
-            ],
-            $session->releaseEvents()
-        );
+        self::assertArrayContainsObjectOfType(AttendeeRegisteredForSession::class, $session->releaseEvents());
     }
 
     /**
@@ -132,7 +127,7 @@ final class SessionTest extends EntityTestCase
 
         self::assertEquals(
             [
-                new AttendeeRegisteredForSession($session->sessionId(), $memberId),
+                new AttendeeRegisteredForSession($session->sessionId(), $memberId, $this->aDate()),
                 new SessionWasClosedForRegistration($session->sessionId())
             ],
             $session->releaseEvents()
@@ -154,7 +149,7 @@ final class SessionTest extends EntityTestCase
 
         self::assertEquals(
             [
-                new AttendeeRegisteredForSession($session->sessionId(), $memberId)
+                new AttendeeRegisteredForSession($session->sessionId(), $memberId, $this->aDate())
                 // The registration wasn't closed
             ],
             $session->releaseEvents()

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure\Symfony\Security;
 
+use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\Members\Member;
-use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -13,17 +13,17 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 final class MemberUserProvider implements UserProviderInterface
 {
-    private Members $members;
+    private ApplicationInterface $application;
 
-    public function __construct(Members $members)
+    public function __construct(ApplicationInterface $application)
     {
-        $this->members = $members;
+        $this->application = $application;
     }
 
     public function loadUserByUsername(string $username): UserInterface
     {
         try {
-            return $this->members->getOneById($username);
+            return $this->application->getOneMemberById($username);
         } catch (CouldNotFindMember $exception) {
             throw new UsernameNotFoundException('User not found', 0, $exception);
         }

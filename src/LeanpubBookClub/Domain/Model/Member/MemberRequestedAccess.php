@@ -33,6 +33,11 @@ final class MemberRequestedAccess implements EventProducesFlashMessage
         return $this->memberTimeZone;
     }
 
+    public function emailAddress(): EmailAddress
+    {
+        return $this->emailAddress;
+    }
+
     public function flashType(): string
     {
         return FlashType::SUCCESS;
