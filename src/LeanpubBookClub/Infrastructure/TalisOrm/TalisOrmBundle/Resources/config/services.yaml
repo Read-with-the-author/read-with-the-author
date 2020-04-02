@@ -1,0 +1,8 @@
+services:
+    LeanpubBookClub\Infrastructure\TalisOrm\TalisOrmBundle\DoctrineMigrations\AggregateMigrationsSchemaProvider:
+        arguments:
+            - '@TalisOrm\Schema\AggregateSchemaProvider'
+
+    TalisOrm\Schema\AggregateSchemaProvider:
+        arguments:
+            - [] # to be provided by SetAggregateClassesArgument

@@ -1,0 +1,3 @@
+doctrine:
+    dbal:
+        url: 'sqlite:///%kernel.project_dir%/var/db/%kernel.environment%/app.sqlite'

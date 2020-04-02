@@ -9,6 +9,7 @@
 ###< symfony/framework-bundle ###
 
 /public/assets
+/data/
 
 ###> symfony/phpunit-bridge ###
 .phpunit

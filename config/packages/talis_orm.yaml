@@ -1,0 +1,5 @@
+talis_orm:
+    aggregates:
+        - LeanpubBookClub\Domain\Model\Session\Session
+        - LeanpubBookClub\Domain\Model\Member\Member
+        - LeanpubBookClub\Domain\Model\Purchase\Purchase
