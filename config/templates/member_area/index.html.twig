@@ -17,6 +17,7 @@
                 <th>Date</th>
                 <th>Time</th>
                 <th>Description</th>
+                <th>Video call</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -26,6 +27,9 @@
                     <td class="session-date">{{ upcomingSession.date(memberTimeZone) }}</td>
                     <td class="session-time">{{ upcomingSession.time(memberTimeZone) }}</td>
                     <td class="session-description">{{ upcomingSession.description }}</td>
+                    <td class="session-video-call">
+                        <a href="{{ url('redirect_to_video_call', { sessionId: upcomingSession.sessionId }) }}">Join the video call</a>
+                    </td>
                     <td class="session-actions">
                         {% if upcomingSession.memberIsRegisteredAsAttendee %}
                             <form action="{{ url('cancel_attendance') }}" method="post">

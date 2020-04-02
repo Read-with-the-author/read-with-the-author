@@ -112,9 +112,6 @@ final class MemberAreaTest extends WebTestCase
         ]);
     }
 
-    /**
-     * @group wip
-     */
     public function testRedirectToVideoCall(): void
     {
         $this->client->request('GET', '/member-area/');
@@ -133,9 +130,6 @@ final class MemberAreaTest extends WebTestCase
         self::assertTrue($this->client->getResponse()->isRedirect($callUrl));
     }
 
-    /**
-     * @group wip
-     */
     public function testCallUrlNotAvailableYet(): void
     {
         $this->client->request('GET', '/member-area/');
