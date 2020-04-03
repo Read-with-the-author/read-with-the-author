@@ -49,7 +49,8 @@
         "twig/cssinliner-extra": "^3.0",
         "twig/extra-bundle": "^3.0",
         "twig/inky-extra": "^3.0",
-        "twig/twig": "^3.0"
+        "twig/twig": "^3.0",
+        "ext-pdo": "*"
     },
     "autoload": {
         "psr-4": {

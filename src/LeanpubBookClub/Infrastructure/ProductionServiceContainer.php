@@ -3,19 +3,22 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Connection as DbalConnection;
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
 use LeanpubBookClub\Application\Email\Mailer;
+use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
+use LeanpubBookClub\Infrastructure\Doctrine\Connection;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchaseFromLeanpubApi;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
 use LeanpubBookClub\Infrastructure\TalisOrm\EventDispatcherAdapter;
+use LeanpubBookClub\Infrastructure\TalisOrm\MembersUsingDoctrineDbal;
 use LeanpubBookClub\Infrastructure\TalisOrm\MemberTalisOrmRepository;
 use LeanpubBookClub\Infrastructure\TalisOrm\PurchaseTalisOrmRepository;
 use TalisOrm\AggregateRepository;
@@ -24,9 +27,9 @@ final class ProductionServiceContainer extends ServiceContainer
 {
     private Configuration $configuration;
 
-    private Connection $dbalConnection;
+    private DbalConnection $dbalConnection;
 
-    public function __construct(Configuration $configuration, Connection $connection, Mailer $mailer)
+    public function __construct(Configuration $configuration, DbalConnection $connection, Mailer $mailer)
     {
         $this->configuration = $configuration;
         $this->dbalConnection = $connection;
@@ -85,5 +88,15 @@ final class ProductionServiceContainer extends ServiceContainer
             $this->dbalConnection,
             new EventDispatcherAdapter($this->eventDispatcher())
         );
+    }
+
+    protected function members(): Members
+    {
+        return new MembersUsingDoctrineDbal($this->connection());
+    }
+
+    private function connection(): Connection
+    {
+        return new Connection($this->dbalConnection);
     }
 }

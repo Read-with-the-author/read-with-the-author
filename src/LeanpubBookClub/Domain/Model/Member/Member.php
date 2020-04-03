@@ -6,6 +6,7 @@ namespace LeanpubBookClub\Domain\Model\Member;
 use Doctrine\DBAL\Schema\Schema;
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
+use LeanpubBookClub\Domain\Model\Purchase\Purchase;
 use LeanpubBookClub\Domain\Service\AccessTokenGenerator;
 use TalisOrm\Aggregate;
 use TalisOrm\AggregateBehavior;
@@ -68,23 +69,36 @@ final class Member implements Aggregate, SpecifiesSchema
         $this->events[] = new MemberTimeZoneChanged($this->memberId, $newTimeZone);
     }
 
+    /**
+     * @template T
+     * @return array<class-string<T>,array<T>>
+     */
     public function childEntitiesByType(): array
     {
         return [];
     }
 
+    /**
+     * @return array<class-string>
+     */
     public static function childEntityTypes(): array
     {
         return [];
     }
 
+    /**
+     * @template T
+     * @param array<string,string|int|float|bool|null> $aggregateState
+     * @param array<class-string<T>, array<T>> $childEntitiesByType
+     * @return self
+     */
     public static function fromState(array $aggregateState, array $childEntitiesByType): self
     {
         $instance = new self();
 
-        $instance->memberId = LeanpubInvoiceId::fromString($aggregateState['memberId']);
-        $instance->emailAddress = EmailAddress::fromString($aggregateState['emailAddress']);
-        $instance->timeZone = TimeZone::fromString($aggregateState['timeZone']);
+        $instance->memberId = LeanpubInvoiceId::fromString((string)$aggregateState['memberId']);
+        $instance->emailAddress = EmailAddress::fromString((string)$aggregateState['emailAddress']);
+        $instance->timeZone = TimeZone::fromString((string)$aggregateState['timeZone']);
         $instance->accessToken = is_string($aggregateState['accessToken'])
             ? AccessToken::fromString($aggregateState['accessToken'])
             : null;
@@ -92,6 +106,9 @@ final class Member implements Aggregate, SpecifiesSchema
         return $instance;
     }
 
+    /**
+     * @return array<string,string|int|float|bool|null>
+     */
     public function state(): array
     {
         return [
@@ -107,6 +124,9 @@ final class Member implements Aggregate, SpecifiesSchema
         return 'members';
     }
 
+    /**
+     * @return array<string,string|int|float|bool|null>
+     */
     public function identifier(): array
     {
         return [
@@ -114,6 +134,9 @@ final class Member implements Aggregate, SpecifiesSchema
         ];
     }
 
+    /**
+     * @return array<string,string|int|float|bool|null>
+     */
     public static function identifierForQuery(AggregateId $aggregateId): array
     {
         return [
