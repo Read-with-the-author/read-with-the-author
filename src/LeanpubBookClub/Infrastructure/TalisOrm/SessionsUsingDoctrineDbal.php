@@ -61,7 +61,13 @@ final class SessionsUsingDoctrineDbal implements Sessions
 
     public function getSessionForMember(SessionId $sessionId, LeanpubInvoiceId $memberId): SessionForMember
     {
-        throw CouldNotFindSession::withId($sessionId);
+        $row = $this->connection->selectOne(
+            $this->createQueryBuilderForMember($memberId)
+                ->andWhere('sessionId = :sessionId')
+                ->setParameter('sessionId', $sessionId->asString())
+        );
+
+        return $this->createSessionForMember($row);
     }
 
     /**
