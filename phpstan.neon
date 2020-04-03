@@ -4,6 +4,8 @@ parameters:
     - src/
     - test/
   excludes_analyse:
+    - src/LeanpubBookClub/Infrastructure/Doctrine/Migrations
+    - src/LeanpubBookClub/Infrastructure/TalisOrm/TalisOrmBundle/DependencyInjection/Configuration.php
     - src/LeanpubBookClub/Infrastructure/Symfony
     - test/bootstrap.php
     - test/Functional/

@@ -38,6 +38,7 @@ services:
         env_file:
             - .env
             - .env.local
+        user: ${HOST_UID}:${HOST_GID}
 
     mailhog:
         image: mailhog/mailhog

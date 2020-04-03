@@ -3,23 +3,30 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure;
 
+use Doctrine\DBAL\Connection;
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
-use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
+use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchaseFromLeanpubApi;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
+use LeanpubBookClub\Infrastructure\TalisOrm\EventDispatcherAdapter;
+use LeanpubBookClub\Infrastructure\TalisOrm\PurchaseTalisOrmRepository;
+use TalisOrm\AggregateRepository;
 
 final class ProductionServiceContainer extends ServiceContainer
 {
     private Configuration $configuration;
 
-    public function __construct(Configuration $configuration)
+    private Connection $dbalConnection;
+
+    public function __construct(Configuration $configuration, Connection $connection)
     {
         $this->configuration = $configuration;
+        $this->dbalConnection = $connection;
     }
 
     protected function clock(): Clock
@@ -32,10 +39,13 @@ final class ProductionServiceContainer extends ServiceContainer
         return $this->configuration->authorTimeZone();
     }
 
-    public static function createFromEnvironmentVariables(string $projectDirectory): self
+    protected function purchaseRepository(): PurchaseRepository
     {
-        return new self(
-            Configuration::createFromEnvironmentVariables($projectDirectory)
+        return new PurchaseTalisOrmRepository(
+            new AggregateRepository(
+                $this->dbalConnection,
+                new EventDispatcherAdapter($this->eventDispatcher())
+            )
         );
     }
 

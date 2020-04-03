@@ -4,8 +4,9 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Domain\Model\Member;
 
 use Assert\Assert;
+use TalisOrm\AggregateId;
 
-final class LeanpubInvoiceId
+final class LeanpubInvoiceId implements AggregateId
 {
     private string $leanpubInvoiceId;
 
@@ -28,5 +29,10 @@ final class LeanpubInvoiceId
     public function equals(LeanpubInvoiceId $other): bool
     {
         return $this->leanpubInvoiceId === $other->leanpubInvoiceId;
+    }
+
+    public function __toString(): string
+    {
+        return $this->asString();
     }
 }

@@ -9,7 +9,7 @@ use TalisOrm\Schema\AggregateSchemaProvider;
 
 final class SetAggregateClassesArgument implements CompilerPassInterface
 {
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(AggregateSchemaProvider::class);
         $definition->setArguments(
