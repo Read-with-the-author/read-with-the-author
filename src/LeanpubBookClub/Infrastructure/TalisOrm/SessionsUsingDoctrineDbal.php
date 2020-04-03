@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure\TalisOrm;
 
 use DateTimeImmutable;
+use Doctrine\DBAL\Query\QueryBuilder;
 use LeanpubBookClub\Application\UpcomingSessions\CouldNotFindSession;
 use LeanpubBookClub\Application\UpcomingSessions\SessionForAdministrator;
 use LeanpubBookClub\Application\UpcomingSessions\SessionForMember;
@@ -28,16 +29,62 @@ final class SessionsUsingDoctrineDbal implements Sessions
 
     public function upcomingSessionsForAdministrator(DateTimeImmutable $currentTime): array
     {
-        return [];
+        $rows = $this->connection->selectAll(
+            $this->createQueryBuilderForAdministrator()->orderBy('date', 'ASC')
+        );
+
+        // @todo only upcoming sessions
+
+        return $this->createSessionsForAdministrator($rows);
     }
 
     public function getSessionForAdministrator(SessionId $sessionId): SessionForAdministrator
     {
-        throw CouldNotFindSession::withId($sessionId);
+        $row = $this->connection->selectOne(
+            $this->createQueryBuilderForAdministrator()
+                ->andWhere('sessionId = :sessionId')
+                ->setParameter('sessionId', $sessionId->asString())
+        );
+
+        return $this->createSessionForAdministrator($row);
     }
 
     public function getSessionForMember(SessionId $sessionId, LeanpubInvoiceId $memberId): SessionForMember
     {
         throw CouldNotFindSession::withId($sessionId);
+    }
+
+    /**
+     * @param array<array<string,mixed>> $rows
+     * @return array<SessionForAdministrator>
+     */
+    private function createSessionsForAdministrator(array $rows): array
+    {
+        return array_map(
+            [$this, 'createSessionForAdministrator'],
+            $rows
+        );
+    }
+
+    /**
+     * @param array<string,mixed> $row
+     * @return SessionForAdministrator
+     */
+    private function createSessionForAdministrator(array $row): SessionForAdministrator
+    {
+        return (new SessionForAdministrator(
+            (string)$row['sessionId'],
+            (string)$row['date'],
+            (string)$row['description'],
+            (int)$row['maximumNumberOfAttendees']
+        ))->withUrlForCall($row['urlForCall'])->withNumberOfAttendees((int)$row['numberOfAttendees']);
+    }
+
+    private function createQueryBuilderForAdministrator(): QueryBuilder
+    {
+        return $this->connection->createQueryBuilder()
+            ->select('*')
+            ->addSelect('(SELECT COUNT(*) FROM attendees a WHERE a.sessionId = sessionId) AS numberOfAttendees')
+            ->from('sessions');
     }
 }

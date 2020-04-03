@@ -90,7 +90,7 @@ final class SessionForAdministrator
         return $dateTime;
     }
 
-    public function withUrlForCall(string $urlForCall): self
+    public function withUrlForCall(?string $urlForCall): self
     {
         $copy = clone $this;
 

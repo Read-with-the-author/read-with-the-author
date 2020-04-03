@@ -28,15 +28,31 @@ final class Connection
      */
     public function selectOne(QueryBuilder $queryBuilder): array
     {
-        $statement = $queryBuilder->execute();
-        Assert::that($statement)->isInstanceOf(Statement::class);
-
-        $data = $statement->fetch(PDO::FETCH_ASSOC);
+        $data = $this->execute($queryBuilder)->fetch(PDO::FETCH_ASSOC);
 
         if ($data === false) {
             throw NoResult::forQuery($queryBuilder->getSQL(), $queryBuilder->getParameters());
         }
 
         return $data;
+    }
+
+    /**
+     * @return array<array<string,mixed>> The query result as an associative array
+     */
+    public function selectAll(QueryBuilder $queryBuilder): array
+    {
+        return $this->execute($queryBuilder)->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * @return Statement<array>
+     */
+    private function execute(QueryBuilder $queryBuilder): Statement
+    {
+        $statement = $queryBuilder->execute();
+        Assert::that($statement)->isInstanceOf(Statement::class);
+
+        return $statement;
     }
 }

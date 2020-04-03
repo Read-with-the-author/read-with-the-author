@@ -163,7 +163,7 @@ final class Session implements Aggregate, SpecifiesSchema
         $instance->sessionId = SessionId::fromString((string)$aggregateState['sessionId']);
         $instance->date = ScheduledDate::fromString((string)$aggregateState['date']);
         $instance->description = (string)$aggregateState['description'];
-        $instance->maximumNumberOfAttendees = $aggregateState['maximumNumberOfAttendees'];
+        $instance->maximumNumberOfAttendees = (int)$aggregateState['maximumNumberOfAttendees'];
         $instance->wasClosed = (bool)$aggregateState['wasClosed'];
         $instance->urlForCall = $aggregateState['urlForCall'];
 
