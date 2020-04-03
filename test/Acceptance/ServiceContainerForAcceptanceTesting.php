@@ -49,7 +49,7 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
         );
         $eventDispatcher->subscribeToSpecificEvent(
             UrlForCallWasUpdated::class,
-            [$this->sessionCallUrls(), 'whenUrlForCallWasProvided']
+            [$this->sessions(), 'whenUrlForCallWasUpdated']
         );
 
         $eventDispatcher->subscribeToSpecificEvent(
@@ -136,16 +136,6 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
         /** @var $individualPurchases IndividualPurchasesInMemory */
 
         return $individualPurchases;
-    }
-
-    protected function sessionCallUrls(): SessionCallUrlsInMemory
-    {
-        $service = parent::sessionCallUrls();
-
-        Assert::that($service)->isInstanceOf(SessionCallUrlsInMemory::class);
-        /** @var $service SessionCallUrlsInMemory */
-
-        return $service;
     }
 
     public function mailer(): MailerSpy

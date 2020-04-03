@@ -40,10 +40,18 @@ Feature:
 
   Scenario: An administrator has not provided the URL for the call yet
     Given an upcoming session
+    And the member has registered themselves as a participant of the session
     When the member requests the call URL for this session
-    Then the it fails because it has not been provided yet
+    Then it fails because it has not been determined yet
 
-  Scenario: An administrator sets the call URL
+  Scenario: An administrator has provided the URL for the call, but the member is not registered as a participant
     Given an upcoming session
-    When the administrator sets the call URL to "https://whereby.com/matthiasnoback"
-    Then the call URL for this session will be "https://whereby.com/matthiasnoback"
+    And the administrator has set the call URL to "https://whereby.com/matthiasnoback"
+    When the member requests the call URL for this session
+    Then it fails because this member is not registered as an attendee
+
+  Scenario: An administrator sets the call URL and the member has been registered as a participant
+    Given an upcoming session
+    And the member has registered themselves as a participant of the session
+    And the administrator has set the call URL to "https://whereby.com/matthiasnoback"
+    When the member requests the call URL for this session it will be "https://whereby.com/matthiasnoback"

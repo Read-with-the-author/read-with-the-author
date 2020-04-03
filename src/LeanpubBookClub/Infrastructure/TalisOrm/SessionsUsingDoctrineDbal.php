@@ -6,6 +6,7 @@ namespace LeanpubBookClub\Infrastructure\TalisOrm;
 use DateTimeImmutable;
 use LeanpubBookClub\Application\UpcomingSessions\CouldNotFindSession;
 use LeanpubBookClub\Application\UpcomingSessions\SessionForAdministrator;
+use LeanpubBookClub\Application\UpcomingSessions\SessionForMember;
 use LeanpubBookClub\Application\UpcomingSessions\Sessions;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
@@ -31,6 +32,11 @@ final class SessionsUsingDoctrineDbal implements Sessions
     }
 
     public function getSessionForAdministrator(SessionId $sessionId): SessionForAdministrator
+    {
+        throw CouldNotFindSession::withId($sessionId);
+    }
+
+    public function getSessionForMember(SessionId $sessionId, LeanpubInvoiceId $memberId): SessionForMember
     {
         throw CouldNotFindSession::withId($sessionId);
     }

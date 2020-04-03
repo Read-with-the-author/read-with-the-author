@@ -10,7 +10,7 @@ use LeanpubBookClub\Domain\Model\Session\SessionId;
 interface Sessions
 {
     /**
-     * @return array<UpcomingSession>
+     * @return array<SessionForMember>
      */
     public function upcomingSessions(DateTimeImmutable $currentTime, LeanpubInvoiceId $activeMemberId): array;
 
@@ -24,4 +24,6 @@ interface Sessions
      * @throws CouldNotFindSession
      */
     public function getSessionForAdministrator(SessionId $sessionId): SessionForAdministrator;
+
+    public function getSessionForMember(SessionId $sessionId, LeanpubInvoiceId $memberId): SessionForMember;
 }

@@ -62,7 +62,7 @@ final class ParticipationContext extends FeatureContext
         Assert::assertNotNull($this->leanpubInvoiceId);
 
         $expectedDetails = $table->getRowsHash();
-        foreach ($this->application()->listUpcomingSessions($this->leanpubInvoiceId) as $upcomingSession) {
+        foreach ($this->application()->listUpcomingSessionsForMember($this->leanpubInvoiceId) as $upcomingSession) {
             if ($this->plannedSessionId === $upcomingSession->sessionId()
                 && $this->plannedSessionDescription === $upcomingSession->description()) {
 
@@ -161,7 +161,7 @@ final class ParticipationContext extends FeatureContext
         string $memberId,
         bool $expectedToAttend
     ): void {
-        $upcomingSessions = $this->application()->listUpcomingSessions($memberId);
+        $upcomingSessions = $this->application()->listUpcomingSessionsForMember($memberId);
 
         foreach ($upcomingSessions as $session) {
             if ($session->sessionId() === $sessionId) {
@@ -182,7 +182,7 @@ final class ParticipationContext extends FeatureContext
         Assert::assertNotNull($this->plannedSessionId);
         Assert::assertNotNull($this->leanpubInvoiceId);
 
-        $upcomingSessions = $this->application()->listUpcomingSessions($this->leanpubInvoiceId);
+        $upcomingSessions = $this->application()->listUpcomingSessionsForMember($this->leanpubInvoiceId);
 
         foreach ($upcomingSessions as $session) {
             if ($session->sessionId() === $this->plannedSessionId) {
@@ -221,21 +221,23 @@ final class ParticipationContext extends FeatureContext
     {
         $this->mayFail(function () {
             Assert::assertNotNull($this->sessionId);
+            Assert::assertNotNull($this->leanpubInvoiceId);
 
-            $this->application()->getCallUrlForSession($this->sessionId);
+            $this->application()->getCallUrlForSession($this->sessionId, $this->leanpubInvoiceId);
         });
     }
 
     /**
-     * @Then the it fails because it has not been provided yet
+     * @Then /^it fails because (.+)/
      */
-    public function theCallURLCanNotBeDeterminedBecauseItHasNotBeenProvidedYet(): void
+    public function theCallURLCanNotBeDeterminedBecauseItHasNotBeenProvidedYet(string $messageContains): void
     {
-        $this->assertCaughtExceptionMatches(CouldNotGetCallUrl::class);
+        $this->assertCaughtExceptionMatches(CouldNotGetCallUrl::class, $messageContains);
     }
 
     /**
      * @When the administrator sets the call URL to :callUrl
+     * @Given the administrator has set the call URL to :callUrl
      */
     public function theMemberTheAdministratorSetTheCallUrlTo(string $callUrl): void
     {
@@ -247,13 +249,14 @@ final class ParticipationContext extends FeatureContext
     }
 
     /**
-     * @Then the call URL for this session will be :expectedCallUrl
+     * @When the member requests the call URL for this session it will be :expectedCallUrl
      */
     public function theCallUrlForThisSessionWillBe(string $expectedCallUrl): void
     {
         Assert::assertNotNull($this->sessionId);
+        Assert::assertNotNull($this->leanpubInvoiceId);
 
-        $actualUrl = $this->application()->getCallUrlForSession($this->sessionId);
+        $actualUrl = $this->application()->getCallUrlForSession($this->sessionId, $this->leanpubInvoiceId);
 
         Assert::assertEquals($expectedCallUrl, $actualUrl);
     }

@@ -6,7 +6,7 @@ namespace LeanpubBookClub\Application\UpcomingSessions;
 use DateTimeImmutable;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 
-final class UpcomingSession
+final class SessionForMember
 {
     private string $sessionId;
 
@@ -15,6 +15,8 @@ final class UpcomingSession
     private string $description;
 
     private bool $memberIsRegisteredAsAttendee;
+
+    private ?string $urlForCall = null;
 
     public function __construct(
         string $sessionId,
@@ -53,14 +55,13 @@ final class UpcomingSession
         return $this->memberIsRegisteredAsAttendee;
     }
 
-    public function withActiveMemberRegisteredAsAttendee(): self
+    public function withActiveMemberRegisteredAsAttendee(bool $activeMemberIsRegistered): self
     {
-        return new self(
-            $this->sessionId,
-            $this->date,
-            $this->description,
-            true
-        );
+        $copy = clone $this;
+
+        $copy->memberIsRegisteredAsAttendee  = $activeMemberIsRegistered;
+
+        return $copy;
     }
 
     private function dateTime(string $memberTimeZone): DateTimeImmutable
@@ -75,5 +76,19 @@ final class UpcomingSession
     public function isToBeConsideredUpcoming(DateTimeImmutable $currentTime): bool
     {
         return $this->dateTime('UTC')->modify('+2 hours') >= $currentTime;
+    }
+
+    public function urlForCall(): ?string
+    {
+        return $this->urlForCall;
+    }
+
+    public function withUrlForCall(string $urlForCall): self
+    {
+        $copy = clone $this;
+
+        $copy->urlForCall = $urlForCall;
+
+        return $copy;
     }
 }

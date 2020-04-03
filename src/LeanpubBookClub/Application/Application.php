@@ -7,7 +7,7 @@ use LeanpubBookClub\Application\Importing\PurchaseWasAlreadyImported;
 use LeanpubBookClub\Application\Members\Member as MemberReadModel;
 use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
-use LeanpubBookClub\Application\SessionCall\SessionCallUrls;
+use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\SessionCall\SetCallUrl;
 use LeanpubBookClub\Application\UpcomingSessions\Sessions;
 use LeanpubBookClub\Application\UpcomingSessions\SessionForAdministrator;
@@ -38,7 +38,7 @@ final class Application implements ApplicationInterface
 
     private Clock $clock;
 
-    private Sessions $listUpcomingSessions;
+    private Sessions $sessions;
 
     private IndividualPurchases $individualPurchases;
 
@@ -50,34 +50,30 @@ final class Application implements ApplicationInterface
 
     private Members $members;
 
-    private SessionCallUrls $sessionCallUrls;
-
     public function __construct(
         MemberRepository $memberRepository,
         EventDispatcher $eventDispatcher,
         PurchaseRepository $purchaseRepository,
         SessionRepository $sessionRepository,
         Clock $clock,
-        Sessions $listUpcomingSessions,
+        Sessions $sessions,
         IndividualPurchases $individualPurchases,
         GetBookSummary $getBookSummary,
         AssetPublisher $assetPublisher,
         AccessTokenGenerator $accessTokenGenerator,
-        Members $members,
-        SessionCallUrls $sessionCallUrls
+        Members $members
     ) {
         $this->memberRepository = $memberRepository;
         $this->eventDispatcher = $eventDispatcher;
         $this->purchaseRepository = $purchaseRepository;
         $this->sessionRepository = $sessionRepository;
         $this->clock = $clock;
-        $this->listUpcomingSessions = $listUpcomingSessions;
+        $this->sessions = $sessions;
         $this->individualPurchases = $individualPurchases;
         $this->getBookSummary = $getBookSummary;
         $this->assetPublisher = $assetPublisher;
         $this->accessTokenGenerator = $accessTokenGenerator;
         $this->members = $members;
-        $this->sessionCallUrls = $sessionCallUrls;
     }
 
     public function importAllPurchases(): void
@@ -207,9 +203,9 @@ final class Application implements ApplicationInterface
         $this->eventDispatcher->dispatchAll($session->releaseEvents());
     }
 
-    public function listUpcomingSessions(string $memberId): array
+    public function listUpcomingSessionsForMember(string $memberId): array
     {
-        return $this->listUpcomingSessions->upcomingSessions(
+        return $this->sessions->upcomingSessions(
             $this->clock->currentTime(),
             LeanpubInvoiceId::fromString($memberId)
         );
@@ -217,7 +213,7 @@ final class Application implements ApplicationInterface
 
     public function listUpcomingSessionsForAdministrator(): array
     {
-        return $this->listUpcomingSessions->upcomingSessionsForAdministrator($this->clock->currentTime());
+        return $this->sessions->upcomingSessionsForAdministrator($this->clock->currentTime());
     }
 
     public function attendSession(AttendSession $command): void
@@ -269,13 +265,29 @@ final class Application implements ApplicationInterface
         $this->eventDispatcher->dispatchAll($member->releaseEvents());
     }
 
-    public function getCallUrlForSession(string $sessionId): string
+    public function getCallUrlForSession(string $sessionId, string $memberId): string
     {
-        return $this->sessionCallUrls->getCallUrlForSession(SessionId::fromString($sessionId));
+        $memberId = LeanpubInvoiceId::fromString($memberId);
+
+        $sessionId = SessionId::fromString($sessionId);
+        $session = $this->sessions->getSessionForMember(
+            $sessionId,
+            $memberId
+        );
+
+        if (!$session->memberIsRegisteredAsAttendee()) {
+            throw CouldNotGetCallUrl::becauseMemberIsNotARegisteredAttendee($sessionId, $memberId);
+        }
+
+        if (!is_string($session->urlForCall())) {
+            throw CouldNotGetCallUrl::becauseItHasNotBeenDeterminedYet($sessionId);
+        }
+
+        return $session->urlForCall();
     }
 
     public function getSessionForAdministrator(string $sessionId): SessionForAdministrator
     {
-        return $this->listUpcomingSessions->getSessionForAdministrator(SessionId::fromString($sessionId));
+        return $this->sessions->getSessionForAdministrator(SessionId::fromString($sessionId));
     }
 }

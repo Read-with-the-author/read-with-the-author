@@ -8,7 +8,7 @@ use LeanpubBookClub\Application\CancelAttendance;
 use LeanpubBookClub\Application\FlashType;
 use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
-use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
+use LeanpubBookClub\Application\UpcomingSessions\SessionForMember;
 use LeanpubBookClub\Application\UpdateTimeZone;
 use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use Symfony\Component\BrowserKit\Cookie;
@@ -88,13 +88,13 @@ final class MemberAreaTest extends WebTestCase
     public function testUpcomingEvents(): void
     {
         $upcomingSessions = [
-            new UpcomingSession(
+            new SessionForMember(
                 'e44c5dfa-73f5-4355-aba7-21ac67c3c87a',
                 '2020-02-01 20:00',
                 'Chapter 1',
                 true
             ),
-            new UpcomingSession(
+            new SessionForMember(
                 '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
                 '2020-02-08 20:00',
                 'Chapter 2',
@@ -120,7 +120,7 @@ final class MemberAreaTest extends WebTestCase
         $this->upcomingSessionsAre(
             $this->loggedInMember,
             [
-                new UpcomingSession(
+                new SessionForMember(
                     '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
                     '2020-02-08 20:00',
                     'Chapter 2',
@@ -147,7 +147,7 @@ final class MemberAreaTest extends WebTestCase
         $this->upcomingSessionsAre(
             $this->loggedInMember,
             [
-                new UpcomingSession(
+                new SessionForMember(
                     '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
                     '2020-02-08 20:00',
                     'Chapter 2',
@@ -226,23 +226,23 @@ final class MemberAreaTest extends WebTestCase
     }
 
     /**
-     * @param array<UpcomingSession> $upcomingSessions
+     * @param array<SessionForMember> $upcomingSessions
      */
     private function upcomingSessionsAre(Member $member, array $upcomingSessions): void
     {
         $this->application->expects($this->any())
-            ->method('listUpcomingSessions')
+            ->method('listUpcomingSessionsForMember')
             ->with($member->memberId()->asString())
             ->willReturn($upcomingSessions);
     }
 
     /**
-     * @param array<UpcomingSession> $upcomingSessions
+     * @param array<SessionForMember> $upcomingSessions
      */
     private function assertResponseContainsUpcomingSessions(Crawler $crawler, array $upcomingSessions)
     {
         foreach ($upcomingSessions as $upcomingSession) {
-            /** @var UpcomingSession $upcomingSession */
+            /** @var SessionForMember $upcomingSession */
             $sessionId = $upcomingSession->sessionId();
             $sessionElement = self::sessionElement($crawler, $sessionId);
 

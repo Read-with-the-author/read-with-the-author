@@ -6,23 +6,24 @@ namespace Test\Acceptance;
 use DateTimeImmutable;
 use LeanpubBookClub\Application\UpcomingSessions\CouldNotFindSession;
 use LeanpubBookClub\Application\UpcomingSessions\Sessions;
-use LeanpubBookClub\Application\UpcomingSessions\UpcomingSession;
+use LeanpubBookClub\Application\UpcomingSessions\SessionForMember;
 use LeanpubBookClub\Application\UpcomingSessions\SessionForAdministrator;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\AttendeeCancelledTheirAttendance;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
+use LeanpubBookClub\Domain\Model\Session\UrlForCallWasUpdated;
 
 final class SessionsInMemory implements Sessions
 {
     /**
-     * @var array<string,UpcomingSession>
+     * @var array<string,SessionForMember> & SessionForMember[]
      */
-    private array $sessions = [];
+    private array $sessionsForMembers = [];
 
     /**
-     * @var array<string,SessionForAdministrator>
+     * @var array<string,SessionForAdministrator> & SessionForAdministrator[]
      */
     private array $sessionsForAdministrator = [];
 
@@ -33,7 +34,7 @@ final class SessionsInMemory implements Sessions
 
     public function whenSessionWasPlanned(SessionWasPlanned $event): void
     {
-        $this->sessions[$event->sessionId()->asString()] = new UpcomingSession(
+        $this->sessionsForMembers[$event->sessionId()->asString()] = new SessionForMember(
             $event->sessionId()->asString(),
             $event->date()->asString(),
             $event->description(),
@@ -45,6 +46,17 @@ final class SessionsInMemory implements Sessions
             $event->date()->asString(),
             $event->description(),
             $event->maximumNumberOfAttendees()
+        );
+    }
+
+    public function whenUrlForCallWasUpdated(UrlForCallWasUpdated $event): void
+    {
+        $this->updateSessionForMember(
+            $this->sessionForMember($event->sessionId())->withUrlForCall($event->callUrl())
+        );
+
+        $this->updateSessionForAdministrator(
+            $this->sessionForAdministrator($event->sessionId())->withUrlForCall($event->callUrl())
         );
     }
 
@@ -61,20 +73,25 @@ final class SessionsInMemory implements Sessions
     public function upcomingSessions(DateTimeImmutable $currentTime, LeanpubInvoiceId $activeMemberId): array
     {
         return array_map(
-            function (UpcomingSession $upcomingSession) use ($activeMemberId): UpcomingSession {
-                if ($this->attendees[$upcomingSession->sessionId()][$activeMemberId->asString()] ?? false) {
-                    return $upcomingSession->withActiveMemberRegisteredAsAttendee();
-                }
-
-                return $upcomingSession;
+            function (SessionForMember $session) use ($activeMemberId): SessionForMember {
+                return $this->updateSessionForMemberReadModel($session, $activeMemberId);
             },
             array_filter(
-                $this->sessions,
-                function (UpcomingSession $session) use ($currentTime): bool {
+                $this->sessionsForMembers,
+                function (SessionForMember $session) use ($currentTime): bool {
                     return $session->isToBeConsideredUpcoming($currentTime);
                 }
             )
         );
+    }
+
+    public function getSessionForMember(SessionId $sessionId, LeanpubInvoiceId $memberId): SessionForMember
+    {
+        if (!isset($this->sessionsForMembers[$sessionId->asString()])) {
+            throw CouldNotFindSession::withId($sessionId);
+        }
+
+        return $this->updateSessionForMemberReadModel($this->sessionsForMembers[$sessionId->asString()], $memberId);
     }
 
     public function upcomingSessionsForAdministrator(DateTimeImmutable $currentTime): array
@@ -102,10 +119,39 @@ final class SessionsInMemory implements Sessions
     }
 
     private function updateUpcomingSessionForAdministratorReadModel(
-        SessionForAdministrator $upcomingSession
+        SessionForAdministrator $session
     ): SessionForAdministrator {
-        $attendeesForSession = $this->attendees[$upcomingSession->sessionId()] ?? [];
+        $attendeesForSession = $this->attendees[$session->sessionId()] ?? [];
 
-        return $upcomingSession->withNumberOfAttendees(count($attendeesForSession));
+        return $session->withNumberOfAttendees(count($attendeesForSession));
+    }
+
+    private function updateSessionForMemberReadModel(
+        SessionForMember $session,
+        LeanpubInvoiceId $activeMemberId
+    ): SessionForMember {
+        $isActiveMemberRegisteredAsAttendee = $this->attendees[$session->sessionId()][$activeMemberId->asString()] ?? false;
+
+        return $session->withActiveMemberRegisteredAsAttendee($isActiveMemberRegisteredAsAttendee);
+    }
+
+    private function sessionForMember(SessionId $sessionId): SessionForMember
+    {
+        return $this->sessionsForMembers[$sessionId->asString()];
+    }
+
+    private function updateSessionForMember(SessionForMember $updatedSession): void
+    {
+        $this->sessionsForMembers[$updatedSession->sessionId()] = $updatedSession;
+    }
+
+    private function sessionForAdministrator(SessionId $sessionId): SessionForAdministrator
+    {
+        return $this->sessionsForAdministrator[$sessionId->asString()];
+    }
+
+    private function updateSessionForAdministrator(SessionForAdministrator $updatedSession): void
+    {
+        $this->sessionsForAdministrator[$updatedSession->sessionId()] = $updatedSession;
     }
 }

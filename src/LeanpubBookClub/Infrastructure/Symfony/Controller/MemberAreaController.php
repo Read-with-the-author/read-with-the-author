@@ -55,7 +55,7 @@ final class MemberAreaController extends AbstractController
         return $this->render(
             'member_area/index.html.twig',
             [
-                'upcomingSessions' => $this->application->listUpcomingSessions($member->memberId()->asString()),
+                'upcomingSessions' => $this->application->listUpcomingSessionsForMember($member->memberId()->asString()),
                 'memberTimeZone' => $member->timeZone(),
                 'updateTimeZoneForm' => $this->createUpdateTimeZoneForm($member)->createView()
             ]
@@ -115,10 +115,10 @@ final class MemberAreaController extends AbstractController
     /**
      * @Route("/redirect-to-video-call/{sessionId}", name="redirect_to_video_call", methods={"GET"})
      */
-    public function redirectToVideoCall(string $sessionId): Response
+    public function redirectToVideoCall(string $sessionId, UserInterface $user): Response
     {
         try {
-            $videoCallUrl = $this->application->getCallUrlForSession($sessionId);
+            $videoCallUrl = $this->application->getCallUrlForSession($sessionId, $user->getUsername());
 
             return $this->redirect($videoCallUrl);
         } catch (CouldNotGetCallUrl $exception) {
