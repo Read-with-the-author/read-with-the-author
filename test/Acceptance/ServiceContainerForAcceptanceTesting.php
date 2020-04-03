@@ -7,9 +7,12 @@ use Assert\Assert;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Model\Member\AnAccessTokenWasGenerated;
+use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
+use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Session\AttendeeCancelledTheirAttendance;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
+use LeanpubBookClub\Domain\Model\Session\SessionRepository;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
 use LeanpubBookClub\Domain\Model\Session\UrlForCallWasUpdated;
 use LeanpubBookClub\Infrastructure\ServiceContainer;
@@ -17,6 +20,8 @@ use LeanpubBookClub\Infrastructure\ServiceContainer;
 final class ServiceContainerForAcceptanceTesting extends ServiceContainer
 {
     private ?EventDispatcherSpy $eventDispatcherSpy = null;
+
+    private ?MailerSpy $mailer = null;
 
     public function authorTimeZone(): TimeZone
     {
@@ -66,24 +71,53 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
         );
     }
 
+    protected function purchaseRepository(): PurchaseRepository
+    {
+        if ($this->purchaseRepository === null) {
+            $this->purchaseRepository = new PurchaseRepositoryInMemory();
+        }
+
+        return $this->purchaseRepository;
+    }
+
+    protected function sessionRepository(): SessionRepository
+    {
+        if ($this->sessionRepository === null) {
+            $this->sessionRepository = new SessionRepositoryInMemory();
+        }
+
+        return $this->sessionRepository;
+    }
+
+    protected function memberRepository(): MemberRepository
+    {
+        if ($this->memberRepository === null) {
+            $this->memberRepository = new MemberRepositoryInMemory();
+        }
+
+        return $this->memberRepository;
+    }
+
     protected function members(): MembersInMemory
     {
-        $members = parent::members();
+        if ($this->members ===  null) {
+            $this->members = new MembersInMemory();
+        }
 
-        Assert::that($members)->isInstanceOf(MembersInMemory::class);
-        /** @var MembersInMemory $members */
+        Assert::that($this->members)->isInstanceOf(MembersInMemory::class);
 
-        return $members;
+        return $this->members;
     }
 
     protected function sessions(): SessionsInMemory
     {
-        $sessions = parent::sessions();
+        if ($this->upcomingSessions === null) {
+            $this->upcomingSessions = new SessionsInMemory();
+        }
 
-        Assert::that($sessions)->isInstanceOf(SessionsInMemory::class);
-        /** @var SessionsInMemory $sessions */
+        Assert::that($this->upcomingSessions)->isInstanceOf(SessionsInMemory::class);
 
-        return $sessions;
+        return $this->upcomingSessions;
     }
 
     public function eventDispatcherSpy(): EventDispatcherSpy
@@ -120,7 +154,6 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
             $this->mailer = new MailerSpy();
         }
 
-        Assert::that($this->mailer)->isInstanceOf(MailerSpy::class);
         return $this->mailer;
     }
 }

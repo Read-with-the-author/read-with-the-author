@@ -9,7 +9,6 @@ use LeanpubBookClub\Application\Application;
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
-use LeanpubBookClub\Application\Email\Email;
 use LeanpubBookClub\Application\Email\Mailer;
 use LeanpubBookClub\Application\Email\SendEmail;
 use LeanpubBookClub\Application\EventDispatcher;
@@ -34,26 +33,20 @@ use Test\Acceptance\AssetPublisherInMemory;
 use Test\Acceptance\FakeClock;
 use Test\Acceptance\GetBookSummaryInMemory;
 use Test\Acceptance\IndividualPurchasesInMemory;
-use Test\Acceptance\MemberRepositoryInMemory;
-use Test\Acceptance\MembersInMemory;
-use Test\Acceptance\PurchaseRepositoryInMemory;
 use Test\Acceptance\SessionCallUrlsInMemory;
-use Test\Acceptance\SessionRepositoryInMemory;
-use Test\Acceptance\SessionsInMemory;
 
 abstract class ServiceContainer
 {
     protected ?EventDispatcher $eventDispatcher = null;
 
     protected ?ApplicationInterface $application = null;
-    private ?Sessions $upcomingSessions = null;
+    protected ?Sessions $upcomingSessions = null;
     private ?Clock $clock = null;
-    private ?MemberRepository $memberRepository = null;
-    private ?PurchaseRepository $purchaseRepository = null;
-    private ?SessionRepository $sessionRepository = null;
+    protected ?MemberRepository $memberRepository = null;
+    protected ?PurchaseRepository $purchaseRepository = null;
+    protected ?SessionRepository $sessionRepository = null;
     private ?IndividualPurchasesInMemory $individualPurchases = null;
-    protected ?Mailer $mailer = null;
-    private ?Members $members = null;
+    protected ?Members $members = null;
     private ?SessionCallUrls $sessionCallUrls = null;
 
     protected function clock(): Clock
@@ -143,54 +136,15 @@ abstract class ServiceContainer
         );
     }
 
-    protected function purchaseRepository(): PurchaseRepository
-    {
-        if ($this->purchaseRepository === null) {
-            $this->purchaseRepository = new PurchaseRepositoryInMemory();
-        }
+    abstract protected function purchaseRepository(): PurchaseRepository;
 
-        return $this->purchaseRepository;
-    }
+    abstract protected function sessionRepository(): SessionRepository;
 
-    protected function sessionRepository(): SessionRepository
-    {
-        if ($this->sessionRepository === null) {
-            $this->sessionRepository = new SessionRepositoryInMemory();
-        }
+    abstract protected function memberRepository(): MemberRepository;
 
-        return $this->sessionRepository;
-    }
+    abstract protected function sessions(): Sessions;
 
-    protected function memberRepository(): MemberRepository
-    {
-        if ($this->memberRepository === null) {
-            $this->memberRepository = new MemberRepositoryInMemory();
-        }
-
-        return $this->memberRepository;
-    }
-
-    protected function sessions(): Sessions
-    {
-        if ($this->upcomingSessions === null) {
-            $this->upcomingSessions = new SessionsInMemory();
-        }
-
-        return $this->upcomingSessions;
-    }
-
-    protected function mailer(): Mailer
-    {
-        if ($this->mailer === null) {
-            $this->mailer = new class implements Mailer {
-                public function send(Email $email): void
-                {
-                }
-            };
-        }
-
-        return $this->mailer;
-    }
+    abstract protected function mailer(): Mailer;
 
     protected function getBookSummary(): GetBookSummary
     {
@@ -207,14 +161,7 @@ abstract class ServiceContainer
         return new RealUuidAccessTokenGenerator();
     }
 
-    protected function members(): Members
-    {
-        if ($this->members ===  null) {
-            $this->members = new MembersInMemory();
-        }
-
-        return $this->members;
-    }
+    abstract protected function members(): Members;
 
     protected function authorTimeZone(): TimeZone
     {
