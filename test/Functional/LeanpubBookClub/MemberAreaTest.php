@@ -88,18 +88,16 @@ final class MemberAreaTest extends WebTestCase
     public function testUpcomingEvents(): void
     {
         $upcomingSessions = [
-            new SessionForMember(
+            (new SessionForMember(
                 'e44c5dfa-73f5-4355-aba7-21ac67c3c87a',
                 '2020-02-01 20:00',
-                'Chapter 1',
-                true
-            ),
-            new SessionForMember(
+                'Chapter 1'
+            ))->withActiveMemberRegisteredAsAttendee(true),
+            (new SessionForMember(
                 '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
                 '2020-02-08 20:00',
-                'Chapter 2',
-                false
-            )
+                'Chapter 2'
+            ))->withActiveMemberRegisteredAsAttendee(true)
         ];
 
         $this->upcomingSessionsAre($this->loggedInMember, $upcomingSessions);
@@ -123,8 +121,7 @@ final class MemberAreaTest extends WebTestCase
                 new SessionForMember(
                     '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
                     '2020-02-08 20:00',
-                    'Chapter 2',
-                    false
+                    'Chapter 2'
                 )
             ]);
 
@@ -147,12 +144,11 @@ final class MemberAreaTest extends WebTestCase
         $this->upcomingSessionsAre(
             $this->loggedInMember,
             [
-                new SessionForMember(
+                (new SessionForMember(
                     '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
                     '2020-02-08 20:00',
-                    'Chapter 2',
-                    true
-                )
+                    'Chapter 2'
+                ))->withActiveMemberRegisteredAsAttendee(true)
             ]);
 
         $this->client->request('GET', '/member-area/');

@@ -27,18 +27,25 @@ final class SessionsUsingDoctrineDbal implements Sessions
 
     public function upcomingSessions(DateTimeImmutable $currentTime, LeanpubInvoiceId $activeMemberId): array
     {
-        return [];
+        // @todo only upcoming sessions
+
+        $rows = $this->connection->selectAll(
+            $this->createQueryBuilderForMember($activeMemberId)
+        );
+
+        return array_map([$this, 'createSessionForMember'], $rows);
     }
 
     public function upcomingSessionsForAdministrator(DateTimeImmutable $currentTime): array
     {
         $rows = $this->connection->selectAll(
-            $this->createQueryBuilderForAdministrator()->orderBy('date', 'ASC')
+            $this->createQueryBuilderForAdministrator()
+                ->orderBy('date', 'ASC')
         );
 
         // @todo only upcoming sessions
 
-        return $this->createSessionsForAdministrator($rows);
+        return array_map([$this, 'createSessionForAdministrator'], $rows);
     }
 
     public function getSessionForAdministrator(SessionId $sessionId): SessionForAdministrator
@@ -58,20 +65,7 @@ final class SessionsUsingDoctrineDbal implements Sessions
     }
 
     /**
-     * @param array<array<string,mixed>> $rows
-     * @return array<SessionForAdministrator>
-     */
-    private function createSessionsForAdministrator(array $rows): array
-    {
-        return array_map(
-            [$this, 'createSessionForAdministrator'],
-            $rows
-        );
-    }
-
-    /**
      * @param array<string,mixed> $row
-     * @return SessionForAdministrator
      */
     private function createSessionForAdministrator(array $row): SessionForAdministrator
     {
@@ -87,11 +81,38 @@ final class SessionsUsingDoctrineDbal implements Sessions
             ->withNumberOfAttendees(self::asInt($row, 'numberOfAttendees'));
     }
 
+    /**
+     * @param array<string,mixed> $row
+     */
+    private function createSessionForMember(array $row): SessionForMember
+    {
+        $session = new SessionForMember(
+            self::asString($row, 'sessionId'),
+            self::asString($row, 'date'),
+            self::asString($row, 'description')
+        );
+
+        return $session
+            ->withUrlForCall(self::asStringOrNull($row, 'urlForCall'))
+            ->withActiveMemberRegisteredAsAttendee(self::asInt($row, 'memberIsRegisteredAsAttendee') > 0);
+    }
+
     private function createQueryBuilderForAdministrator(): QueryBuilder
     {
         return $this->connection->createQueryBuilder()
             ->select('*')
             ->addSelect('(SELECT COUNT(*) FROM attendees a WHERE a.sessionId = sessionId) AS numberOfAttendees')
+            ->from('sessions');
+    }
+
+    private function createQueryBuilderForMember(LeanpubInvoiceId $memberId): QueryBuilder
+    {
+        return $this->connection->createQueryBuilder()
+            ->select('*')
+            ->addSelect(
+                '(SELECT COUNT(*) FROM attendees WHERE attendees.sessionId = sessions.sessionId AND attendees.memberId = :memberId) AS memberIsRegisteredAsAttendee'
+            )
+            ->setParameter('memberId', $memberId->asString())
             ->from('sessions');
     }
 }

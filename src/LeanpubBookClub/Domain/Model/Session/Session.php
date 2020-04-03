@@ -98,6 +98,8 @@ final class Session implements Aggregate, SpecifiesSchema
     public function cancelAttendance(LeanpubInvoiceId $memberId): void
     {
         foreach ($this->attendees as $key => $attendee) {
+            $this->deleteChildEntity($attendee);
+
             if ($attendee->memberId()->equals($memberId)) {
                 unset($this->attendees[$key]);
                 $this->events[] = new AttendeeCancelledTheirAttendance($this->sessionId, $memberId);

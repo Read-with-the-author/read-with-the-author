@@ -14,20 +14,18 @@ final class SessionForMember
 
     private string $description;
 
-    private bool $memberIsRegisteredAsAttendee;
+    private bool $memberIsRegisteredAsAttendee = false;
 
     private ?string $urlForCall = null;
 
     public function __construct(
         string $sessionId,
         string $date,
-        string $description,
-        bool $memberIsRegisteredAsAttendee
+        string $description
     ) {
         $this->sessionId = $sessionId;
         $this->date = $date;
         $this->description = $description;
-        $this->memberIsRegisteredAsAttendee = $memberIsRegisteredAsAttendee;
     }
 
     public function sessionId(): string
@@ -83,7 +81,7 @@ final class SessionForMember
         return $this->urlForCall;
     }
 
-    public function withUrlForCall(string $urlForCall): self
+    public function withUrlForCall(?string $urlForCall): self
     {
         $copy = clone $this;
 
