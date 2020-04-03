@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker-compose run --rm composer --ignore-platform-reqs $@
+docker-compose run --rm php composer $@

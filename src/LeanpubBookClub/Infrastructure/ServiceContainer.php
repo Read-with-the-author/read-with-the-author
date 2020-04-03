@@ -144,7 +144,6 @@ abstract class ServiceContainer
 
     protected function purchaseRepository(): PurchaseRepository
     {
-        // TODO Replace with production implementation
         if ($this->purchaseRepository === null) {
             $this->purchaseRepository = new PurchaseRepositoryInMemory();
         }
@@ -164,7 +163,6 @@ abstract class ServiceContainer
 
     protected function memberRepository(): MemberRepository
     {
-        // TODO Replace with production implementation
         if ($this->memberRepository === null) {
             $this->memberRepository = new MemberRepositoryInMemory();
         }
@@ -186,7 +184,6 @@ abstract class ServiceContainer
     {
         if ($this->mailer === null) {
             $this->mailer = new class implements Mailer {
-                // TODO replace with production implementation
                 public function send(Email $email): void
                 {
                 }

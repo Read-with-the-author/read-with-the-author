@@ -40,6 +40,9 @@ class Kernel extends BaseKernel
         $eventDispatcher->subscribeToAllEvents(
             [$this->getContainer()->get(AddFlashMessageToSession::class), 'notify']
         );
+        $eventDispatcher->subscribeToAllEvents(
+            [$this->getContainer()->get(LogEvents::class), 'notify']
+        );
     }
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void

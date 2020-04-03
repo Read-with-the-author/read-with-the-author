@@ -47,10 +47,15 @@ services:
     LeanpubBookClub\Infrastructure\Symfony\SymfonyMailer:
         public: '%kernel.debug%'
 
+    LeanpubBookClub\Application\Email\Mailer: '@LeanpubBookClub\Infrastructure\Symfony\SymfonyMailer'
+
     LeanpubBookClub\Domain\Model\Common\EmailAddress:
         factory: ['@LeanpubBookClub\Infrastructure\Configuration', 'systemEmailAddress']
 
     LeanpubBookClub\Infrastructure\Symfony\AddFlashMessageToSession:
+        public: true
+
+    LeanpubBookClub\Infrastructure\Symfony\LogEvents:
         public: true
 
     LeanpubBookClub\Infrastructure\Symfony\Security\AccessTokenAuthenticator: ~

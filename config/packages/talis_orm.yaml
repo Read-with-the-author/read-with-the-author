@@ -1,6 +1,5 @@
 talis_orm:
     aggregates:
         - LeanpubBookClub\Domain\Model\Purchase\Purchase
-# TODO add mapping for these aggregates:
+        - LeanpubBookClub\Domain\Model\Member\Member
 #        - LeanpubBookClub\Domain\Model\Session\Session
-#        - LeanpubBookClub\Domain\Model\Member\Member

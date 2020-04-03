@@ -6,18 +6,11 @@ services:
         build: docker/php/
         volumes:
             - ./:/app:cached
+            - ${COMPOSER_HOME}:/home/.composer:cached
         working_dir: /app
         user: ${HOST_UID}:${HOST_GID}
-        env_file:
-            - .env
-            - .env.local
-
-    composer:
-        image: composer:latest
-        volumes:
-            - ./:/app:cached
-            - ~/.composer:/tmp:cached
-        user: ${HOST_UID}:${HOST_GID}
+        environment:
+            COMPOSER_HOME: "/home/.composer"
         env_file:
             - .env
             - .env.local
@@ -29,6 +22,8 @@ services:
             - ./:/app:cached
         ports:
             - "80:80"
+        depends_on:
+          - php-fpm
 
     php-fpm:
         image: matthiasnoback/leanpub-book-club-php-fpm:latest
@@ -39,6 +34,8 @@ services:
             - .env
             - .env.local
         user: ${HOST_UID}:${HOST_GID}
+        depends_on:
+          - mailhog
 
     mailhog:
         image: mailhog/mailhog
