@@ -70,16 +70,7 @@ final class Member implements Aggregate, SpecifiesSchema
     }
 
     /**
-     * @template T
-     * @return array<class-string<T>,array<T>>
-     */
-    public function childEntitiesByType(): array
-    {
-        return [];
-    }
-
-    /**
-     * @return array<class-string>
+     * @return array<int,class-string>
      */
     public static function childEntityTypes(): array
     {
@@ -87,10 +78,16 @@ final class Member implements Aggregate, SpecifiesSchema
     }
 
     /**
-     * @template T
-     * @param array<string,string|int|float|bool|null> $aggregateState
-     * @param array<class-string<T>, array<T>> $childEntitiesByType
-     * @return self
+     * @return array<string,array<object>>
+     */
+    public function childEntitiesByType(): array
+    {
+        return [];
+    }
+
+    /**
+     * @param array<string,mixed> $aggregateState
+     * @param array<string,array<object>> $childEntitiesByType
      */
     public static function fromState(array $aggregateState, array $childEntitiesByType): self
     {

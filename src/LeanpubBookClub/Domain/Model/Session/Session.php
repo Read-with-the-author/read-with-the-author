@@ -4,12 +4,16 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Domain\Model\Session;
 
 use Assert\Assert;
-use LeanpubBookClub\Domain\Model\Common\Entity;
+use Doctrine\DBAL\Schema\Schema;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
+use TalisOrm\Aggregate;
+use TalisOrm\AggregateBehavior;
+use TalisOrm\AggregateId;
+use TalisOrm\Schema\SpecifiesSchema;
 
-final class Session
+final class Session implements Aggregate, SpecifiesSchema
 {
-    use Entity;
+    use AggregateBehavior;
 
     private SessionId $sessionId;
 
@@ -17,7 +21,7 @@ final class Session
 
     private string $description;
 
-    private int $maximumNumberOfParticipantsAllowed;
+    private int $maximumNumberOfAttendees;
 
     /**
      * @var array<Attendee> & Attendee[]
@@ -28,20 +32,8 @@ final class Session
 
     private ?string $urlForCall = null;
 
-    private function __construct(
-        SessionId $sessionId,
-        ScheduledDate $date,
-        string $description,
-        int $maximumNumberOfParticipantsAllowed
-    ) {
-        Assert::that($description)->notEmpty('The session description should not be empty');
-        Assert::that($maximumNumberOfParticipantsAllowed)
-            ->greaterThan(0, 'The maximum number of participants should be greater than 0');
-
-        $this->sessionId = $sessionId;
-        $this->date = $date;
-        $this->description = $description;
-        $this->maximumNumberOfParticipantsAllowed = $maximumNumberOfParticipantsAllowed;
+    private function __construct()
+    {
     }
 
     public static function plan(
@@ -50,7 +42,16 @@ final class Session
         string $description,
         int $maximumNumberOfAttendees
     ): self {
-        $session = new self($sessionId, $date, $description, $maximumNumberOfAttendees);
+        $session = new self();
+
+        Assert::that($description)->notEmpty('The session description should not be empty');
+        Assert::that($maximumNumberOfAttendees)
+            ->greaterThan(0, 'The maximum number of participants should be greater than 0');
+
+        $session->sessionId = $sessionId;
+        $session->date = $date;
+        $session->description = $description;
+        $session->maximumNumberOfAttendees = $maximumNumberOfAttendees;
 
         $session->events[] = new SessionWasPlanned($sessionId, $date, $description, $maximumNumberOfAttendees);
 
@@ -76,11 +77,11 @@ final class Session
             }
         }
 
-        $this->attendees[] = new Attendee($this->sessionId, $memberId);
+        $this->attendees[] = Attendee::create($this->sessionId, $memberId);
 
         $this->events[] = new AttendeeRegisteredForSession($this->sessionId, $memberId, $this->date);
 
-        if (count($this->attendees) >= $this->maximumNumberOfParticipantsAllowed) {
+        if (count($this->attendees) >= $this->maximumNumberOfAttendees) {
             $this->close();
         }
     }
@@ -129,5 +130,103 @@ final class Session
         $this->description = $description;
 
         $this->events[] = new DescriptionWasUpdated($this->sessionId, $description);
+    }
+
+    /**
+     * @return array<int,class-string>
+     */
+    public static function childEntityTypes(): array
+    {
+        return [
+            Attendee::class
+        ];
+    }
+
+    /**
+     * @return array<string,array<object>>
+     */
+    public function childEntitiesByType(): array
+    {
+        return [
+            Attendee::class => $this->attendees
+        ];
+    }
+
+    /**
+     * @param array<string,mixed> $aggregateState
+     * @param array<string,array<object>> $childEntitiesByType
+     */
+    public static function fromState(array $aggregateState, array $childEntitiesByType): self
+    {
+        $instance = new self();
+
+        $instance->sessionId = SessionId::fromString((string)$aggregateState['sessionId']);
+        $instance->date = ScheduledDate::fromString((string)$aggregateState['date']);
+        $instance->description = (string)$aggregateState['description'];
+        $instance->maximumNumberOfAttendees = $aggregateState['maximumNumberOfAttendees'];
+        $instance->wasClosed = (bool)$aggregateState['wasClosed'];
+        $instance->urlForCall = $aggregateState['urlForCall'];
+
+        $attendees = $childEntitiesByType[Attendee::class];
+        Assert::that($attendees)->all()->isInstanceOf(Attendee::class);
+        $instance->attendees = $attendees;
+
+        return $instance;
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function state(): array
+    {
+        return [
+            'sessionId' => $this->sessionId->asString(),
+            'date' => $this->date->asString(),
+            'description' => $this->description,
+            'maximumNumberOfAttendees' => $this->maximumNumberOfAttendees,
+            'wasClosed' => $this->wasClosed,
+            'urlForCall' => $this->urlForCall
+        ];
+    }
+
+    public static function tableName(): string
+    {
+        return 'sessions';
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function identifier(): array
+    {
+        return [
+            'sessionId' => $this->sessionId->asString()
+        ];
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public static function identifierForQuery(AggregateId $aggregateId): array
+    {
+        return [
+            'sessionId' => (string)$aggregateId
+        ];
+    }
+
+    public static function specifySchema(Schema $schema): void
+    {
+        $table = $schema->createTable(self::tableName());
+
+        $table->addColumn('sessionId', 'string')->setNotnull(true);
+        $table->setPrimaryKey(['sessionId']);
+
+        $table->addColumn('date', 'string')->setNotnull(true);
+        $table->addColumn('description', 'string')->setNotnull(true);
+        $table->addColumn('maximumNumberOfAttendees', 'integer')->setNotnull(true);
+        $table->addColumn('wasClosed', 'boolean')->setNotnull(true);
+        $table->addColumn('urlForCall', 'string')->setNotnull(false);
+
+        Attendee::specifySchema($schema);
     }
 }

@@ -14,7 +14,7 @@ use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
 
-final class UpcomingSessionsInMemory implements Sessions
+final class SessionsInMemory implements Sessions
 {
     /**
      * @var array<string,UpcomingSession>

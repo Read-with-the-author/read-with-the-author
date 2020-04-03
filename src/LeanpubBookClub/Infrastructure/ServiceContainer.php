@@ -17,6 +17,7 @@ use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
 use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Application\RequestAccess\GenerateAccessToken;
 use LeanpubBookClub\Application\SessionCall\SessionCallUrls;
+use LeanpubBookClub\Application\UpcomingSessions\Sessions;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Model\Member\AccessWasGrantedToMember;
 use LeanpubBookClub\Domain\Model\Member\AnAccessTokenWasGenerated;
@@ -38,14 +39,14 @@ use Test\Acceptance\MembersInMemory;
 use Test\Acceptance\PurchaseRepositoryInMemory;
 use Test\Acceptance\SessionCallUrlsInMemory;
 use Test\Acceptance\SessionRepositoryInMemory;
-use Test\Acceptance\UpcomingSessionsInMemory;
+use Test\Acceptance\SessionsInMemory;
 
 abstract class ServiceContainer
 {
     protected ?EventDispatcher $eventDispatcher = null;
 
     protected ?ApplicationInterface $application = null;
-    private ?UpcomingSessionsInMemory $upcomingSessions = null;
+    private ?Sessions $upcomingSessions = null;
     private ?Clock $clock = null;
     private ?MemberRepository $memberRepository = null;
     private ?PurchaseRepository $purchaseRepository = null;
@@ -153,7 +154,6 @@ abstract class ServiceContainer
 
     protected function sessionRepository(): SessionRepository
     {
-        // TODO Replace with production implementation
         if ($this->sessionRepository === null) {
             $this->sessionRepository = new SessionRepositoryInMemory();
         }
@@ -170,11 +170,10 @@ abstract class ServiceContainer
         return $this->memberRepository;
     }
 
-    protected function sessions(): UpcomingSessionsInMemory
+    protected function sessions(): Sessions
     {
-        // TODO Replace with production implementation
         if ($this->upcomingSessions === null) {
-            $this->upcomingSessions = new UpcomingSessionsInMemory();
+            $this->upcomingSessions = new SessionsInMemory();
         }
 
         return $this->upcomingSessions;

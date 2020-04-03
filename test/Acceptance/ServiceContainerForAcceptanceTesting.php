@@ -18,14 +18,6 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
 {
     private ?EventDispatcherSpy $eventDispatcherSpy = null;
 
-    public function setCurrentTime(string $time): void
-    {
-        $clock = $this->clock();
-        Assert::that($clock)->isInstanceOf(FakeClock::class);
-
-        $clock->setCurrentTime($time);
-    }
-
     public function authorTimeZone(): TimeZone
     {
         return parent::authorTimeZone();
@@ -82,6 +74,16 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
         /** @var MembersInMemory $members */
 
         return $members;
+    }
+
+    protected function sessions(): SessionsInMemory
+    {
+        $sessions = parent::sessions();
+
+        Assert::that($sessions)->isInstanceOf(SessionsInMemory::class);
+        /** @var SessionsInMemory $sessions */
+
+        return $sessions;
     }
 
     public function eventDispatcherSpy(): EventDispatcherSpy

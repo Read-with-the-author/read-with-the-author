@@ -3,15 +3,18 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure;
 
+use Assert\Assert;
 use Doctrine\DBAL\Connection as DbalConnection;
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
 use LeanpubBookClub\Application\Email\Mailer;
 use LeanpubBookClub\Application\Members\Members;
+use LeanpubBookClub\Application\UpcomingSessions\Sessions;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
+use LeanpubBookClub\Domain\Model\Session\SessionRepository;
 use LeanpubBookClub\Infrastructure\Doctrine\Connection;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi;
@@ -21,7 +24,10 @@ use LeanpubBookClub\Infrastructure\TalisOrm\EventDispatcherAdapter;
 use LeanpubBookClub\Infrastructure\TalisOrm\MembersUsingDoctrineDbal;
 use LeanpubBookClub\Infrastructure\TalisOrm\MemberTalisOrmRepository;
 use LeanpubBookClub\Infrastructure\TalisOrm\PurchaseTalisOrmRepository;
+use LeanpubBookClub\Infrastructure\TalisOrm\SessionsUsingDoctrineDbal;
+use LeanpubBookClub\Infrastructure\TalisOrm\SessionTalisOrmRepository;
 use TalisOrm\AggregateRepository;
+use Test\Acceptance\UpcomingSessionsInMemory;
 
 final class ProductionServiceContainer extends ServiceContainer
 {
@@ -95,8 +101,18 @@ final class ProductionServiceContainer extends ServiceContainer
         return new MembersUsingDoctrineDbal($this->connection());
     }
 
+    protected function sessionRepository(): SessionRepository
+    {
+        return new SessionTalisOrmRepository($this->talisOrmAggregateRepository());
+    }
+
     private function connection(): Connection
     {
         return new Connection($this->dbalConnection);
+    }
+
+    protected function sessions(): Sessions
+    {
+        return new SessionsUsingDoctrineDbal($this->connection());
     }
 }

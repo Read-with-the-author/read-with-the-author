@@ -13,9 +13,6 @@ use TalisOrm\AggregateRepository;
 
 final class PurchaseTalisOrmRepository implements PurchaseRepository
 {
-    /**
-     * @var AggregateRepository
-     */
     private AggregateRepository $aggregateRepository;
 
     public function __construct(AggregateRepository $aggregateRepository)
