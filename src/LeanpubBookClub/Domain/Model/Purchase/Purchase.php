@@ -5,6 +5,7 @@ namespace LeanpubBookClub\Domain\Model\Purchase;
 
 use Doctrine\DBAL\Schema\Schema;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
+use LeanpubBookClub\Infrastructure\Mapping;
 use TalisOrm\Aggregate;
 use TalisOrm\AggregateBehavior;
 use TalisOrm\AggregateId;
@@ -13,6 +14,7 @@ use TalisOrm\Schema\SpecifiesSchema;
 final class Purchase implements Aggregate, SpecifiesSchema
 {
     use AggregateBehavior;
+    use Mapping;
 
     private LeanpubInvoiceId $leanpubInvoiceId;
 
@@ -86,8 +88,8 @@ final class Purchase implements Aggregate, SpecifiesSchema
     {
         $instance = new self();
 
-        $instance->leanpubInvoiceId = LeanpubInvoiceId::fromString((string)$aggregateState['leanpubInvoiceId']);
-        $instance->wasClaimed = (bool)$aggregateState['wasClaimed'];
+        $instance->leanpubInvoiceId = LeanpubInvoiceId::fromString(self::asString($aggregateState, 'leanpubInvoiceId'));
+        $instance->wasClaimed = self::asBool($aggregateState, 'wasClaimed');
 
         return $instance;
     }

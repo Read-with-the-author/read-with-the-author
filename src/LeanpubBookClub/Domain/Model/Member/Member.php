@@ -6,8 +6,8 @@ namespace LeanpubBookClub\Domain\Model\Member;
 use Doctrine\DBAL\Schema\Schema;
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
-use LeanpubBookClub\Domain\Model\Purchase\Purchase;
 use LeanpubBookClub\Domain\Service\AccessTokenGenerator;
+use LeanpubBookClub\Infrastructure\Mapping;
 use TalisOrm\Aggregate;
 use TalisOrm\AggregateBehavior;
 use TalisOrm\AggregateId;
@@ -16,6 +16,7 @@ use TalisOrm\Schema\SpecifiesSchema;
 final class Member implements Aggregate, SpecifiesSchema
 {
     use AggregateBehavior;
+    use Mapping;
 
     private LeanpubInvoiceId $memberId;
 
@@ -93,12 +94,12 @@ final class Member implements Aggregate, SpecifiesSchema
     {
         $instance = new self();
 
-        $instance->memberId = LeanpubInvoiceId::fromString((string)$aggregateState['memberId']);
-        $instance->emailAddress = EmailAddress::fromString((string)$aggregateState['emailAddress']);
-        $instance->timeZone = TimeZone::fromString((string)$aggregateState['timeZone']);
-        $instance->accessToken = is_string($aggregateState['accessToken'])
-            ? AccessToken::fromString($aggregateState['accessToken'])
-            : null;
+        $instance->memberId = LeanpubInvoiceId::fromString(self::asString($aggregateState, 'memberId'));
+        $instance->emailAddress = EmailAddress::fromString(self::asString($aggregateState, 'emailAddress'));
+        $instance->timeZone = TimeZone::fromString(self::asString($aggregateState, 'timeZone'));
+
+        $accessToken = self::asStringOrNull($aggregateState, 'accessToken');
+        $instance->accessToken = is_string($accessToken) ? AccessToken::fromString($accessToken) : null;
 
         return $instance;
     }

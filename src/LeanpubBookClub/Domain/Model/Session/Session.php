@@ -6,6 +6,7 @@ namespace LeanpubBookClub\Domain\Model\Session;
 use Assert\Assert;
 use Doctrine\DBAL\Schema\Schema;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
+use LeanpubBookClub\Infrastructure\Mapping;
 use TalisOrm\Aggregate;
 use TalisOrm\AggregateBehavior;
 use TalisOrm\AggregateId;
@@ -14,6 +15,7 @@ use TalisOrm\Schema\SpecifiesSchema;
 final class Session implements Aggregate, SpecifiesSchema
 {
     use AggregateBehavior;
+    use Mapping;
 
     private SessionId $sessionId;
 
@@ -160,12 +162,12 @@ final class Session implements Aggregate, SpecifiesSchema
     {
         $instance = new self();
 
-        $instance->sessionId = SessionId::fromString((string)$aggregateState['sessionId']);
-        $instance->date = ScheduledDate::fromString((string)$aggregateState['date']);
-        $instance->description = (string)$aggregateState['description'];
-        $instance->maximumNumberOfAttendees = (int)$aggregateState['maximumNumberOfAttendees'];
-        $instance->wasClosed = (bool)$aggregateState['wasClosed'];
-        $instance->urlForCall = $aggregateState['urlForCall'];
+        $instance->sessionId = SessionId::fromString(self::asString($aggregateState, 'sessionId'));
+        $instance->date = ScheduledDate::fromString(self::asString($aggregateState, 'date'));
+        $instance->description = self::asString($aggregateState, 'description');
+        $instance->maximumNumberOfAttendees = self::asInt($aggregateState, 'maximumNumberOfAttendees');
+        $instance->wasClosed = self::asBool($aggregateState, 'wasClosed');
+        $instance->urlForCall = self::asStringOrNull($aggregateState, 'urlForCall');
 
         $attendees = $childEntitiesByType[Attendee::class];
         Assert::that($attendees)->all()->isInstanceOf(Attendee::class);

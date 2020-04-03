@@ -10,9 +10,12 @@ use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Infrastructure\Doctrine\Connection;
 use LeanpubBookClub\Infrastructure\Doctrine\NoResult;
+use LeanpubBookClub\Infrastructure\Mapping;
 
 final class MembersUsingDoctrineDbal implements Members
 {
+    use Mapping;
+
     private Connection $connection;
 
     public function __construct(Connection $connection)
@@ -61,9 +64,9 @@ final class MembersUsingDoctrineDbal implements Members
     private function createMember($data): Member
     {
         return new Member(
-            (string)$data['memberId'],
-            (string)$data['timeZone'],
-            (string)$data['emailAddress']
+            self::asString($data, 'memberId'),
+            self::asString($data, 'timeZone'),
+            self::asString($data, 'emailAddress')
         );
     }
 }

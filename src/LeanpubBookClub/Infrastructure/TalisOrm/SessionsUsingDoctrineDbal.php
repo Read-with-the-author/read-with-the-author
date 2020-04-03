@@ -12,9 +12,12 @@ use LeanpubBookClub\Application\UpcomingSessions\Sessions;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
 use LeanpubBookClub\Infrastructure\Doctrine\Connection;
+use LeanpubBookClub\Infrastructure\Mapping;
 
 final class SessionsUsingDoctrineDbal implements Sessions
 {
+    use Mapping;
+
     private Connection $connection;
 
     public function __construct(Connection $connection)
@@ -72,12 +75,16 @@ final class SessionsUsingDoctrineDbal implements Sessions
      */
     private function createSessionForAdministrator(array $row): SessionForAdministrator
     {
-        return (new SessionForAdministrator(
-            (string)$row['sessionId'],
-            (string)$row['date'],
-            (string)$row['description'],
-            (int)$row['maximumNumberOfAttendees']
-        ))->withUrlForCall($row['urlForCall'])->withNumberOfAttendees((int)$row['numberOfAttendees']);
+        $session = new SessionForAdministrator(
+            self::asString($row, 'sessionId'),
+            self::asString($row, 'date'),
+            self::asString($row, 'description'),
+            self::asInt($row, 'maximumNumberOfAttendees')
+        );
+
+        return $session
+            ->withUrlForCall(self::asStringOrNull($row, 'urlForCall'))
+            ->withNumberOfAttendees(self::asInt($row, 'numberOfAttendees'));
     }
 
     private function createQueryBuilderForAdministrator(): QueryBuilder

@@ -5,6 +5,7 @@ namespace LeanpubBookClub\Domain\Model\Session;
 
 use Doctrine\DBAL\Schema\Schema;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
+use LeanpubBookClub\Infrastructure\Mapping;
 use TalisOrm\AggregateId;
 use TalisOrm\ChildEntity;
 use TalisOrm\ChildEntityBehavior;
@@ -13,6 +14,7 @@ use TalisOrm\Schema\SpecifiesSchema;
 final class Attendee implements ChildEntity, SpecifiesSchema
 {
     use ChildEntityBehavior;
+    use Mapping;
 
     private SessionId $sessionId;
 
@@ -45,8 +47,8 @@ final class Attendee implements ChildEntity, SpecifiesSchema
     {
         $instance = new self();
 
-        $instance->sessionId = SessionId::fromString((string)$state['sessionId']);
-        $instance->memberId = LeanpubInvoiceId::fromString((string)$state['memberId']);
+        $instance->sessionId = SessionId::fromString(self::asString($state, 'sessionId'));
+        $instance->memberId = LeanpubInvoiceId::fromString(self::asString($state, 'memberId'));
 
         return $instance;
     }
