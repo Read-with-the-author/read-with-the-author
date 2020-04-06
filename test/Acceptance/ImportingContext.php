@@ -5,7 +5,7 @@ namespace Test\Acceptance;
 
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
-use LeanpubBookClub\Domain\Model\Purchase\PurchaseImported;
+use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasImported;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\Purchase;
 use PHPUnit\Framework\Assert;
 
@@ -43,7 +43,7 @@ final class ImportingContext extends FeatureContext
     public function theImportedInvoiceIdsShouldBe(TableNode $table): void
     {
         $actualInvoiceIds = array_map(
-            function (PurchaseImported $event): string {
+            function (PurchaseWasImported $event): string {
                 return $event->leanpubInvoiceId()->asString();
             },
             $this->purchaseImportedEvents()
@@ -62,14 +62,14 @@ final class ImportingContext extends FeatureContext
     }
 
     /**
-     * @return array<PurchaseImported>
+     * @return array<PurchaseWasImported>
      */
     private function purchaseImportedEvents(): array
     {
         return array_filter(
             $this->dispatchedEvents(),
             function (object $event): bool {
-                return $event instanceof PurchaseImported;
+                return $event instanceof PurchaseWasImported;
             }
         );
     }

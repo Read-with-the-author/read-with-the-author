@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Test\Acceptance;
 
+use Behat\Behat\Tester\Exception\PendingException;
 use BehatExpectException\ExpectException;
 use LeanpubBookClub\Application\Email\AccessTokenEmail;
 use LeanpubBookClub\Application\ImportPurchase;
@@ -17,7 +18,7 @@ final class RegistrationContext extends FeatureContext
 {
     use ExpectException;
 
-    private ?string $buyerLeanpubInvoiceId;
+    private ?string $buyerLeanpubInvoiceId = null;
 
     private string $buyerEmailAddress = 'info@matthiasnoback.nl';
 
@@ -56,6 +57,18 @@ final class RegistrationContext extends FeatureContext
         $this->application()->requestAccess(
             new RequestAccess($invoiceId, $this->buyerEmailAddress, $this->memberTimeZone)
         );
+    }
+
+    /**
+     * @Given someone has requested access to the club
+     */
+    public function someoneHasRequestedAccessToTheClub(): void
+    {
+        $invoiceId = 'jP6LfQ3UkfOvZTLZLNfDfg';
+        $this->application()->requestAccess(
+            new RequestAccess($invoiceId, $this->buyerEmailAddress, $this->memberTimeZone)
+        );
+        $this->buyerLeanpubInvoiceId = $invoiceId;
     }
 
     /**
@@ -176,5 +189,15 @@ final class RegistrationContext extends FeatureContext
                 );
             }
         );
+    }
+
+    /**
+     * @When the system process a purchase with the same invoice ID
+     */
+    public function theSystemProcessAPurchaseWithTheSameInvoiceID(): void
+    {
+        Assert::assertNotNull($this->buyerLeanpubInvoiceId);
+
+        $this->application()->importPurchase(new ImportPurchase($this->buyerLeanpubInvoiceId));
     }
 }

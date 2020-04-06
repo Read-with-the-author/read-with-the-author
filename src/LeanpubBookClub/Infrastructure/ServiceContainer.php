@@ -21,6 +21,7 @@ use LeanpubBookClub\Domain\Model\Member\AccessWasGrantedToMember;
 use LeanpubBookClub\Domain\Model\Member\AnAccessTokenWasGenerated;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
+use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasImported;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
@@ -78,6 +79,11 @@ abstract class ServiceContainer
             PurchaseWasClaimed::class,
             [$this->accessPolicy(), 'whenPurchaseWasClaimed']
         );
+        $eventDispatcher->subscribeToSpecificEvent(
+            PurchaseWasImported::class,
+            [$this->accessPolicy(), 'whenPurchaseWasImported']
+        );
+        
         $eventDispatcher->subscribeToSpecificEvent(
             AccessWasGrantedToMember::class,
             [new GenerateAccessToken($this->application()), 'whenAccessWasGrantedToMember']

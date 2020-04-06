@@ -5,7 +5,7 @@ namespace LeanpubBookClub\Domain\Model\Purchase;
 
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 
-final class PurchaseImported
+final class PurchaseWasImported
 {
     /**
      * @var LeanpubInvoiceId

@@ -26,3 +26,8 @@ Feature:
     Given someone has been granted access to the club
     When they request a new access token
     Then they should receive an email with an access token for their dashboard page
+
+  Scenario: A member has requested access but the purchase gets processed afterwards
+    Given someone has requested access to the club
+    When the system process a purchase with the same invoice ID
+    Then they should be granted access to the club

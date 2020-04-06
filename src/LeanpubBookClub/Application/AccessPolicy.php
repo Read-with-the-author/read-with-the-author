@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Application;
 
+use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
+use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasImported;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
 
@@ -38,5 +40,13 @@ final class AccessPolicy
     public function whenPurchaseWasClaimed(PurchaseWasClaimed $event): void
     {
         $this->application->grantAccess($event->memberId());
+    }
+
+    public function whenPurchaseWasImported(PurchaseWasImported $event): void
+    {
+        if ($this->memberRepository->exists($event->leanpubInvoiceId())) {
+            // There was a member waiting for access, let's grant it now
+            $this->application->grantAccess($event->leanpubInvoiceId());
+        }
     }
 }

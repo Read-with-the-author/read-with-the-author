@@ -18,7 +18,7 @@ final class PurchaseTest extends EntityTestCase
 
         self::assertEquals(
             [
-                new PurchaseImported($leanpubInvoiceId)
+                new PurchaseWasImported($leanpubInvoiceId)
             ],
             $purchase->releaseEvents()
         );

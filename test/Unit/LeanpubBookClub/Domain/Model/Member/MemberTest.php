@@ -46,6 +46,20 @@ final class MemberTest extends EntityTestCase
     /**
      * @test
      */
+    public function granting_access_twice_has_no_effect(): void
+    {
+        $member = $this->aMember();
+        $member->grantAccess();
+        $member->releaseEvents();
+
+        $member->grantAccess();
+
+        self::assertEquals([], $member->releaseEvents());
+    }
+
+    /**
+     * @test
+     */
     public function it_can_generate_a_new_access_token(): void
     {
         $member = $this->aMember();

@@ -26,6 +26,8 @@ final class Member implements Aggregate, SpecifiesSchema
 
     private TimeZone $timeZone;
 
+    private bool $wasGrantedAccess = false;
+
     private function __construct()
     {
     }
@@ -48,6 +50,12 @@ final class Member implements Aggregate, SpecifiesSchema
 
     public function grantAccess(): void
     {
+        if ($this->wasGrantedAccess) {
+            return;
+        }
+
+        $this->wasGrantedAccess = true;
+
         $this->events[] = new AccessWasGrantedToMember($this->memberId, $this->emailAddress);
     }
 
@@ -101,6 +109,8 @@ final class Member implements Aggregate, SpecifiesSchema
         $accessToken = self::asStringOrNull($aggregateState, 'accessToken');
         $instance->accessToken = is_string($accessToken) ? AccessToken::fromString($accessToken) : null;
 
+        $instance->wasGrantedAccess = self::asBool($aggregateState, 'wasGrantedAccess');
+
         return $instance;
     }
 
@@ -113,7 +123,8 @@ final class Member implements Aggregate, SpecifiesSchema
             'memberId' => $this->memberId->asString(),
             'emailAddress' => $this->emailAddress->asString(),
             'timeZone' => $this->timeZone->asString(),
-            'accessToken' => $this->accessToken instanceof AccessToken ? $this->accessToken->asString() : null
+            'accessToken' => $this->accessToken instanceof AccessToken ? $this->accessToken->asString() : null,
+            'wasGrantedAccess' => $this->wasGrantedAccess
         ];
     }
 
@@ -152,5 +163,6 @@ final class Member implements Aggregate, SpecifiesSchema
         $table->addColumn('emailAddress', 'string')->setNotnull(true);
         $table->addColumn('accessToken', 'string')->setNotnull(false);
         $table->addColumn('timeZone', 'string')->setNotnull(true);
+        $table->addColumn('wasGrantedAccess', 'boolean')->setNotnull(true)->setDefault(false);
     }
 }

@@ -29,7 +29,7 @@ final class Purchase implements Aggregate, SpecifiesSchema
         $purchase = new self();
         $purchase->leanpubInvoiceId = $leanpubInvoiceId;
 
-        $purchase->events[] = new PurchaseImported($leanpubInvoiceId);
+        $purchase->events[] = new PurchaseWasImported($leanpubInvoiceId);
 
         return $purchase;
     }
