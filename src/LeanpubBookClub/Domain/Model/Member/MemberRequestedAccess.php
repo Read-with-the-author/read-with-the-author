@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Domain\Model\Member;
 
-use LeanpubBookClub\Application\EventProducesFlashMessage;
+use LeanpubBookClub\Application\ProducesFlashMessage;
 use LeanpubBookClub\Application\FlashType;
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 
-final class MemberRequestedAccess implements EventProducesFlashMessage
+final class MemberRequestedAccess implements ProducesFlashMessage
 {
     private EmailAddress $emailAddress;
 

@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Domain\Model\Session;
 
-use LeanpubBookClub\Application\EventProducesFlashMessage;
+use LeanpubBookClub\Application\ProducesFlashMessage;
 use LeanpubBookClub\Application\FlashType;
 
-final class SessionWasPlanned implements EventProducesFlashMessage
+final class SessionWasPlanned implements ProducesFlashMessage
 {
     private SessionId $sessionId;
 

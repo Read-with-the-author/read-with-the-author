@@ -35,6 +35,8 @@ final class SendEmail
         );
 
         $this->sendEmail($email);
+
+        $this->eventDispatcher->dispatch(new AccessTokenEmailWasSent());
     }
 
     public function whenAttendeeRegisteredForSession(AttendeeRegisteredForSession $event): void

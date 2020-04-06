@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Application;
 
-interface EventProducesFlashMessage
+interface ProducesFlashMessage
 {
     /**
      * @return string Should be one of the FlashType interface constants to make it work with Bootstrap

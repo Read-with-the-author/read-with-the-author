@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure\Symfony;
 
-use LeanpubBookClub\Application\EventProducesFlashMessage;
+use LeanpubBookClub\Application\ProducesFlashMessage;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -26,7 +26,7 @@ final class AddFlashMessageToSession
             return;
         }
 
-        if (!$event instanceof EventProducesFlashMessage) {
+        if (!$event instanceof ProducesFlashMessage) {
             return;
         }
 
