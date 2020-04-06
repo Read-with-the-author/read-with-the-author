@@ -42,6 +42,16 @@ final class PlanSessionForm extends AbstractType
                 ]
             )
             ->add(
+                'duration',
+                IntegerType::class,
+                [
+                    'constraints' => [
+                        new NotBlank(),
+                        new Range(['min' => 0])
+                    ]
+                ]
+            )
+            ->add(
                 'description',
                 TextType::class,
                 [

@@ -34,6 +34,8 @@ final class Session implements Aggregate, SpecifiesSchema
 
     private ?string $urlForCall = null;
 
+    private Duration $duration;
+
     private function __construct()
     {
     }
@@ -41,6 +43,7 @@ final class Session implements Aggregate, SpecifiesSchema
     public static function plan(
         SessionId $sessionId,
         ScheduledDate $date,
+        Duration $duration,
         string $description,
         int $maximumNumberOfAttendees
     ): self {
@@ -52,10 +55,17 @@ final class Session implements Aggregate, SpecifiesSchema
 
         $session->sessionId = $sessionId;
         $session->date = $date;
+        $session->duration = $duration;
         $session->description = $description;
         $session->maximumNumberOfAttendees = $maximumNumberOfAttendees;
 
-        $session->events[] = new SessionWasPlanned($sessionId, $date, $description, $maximumNumberOfAttendees);
+        $session->events[] = new SessionWasPlanned(
+            $sessionId,
+            $date,
+            $duration,
+            $description,
+            $maximumNumberOfAttendees
+        );
 
         return $session;
     }
@@ -166,6 +176,7 @@ final class Session implements Aggregate, SpecifiesSchema
 
         $instance->sessionId = SessionId::fromString(self::asString($aggregateState, 'sessionId'));
         $instance->date = ScheduledDate::fromString(self::asString($aggregateState, 'date'));
+        $instance->duration = Duration::fromMinutes(self::asInt($aggregateState, 'duration'));
         $instance->description = self::asString($aggregateState, 'description');
         $instance->maximumNumberOfAttendees = self::asInt($aggregateState, 'maximumNumberOfAttendees');
         $instance->wasClosed = self::asBool($aggregateState, 'wasClosed');
@@ -186,6 +197,7 @@ final class Session implements Aggregate, SpecifiesSchema
         return [
             'sessionId' => $this->sessionId->asString(),
             'date' => $this->date->asString(),
+            'duration' => $this->duration->asInt(),
             'description' => $this->description,
             'maximumNumberOfAttendees' => $this->maximumNumberOfAttendees,
             'wasClosed' => $this->wasClosed,
@@ -226,6 +238,7 @@ final class Session implements Aggregate, SpecifiesSchema
         $table->setPrimaryKey(['sessionId']);
 
         $table->addColumn('date', 'string')->setNotnull(true);
+        $table->addColumn('duration', 'integer')->setNotnull(false);
         $table->addColumn('description', 'string')->setNotnull(true);
         $table->addColumn('maximumNumberOfAttendees', 'integer')->setNotnull(true);
         $table->addColumn('wasClosed', 'boolean')->setNotnull(true);

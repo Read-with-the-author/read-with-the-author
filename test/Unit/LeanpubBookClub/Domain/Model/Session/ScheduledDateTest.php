@@ -71,4 +71,16 @@ final class ScheduledDateTest extends TestCase
             ScheduledDate::fromString('2020-02-01 10:11')->asString()
         );
     }
+
+    /**
+     * @test
+     */
+    public function it_can_be_converted_to_an_end_time_using_a_duration(): void
+    {
+        $date = ScheduledDate::fromString('2020-04-01 10:00', 'Europe/Amsterdam');
+        self::assertEquals(
+            ScheduledDate::fromString('2020-04-01 11:30', 'Europe/Amsterdam'),
+            $date->endTime(Duration::fromMinutes(90))
+        );
+    }
 }

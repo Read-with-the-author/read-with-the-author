@@ -20,9 +20,12 @@ final class SessionForAdministrator
 
     private int $maximumNumberOfAttendees;
 
+    private int $duration;
+
     public function __construct(
         string $sessionId,
         string $date,
+        int $duration,
         string $description,
         int $maximumNumberOfAttendees
     ) {
@@ -30,6 +33,7 @@ final class SessionForAdministrator
         $this->date = $date;
         $this->description = $description;
         $this->maximumNumberOfAttendees = $maximumNumberOfAttendees;
+        $this->duration = $duration;
     }
 
     public function sessionId(): string
@@ -88,6 +92,13 @@ final class SessionForAdministrator
         $dateTime = $dateTime->setTimezone(TimeZone::fromString($timeZone)->asPhpDateTimeZone());
 
         return $dateTime;
+    }
+
+    public function endTimeDateTime(string $timeZone): DateTimeImmutable
+    {
+        $startTime = $this->dateTime($timeZone);
+
+        return $startTime->modify(sprintf('+%d minutes', $this->duration));
     }
 
     public function withUrlForCall(?string $urlForCall): self

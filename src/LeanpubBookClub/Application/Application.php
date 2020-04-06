@@ -172,6 +172,7 @@ final class Application implements ApplicationInterface
         $session = Session::plan(
             $sessionId,
             $command->date(),
+            $command->duration(),
             $command->description(),
             $command->maximumNumberOfParticipants()
         );

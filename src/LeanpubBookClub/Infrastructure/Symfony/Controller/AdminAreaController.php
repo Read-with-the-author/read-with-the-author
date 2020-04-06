@@ -59,6 +59,7 @@ final class AdminAreaController extends AbstractController
                 new PlanSession(
                     $formData['date']->format('Y-m-d H:i'),
                     $this->authorTimeZone->asString(),
+                    $formData['duration'],
                     $formData['description'],
                     $formData['maximumNumberOfParticipants']
                 )

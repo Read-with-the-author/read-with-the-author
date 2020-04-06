@@ -17,10 +17,12 @@ final class SessionTest extends EntityTestCase
         $aSessionId = $this->aSessionId();
         $aDate = $this->aDate();
         $aDescription = $this->aDescription();
+        $duration = $this->aDuration();
 
         $session = Session::plan(
             $aSessionId,
             $aDate,
+            $duration,
             $aDescription,
             $this->aMaximumNumberOfParticipants()
         );
@@ -41,6 +43,7 @@ final class SessionTest extends EntityTestCase
         Session::plan(
             $this->aSessionId(),
             $this->aDate(),
+            $this->aDuration(),
             $emptyDescription = '',
             $this->aMaximumNumberOfParticipants()
         );
@@ -57,6 +60,7 @@ final class SessionTest extends EntityTestCase
         Session::plan(
             $this->aSessionId(),
             $this->aDate(),
+            $this->aDuration(),
             $this->aDescription(),
             $tooLow = 0
         );
@@ -239,6 +243,7 @@ final class SessionTest extends EntityTestCase
         $session = Session::plan(
             $this->aSessionId(),
             $this->aDate(),
+            $this->aDuration(),
             $this->aDescription(),
             $maximumNumberOfParticipants ?? $this->aMaximumNumberOfParticipants()
         );
@@ -261,5 +266,10 @@ final class SessionTest extends EntityTestCase
     private function anotherMemberId(): LeanpubInvoiceId
     {
         return LeanpubInvoiceId::fromString('6gbXPEDMOEMKCNwOykPvpg');
+    }
+
+    private function aDuration(): Duration
+    {
+        return Duration::fromMinutes(60);
     }
 }

@@ -9,6 +9,7 @@ final class SessionBuilder
 {
     private string $sessionId;
     private string $date;
+    private int $duration;
     private string $description;
     private int $maximumNumberOfParticipants;
 
@@ -16,6 +17,7 @@ final class SessionBuilder
     {
         $this->sessionId = '48e42502-79ee-47ac-b085-4571fc0f719c';
         $this->date = '2020-04-01 20:00';
+        $this->duration = 60;
         $this->description = 'The description';
         $this->maximumNumberOfParticipants = 20;
     }
@@ -30,6 +32,7 @@ final class SessionBuilder
         return new SessionForAdministrator(
             $this->sessionId,
             $this->date,
+            $this->duration,
             $this->description,
             $this->maximumNumberOfParticipants
         );

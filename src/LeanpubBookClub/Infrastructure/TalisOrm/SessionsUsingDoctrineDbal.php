@@ -78,6 +78,7 @@ final class SessionsUsingDoctrineDbal implements Sessions
         $session = new SessionForAdministrator(
             self::asString($row, 'sessionId'),
             self::asString($row, 'date'),
+            self::asInt($row, 'duration'),
             self::asString($row, 'description'),
             self::asInt($row, 'maximumNumberOfAttendees')
         );

@@ -24,12 +24,14 @@ final class AdminAreaTest extends WebTestCase
             (new SessionForAdministrator(
                 'e44c5dfa-73f5-4355-aba7-21ac67c3c87a',
                 '2020-02-01 20:00',
+                60,
                 'Chapter 1',
                 10
             ))->withNumberOfAttendees(5),
             (new SessionForAdministrator(
                 '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
                 '2020-02-08 20:00',
+                90,
                 'Chapter 2',
                 20
             ))->withNumberOfAttendees(18)
@@ -92,6 +94,7 @@ final class AdminAreaTest extends WebTestCase
                 new PlanSession(
                     '2020-03-30 20:00',
                     'Europe/Amsterdam',
+                    90,
                     'Description',
                     10
                 )
@@ -107,6 +110,7 @@ final class AdminAreaTest extends WebTestCase
                 'plan_session_form[date][date][year]' => '2020',
                 'plan_session_form[date][time][hour]' => '20',
                 'plan_session_form[date][time][minute]' => '0',
+                'plan_session_form[duration]' => '90',
                 'plan_session_form[description]' => 'Description',
                 'plan_session_form[maximumNumberOfParticipants]' => '10'
             ]
@@ -129,6 +133,7 @@ final class AdminAreaTest extends WebTestCase
                     (new SessionForAdministrator(
                         $sessionId,
                         '2020-03-30 20:00',
+                        60,
                         $oldDescription,
                         10
                     ))->withUrlForCall($oldUrlForCall)

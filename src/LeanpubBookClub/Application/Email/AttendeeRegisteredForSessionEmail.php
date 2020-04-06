@@ -43,8 +43,7 @@ final class AttendeeRegisteredForSessionEmail implements Email
                 $this->session->dateTime('UTC')
             ),
             DateTime::createFromImmutable(
-                // @todo make end time explicit
-                $this->session->dateTime('UTC')->modify('+1 hour')
+                $this->session->endTimeDateTime('UTC')
             )
         ))->description($this->session->description()); // @todo abbreviate description?
 

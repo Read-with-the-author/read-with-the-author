@@ -73,4 +73,11 @@ final class ScheduledDate
 
         return $dateTime;
     }
+
+    public function endTime(Duration $duration): self
+    {
+        return self::fromDateTime(
+            $this->asPhpDateTime()->modify(sprintf('+%d minutes', $duration->asInt()))
+        );
+    }
 }

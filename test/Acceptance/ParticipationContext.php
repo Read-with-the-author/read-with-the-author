@@ -46,7 +46,7 @@ final class ParticipationContext extends FeatureContext
     public function theAdministratorSchedulesASessionForDateWithDescription(string $date, string $description = 'Description'): void
     {
         $this->plannedSessionId = $this->application()->planSession(
-            new PlanSession($date, $this->authorTimeZone(), $description, 10)
+            new PlanSession($date, $this->authorTimeZone(), 60, $description, 10)
         );
         $this->plannedSessionDescription = $description;
     }
@@ -82,7 +82,7 @@ final class ParticipationContext extends FeatureContext
     public function anUpcomingSession(): void
     {
         $this->sessionId = $this->application()->planSession(
-            new PlanSession('2020-04-01 20:00', $this->authorTimeZone(), 'Chapter 1', 10)
+            new PlanSession('2020-04-01 20:00', $this->authorTimeZone(), 60, 'Chapter 1', 10)
         );
     }
 

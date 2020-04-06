@@ -12,6 +12,8 @@ final class SessionWasPlanned implements ProducesFlashMessage
 
     private ScheduledDate $date;
 
+    private Duration $duration;
+
     private string $description;
 
     private int $maximumNumberOfAttendees;
@@ -19,11 +21,13 @@ final class SessionWasPlanned implements ProducesFlashMessage
     public function __construct(
         SessionId $sessionId,
         ScheduledDate $date,
+        Duration $duration,
         string $description,
         int $maximumNumberOfAttendees
     ) {
         $this->sessionId = $sessionId;
         $this->date = $date;
+        $this->duration = $duration;
         $this->description = $description;
         $this->maximumNumberOfAttendees = $maximumNumberOfAttendees;
     }
@@ -36,6 +40,11 @@ final class SessionWasPlanned implements ProducesFlashMessage
     public function date(): ScheduledDate
     {
         return $this->date;
+    }
+
+    public function duration(): Duration
+    {
+        return $this->duration;
     }
 
     public function description(): string
