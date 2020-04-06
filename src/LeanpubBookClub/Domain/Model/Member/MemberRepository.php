@@ -11,4 +11,6 @@ interface MemberRepository
      * @throws CouldNotFindMember
      */
     public function getById(LeanpubInvoiceId $memberId): Member;
+
+    public function exists(LeanpubInvoiceId $memberId): bool;
 }

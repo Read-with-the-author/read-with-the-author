@@ -12,6 +12,7 @@ use LeanpubBookClub\Application\SessionCall\SetCallUrl;
 use LeanpubBookClub\Application\UpcomingSessions\Sessions;
 use LeanpubBookClub\Application\UpcomingSessions\SessionForAdministrator;
 use LeanpubBookClub\Domain\Model\Member\AccessToken;
+use LeanpubBookClub\Domain\Model\Member\CouldNotRequestAccess;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Member\Member;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
@@ -108,6 +109,10 @@ final class Application implements ApplicationInterface
 
     public function requestAccess(RequestAccess $command): void
     {
+        if ($this->memberRepository->exists($command->leanpubInvoiceId())) {
+            throw CouldNotRequestAccess::becauseInvoiceIdHasBeenUsedBefore($command->leanpubInvoiceId());
+        }
+
         $member = Member::requestAccess($command->leanpubInvoiceId(), $command->emailAddress(), $command->timeZone());
 
         $this->memberRepository->save($member);

@@ -28,4 +28,9 @@ final class MemberRepositoryInMemory implements MemberRepository
 
         return $this->members[$memberId->asString()];
     }
+
+    public function exists(LeanpubInvoiceId $memberId): bool
+    {
+        return isset($this->members[$memberId->asString()]);
+    }
 }

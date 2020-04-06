@@ -97,7 +97,7 @@ final class MemberAreaTest extends WebTestCase
                 '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
                 '2020-02-08 20:00',
                 'Chapter 2'
-            ))->withActiveMemberRegisteredAsAttendee(true)
+            ))->withActiveMemberRegisteredAsAttendee(false)
         ];
 
         $this->upcomingSessionsAre($this->loggedInMember, $upcomingSessions);

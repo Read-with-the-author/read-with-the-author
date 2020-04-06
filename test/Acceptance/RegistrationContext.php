@@ -3,17 +3,20 @@ declare(strict_types=1);
 
 namespace Test\Acceptance;
 
+use BehatExpectException\ExpectException;
 use LeanpubBookClub\Application\Email\AccessTokenEmail;
 use LeanpubBookClub\Application\ImportPurchase;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Domain\Model\Member\AccessWasGrantedToMember;
-use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
+use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
 use PHPUnit\Framework\Assert;
 use RuntimeException;
 
 final class RegistrationContext extends FeatureContext
 {
+    use ExpectException;
+
     private ?string $buyerLeanpubInvoiceId;
 
     private string $buyerEmailAddress = 'info@matthiasnoback.nl';
@@ -127,6 +130,21 @@ final class RegistrationContext extends FeatureContext
     }
 
     /**
+     * @Then the membership request should not be registered
+     */
+    public function theMembershipRequestShouldNotBeRegistered(): void
+    {
+        Assert::assertNotNull($this->buyerLeanpubInvoiceId);
+
+        foreach ($this->dispatchedEvents() as $event) {
+            if ($event instanceof MemberRequestedAccess
+                && $event->leanpubInvoiceId()->equals(LeanpubInvoiceId::fromString($this->buyerLeanpubInvoiceId))) {
+                throw new RuntimeException('We did not expect an MemberRequestedAccess event to have been dispatched');
+            }
+        }
+    }
+
+    /**
      * @Given someone has been granted access to the club
      */
     public function someoneHasBeenGrantedAccessToTheClub(): void
@@ -139,16 +157,24 @@ final class RegistrationContext extends FeatureContext
     }
 
     /**
-     * @When someone else requests access providing the same invoice ID
+     * @When someone else tries to request access providing the same invoice ID
      */
     public function someoneElseRequestsAccessProvidingTheSameInvoiceID(): void
     {
-        Assert::assertNotNull($this->buyerLeanpubInvoiceId);
-
         $this->serviceContainer()->eventDispatcherSpy()->clearEvents();
 
-        $this->application()->requestAccess(
-            new RequestAccess($this->buyerLeanpubInvoiceId, 'someoneelse@matthiasnoback.nl', $this->memberTimeZone)
+        $this->mayFail(
+            function () {
+                Assert::assertNotNull($this->buyerLeanpubInvoiceId);
+
+                $this->application()->requestAccess(
+                    new RequestAccess(
+                        $this->buyerLeanpubInvoiceId,
+                        'someoneelse@matthiasnoback.nl',
+                        $this->memberTimeZone
+                    )
+                );
+            }
         );
     }
 }

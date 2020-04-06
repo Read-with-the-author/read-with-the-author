@@ -4,10 +4,10 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure\TalisOrm;
 
 use Assert\Assert;
+use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Member\Member;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
-use LeanpubBookClub\Domain\Model\Purchase\CouldNotFindPurchase;
 use TalisOrm\AggregateNotFoundException;
 use TalisOrm\AggregateRepository;
 
@@ -37,7 +37,17 @@ final class MemberTalisOrmRepository implements MemberRepository
 
             return $member;
         } catch (AggregateNotFoundException $exception) {
-            throw CouldNotFindPurchase::withInvoiceId($invoiceId);
+            throw CouldNotFindMember::withId($invoiceId);
+        }
+    }
+
+    public function exists(LeanpubInvoiceId $memberId): bool
+    {
+        try {
+            $this->getById($memberId);
+            return true;
+        } catch (CouldNotFindMember $exception) {
+            return false;
         }
     }
 }
