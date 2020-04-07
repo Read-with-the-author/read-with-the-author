@@ -2,19 +2,45 @@
 
 {% block body %}
 
-    <div class="logged_in_username">{{ app.user.username }}</div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+        <a class="navbar-brand" href="#">{{ site_title }}</a>
+
+
+
+        <div class="navbar-text logged_in_username">
+            Your Leanpub invoice ID: <strong>{{ app.user.username }}</strong>
+        </div>
+
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a href="#" class="nav-link">Logout</a>
+            </li>
+        </ul>
+    </nav>
 
     <h1>Member area</h1>
 
-    <h2>Latest version of the book</h2>
+    <div class="card mb-4 mt-4">
+        <div class="row no-gutters">
+            <div class="col-sm-4 col-md-3 col-lg-2 d-none d-sm-block">
+                <a href="{{ bookSummary.url }}" target="_blank">
+                    <img src="{{ url('title_page_image') }}" class="card-img" alt="Title page">
+                </a>
+            </div>
+            <div class="col-sm-8 col-md-9 col-lg-10">
+                <div class="card-body">
+                    <h3 class="card-title">Latest version of the book</h3>
+                    <p class="card-text">Download here the latest version of the book:</p>
 
-    <p>Download here the latest version of the book:</p>
-
-    <ul>
-        <li><a href="{{ url('download_latest_version_pdf') }}">PDF</a></li>
-        <li><a href="{{ url('download_latest_version_epub') }}">EPUB</a></li>
-        <li><a href="{{ url('download_latest_version_mobi') }}">MOBI</a></li>
-    </ul>
+                    <ul class="list-group list-group-horizontal">
+                        <li class="list-group-item"><a href="{{ url('download_latest_version_pdf') }}">PDF</a></li>
+                        <li class="list-group-item"><a href="{{ url('download_latest_version_epub') }}">EPUB</a></li>
+                        <li class="list-group-item"><a href="{{ url('download_latest_version_mobi') }}">MOBI</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <h2>Upcoming sessions</h2>
 
@@ -38,7 +64,8 @@
                     <td class="session-description">{{ upcomingSession.description }}</td>
                     <td class="session-actions">
                         {% if upcomingSession.memberIsRegisteredAsAttendee %}
-                            <a href="{{ url('redirect_to_video_call', { sessionId: upcomingSession.sessionId }) }}" class="btn btn-primary">
+                            <a href="{{ url('redirect_to_video_call', { sessionId: upcomingSession.sessionId }) }}"
+                               class="btn btn-primary">
                                 Join the video call
                             </a>
 
