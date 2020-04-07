@@ -9,7 +9,19 @@ endif
 
 RUN_PHP:=docker-compose run --rm php
 DOCKER_COMPOSE_DEV:=docker-compose
-DOCKER_COMPOSE_PROD:=docker-compose -f docker-compose.yml
+DOCKER_COMPOSE_PROD:=docker-compose -f docker-compose.yml -f docker-compose.prod.yml
+
+HOSTNAME:=noback.readwiththeauthor.localhost
+HOSTS_ENTRY:=127.0.0.1 ${HOSTNAME}
+
+.PHONY: hosts-entry
+ifeq ($(PLATFORM), $(filter $(PLATFORM), Darwin Linux))
+hosts-entry:
+	(grep "$(HOSTS_ENTRY)" /etc/hosts) || echo '$(HOSTS_ENTRY)' | sudo tee -a /etc/hosts
+else
+hosts-entry:
+	$(warning Make sure to add "${HOSTS_ENTRY}" to your operating system's hosts file)
+endif
 
 .PHONY: migrations
 migrations:
@@ -27,17 +39,10 @@ push:
 build:
 	${DOCKER_COMPOSE_DEV} build
 
-.PHONY: push-prod
-push-prod:
-	${DOCKER_COMPOSE_PROD} push
-
 .PHONY: up
-up: down
+up: hosts-entry down
 	${DOCKER_COMPOSE_DEV} up -d
-
-up-prod: down
-	${DOCKER_COMPOSE_PROD} up -d
 
 .PHONY: down
 down:
-	${DOCKER_COMPOSE_DEV} down
+	${DOCKER_COMPOSE_DEV} down --remove-orphans

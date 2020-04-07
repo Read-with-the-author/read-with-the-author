@@ -10,17 +10,6 @@ services:
             target: symfony_nginx
         depends_on:
             - php
-        networks:
-            - traefik
-            - internal
-        # TODO uncomment when doing the actual deploy to production
-        ports:
-            - "80:80"
-        labels:
-            - "traefik.enable=true"
-            - "traefik.http.routers.readwiththeauthor_com_https.rule=Host(`readwiththeauthor.com`)"
-            - "traefik.http.routers.readwiththeauthor_com_https.entrypoints=websecure"
-            - "traefik.http.routers.readwiththeauthor_com_https.tls.certresolver=myhttpchallenge"
 
     php:
         image: matthiasnoback/leanpub-book-club-production-php:latest
@@ -38,8 +27,6 @@ services:
             start_period: 30s
         environment:
             - SYMFONY_VERSION
-        networks:
-            - internal
         env_file:
             - .env.prod.local
         volumes:
@@ -48,16 +35,13 @@ services:
 #
 #    importer:
 #        image: matthiasnoback/leanpub-book-club-production-php:latest
-#        env_file:
-#            - .env.prod.local
-#        entrypoint: php bin/console leanpub:import-all-purchases --loop --delay=60
+#        command: php bin/console leanpub:import-all-purchases --loop --delay=60
 #        networks:
 #            - internal
-
-networks:
-    traefik:
-        external: true
-    internal:
+#        env_file:
+#            - .env.prod.local
+#        volumes:
+#            - var:/srv/app/var/
 
 volumes:
     var:

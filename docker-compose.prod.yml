@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+
+    nginx:
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.readwiththeauthor_com.rule=Host(`noback.readwiththeauthor.com`)"
+            - "traefik.http.routers.readwiththeauthor_com.entrypoints=websecure"
+            - "traefik.http.routers.readwiththeauthor_com.tls.certresolver=myhttpchallenge"
+        networks:
+            - internal
+            - traefik
+
+    php:
+        labels:
+            - "traefik.enable=false"
+        networks:
+            - internal
+
+    traefik:
+        external: true

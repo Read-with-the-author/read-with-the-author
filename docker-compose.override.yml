@@ -1,6 +1,11 @@
 version: '3.4'
 
 services:
+
+    nginx:
+        ports:
+            - "80:80"
+
     php:
         volumes:
             - .:/srv/app:cached
@@ -8,10 +13,6 @@ services:
             - mailhog
         env_file:
             - .env.local
-
-    nginx:
-        ports:
-            - "80:80"
 
     mailhog:
         image: mailhog/mailhog
