@@ -18,6 +18,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -143,9 +144,7 @@ final class MemberAreaController extends AbstractController
      */
     public function downloadLatestVersionPdfAction(): Response
     {
-        $bookSummary = $this->getBookSummary->getBookSummary();
-
-        return new RedirectResponse($bookSummary->pdfPublishedUrl());
+        return $this->redirectToUrlOr404IfEmpty($this->getBookSummary->getBookSummary()->pdfPublishedUrl());
     }
 
     /**
@@ -153,9 +152,7 @@ final class MemberAreaController extends AbstractController
      */
     public function downloadLatestVersionEpubAction(): Response
     {
-        $bookSummary = $this->getBookSummary->getBookSummary();
-
-        return new RedirectResponse($bookSummary->epubPublishedUrl());
+        return $this->redirectToUrlOr404IfEmpty($this->getBookSummary->getBookSummary()->epubPublishedUrl());
     }
 
     /**
@@ -163,9 +160,7 @@ final class MemberAreaController extends AbstractController
      */
     public function downloadLatestVersionMobiAction(): Response
     {
-        $bookSummary = $this->getBookSummary->getBookSummary();
-
-        return new RedirectResponse($bookSummary->mobiPublishedUrl());
+        return $this->redirectToUrlOr404IfEmpty($this->getBookSummary->getBookSummary()->mobiPublishedUrl());
     }
 
     private function createUpdateTimeZoneForm(Member $member): FormInterface
@@ -176,5 +171,14 @@ final class MemberAreaController extends AbstractController
                 'timeZone' => $member->timeZone()
             ]
         );
+    }
+
+    private function redirectToUrlOr404IfEmpty(string $url): Response
+    {
+        if ($url === '') {
+            throw $this->createNotFoundException();
+        }
+
+        return new RedirectResponse($url);
     }
 }

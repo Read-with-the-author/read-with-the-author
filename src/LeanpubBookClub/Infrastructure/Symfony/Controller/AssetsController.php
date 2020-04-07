@@ -29,7 +29,7 @@ final class AssetsController extends AbstractController
         $titlePageImagePath = $this->assets->titlePageImagePath();
 
         if (!file_exists($titlePageImagePath)) {
-            return new Response(null, Response::HTTP_NOT_FOUND);
+            throw $this->createNotFoundException();
         }
 
         $response = new BinaryFileResponse($titlePageImagePath);
