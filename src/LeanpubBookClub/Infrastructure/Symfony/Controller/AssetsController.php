@@ -22,7 +22,7 @@ final class AssetsController extends AbstractController
     }
 
     /**
-     * @Route("/title_page.jpg", methods={"GET"})
+     * @Route("/title_page.jpg", name="title_page_image", methods={"GET"})
      */
     public function titlePageImageAction(): Response
     {

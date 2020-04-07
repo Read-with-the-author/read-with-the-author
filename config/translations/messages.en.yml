@@ -1,6 +1,6 @@
 request_access_form.email_address.help: We'll never share your email with anyone else.
-request_access_form.email_address.label: Email address
-form.leanpub_invoice_id.label: Leanpub Purchase ID
+request_access_form.email_address.label: Your email address
+form.leanpub_invoice_id.label: Your Leanpub Purchase ID
 form.leanpub_invoice_id.help: You can find your Purchase ID in the email you received from Leanpub when you purchased this book.
 request_access_form.request_access.label: Request access
 request_access_token_form.request_access_token.label: Get an access token

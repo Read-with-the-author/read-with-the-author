@@ -92,3 +92,6 @@ services:
 
     LeanpubBookClub\Domain\Model\Common\TimeZone:
         factory: ['@LeanpubBookClub\Infrastructure\Configuration', 'authorTimeZone']
+
+    LeanpubBookClub\Infrastructure\Leanpub\BookSummary\BookSummary:
+        factory: ['@LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary', 'getBookSummary']

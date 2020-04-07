@@ -3,3 +3,5 @@ twig:
     form_themes: ['bootstrap_4_layout.html.twig']
     paths:
         '%kernel.project_dir%/config/assets/css': css
+    globals:
+        bookSummary: '@LeanpubBookClub\Infrastructure\Leanpub\BookSummary\BookSummary'

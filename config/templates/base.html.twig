@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Leanpub Book Club{% endblock %}</title>
+    <title>Read with the Author - {{ bookSummary.title }}{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="/css/bootstrap-4.4.1-min.css">
-    {% block stylesheets %}{% endblock %}
 </head>
 <body>
 <div class="container">
@@ -18,7 +17,6 @@
         {% endfor %}
     </div>
     {% block body %}{% endblock %}
-    {% block javascripts %}{% endblock %}
 </div>
 </body>
 </html>

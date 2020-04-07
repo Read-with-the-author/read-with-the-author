@@ -5,7 +5,10 @@
         <div class="row">
             <div class="col-sm-8">
 
-                <h1 class="display-4">Object Design Style Guide</h1>
+                <h1 class="display-4">{{ bookSummary.title }}</h1>
+                {% if bookSummary.subtitle %}
+                    <h2>{{ bookSummary.subtitle }}</h2>
+                {% endif %}
                 <p class="lead">Read the book together with the author</p>
                 <hr class="my-4">
 
@@ -13,9 +16,9 @@
                 {{ form(requestAccessTokenForm) }}
             </div>
             <div class="col-sm-3">
-                <a href="https://leanpub.com/object-design/" target="_blank"><img
-                            src="/assets/title_page.jpg"
-                            class="img-fluid"/></a>
+                <a href="{{ bookSummary.url }}" target="_blank">
+                    <img src="{{ url('title_page_image') }}" class="img-fluid" alt="Title page"/>
+                </a>
             </div>
         </div>
     </div>

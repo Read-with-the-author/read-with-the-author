@@ -62,6 +62,26 @@ final class BookSummary
         );
     }
 
+    public function title(): string
+    {
+        return $this->title;
+    }
+
+    public function subtitle(): string
+    {
+        return $this->subtitle;
+    }
+
+    public function authorString(): string
+    {
+        return $this->authorString;
+    }
+
+    public function url(): string
+    {
+        return $this->url;
+    }
+
     public function titlePageUrl(): string
     {
         return $this->titlePageUrl;
