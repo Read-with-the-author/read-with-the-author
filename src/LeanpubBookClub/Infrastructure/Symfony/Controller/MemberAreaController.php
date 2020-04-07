@@ -11,6 +11,7 @@ use LeanpubBookClub\Application\FlashType;
 use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\UpdateTimeZone;
+use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Symfony\Form\UpdateTimeZoneForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -30,10 +31,16 @@ final class MemberAreaController extends AbstractController
 
     private TranslatorInterface $translator;
 
-    public function __construct(ApplicationInterface $application, TranslatorInterface $translator)
-    {
+    private GetBookSummary $getBookSummary;
+
+    public function __construct(
+        ApplicationInterface $application,
+        TranslatorInterface $translator,
+        GetBookSummary $getBookSummary
+    ) {
         $this->application = $application;
         $this->translator = $translator;
+        $this->getBookSummary = $getBookSummary;
     }
 
     /**
@@ -55,7 +62,8 @@ final class MemberAreaController extends AbstractController
         return $this->render(
             'member_area/index.html.twig',
             [
-                'upcomingSessions' => $this->application->listUpcomingSessionsForMember($member->memberId()->asString()),
+                'upcomingSessions' => $this->application->listUpcomingSessionsForMember(
+                    $member->memberId()->asString()),
                 'memberTimeZone' => $member->timeZone(),
                 'updateTimeZoneForm' => $this->createUpdateTimeZoneForm($member)->createView()
             ]
@@ -122,10 +130,42 @@ final class MemberAreaController extends AbstractController
 
             return $this->redirect($videoCallUrl);
         } catch (CouldNotGetCallUrl $exception) {
-            $this->addFlash(FlashType::WARNING, $this->translator->trans('session_video_call_url_not_available.flash_message'));
+            $this->addFlash(
+                FlashType::WARNING,
+                $this->translator->trans('session_video_call_url_not_available.flash_message'));
 
             return $this->redirectToRoute('member_area_index');
         }
+    }
+
+    /**
+     * @Route("/download-latest-version/pdf", name="download_latest_version_pdf", methods={"GET"})
+     */
+    public function downloadLatestVersionPdfAction(): Response
+    {
+        $bookSummary = $this->getBookSummary->getBookSummary();
+
+        return new RedirectResponse($bookSummary->pdfPublishedUrl());
+    }
+
+    /**
+     * @Route("/download-latest-version/epub", name="download_latest_version_epub", methods={"GET"})
+     */
+    public function downloadLatestVersionEpubAction(): Response
+    {
+        $bookSummary = $this->getBookSummary->getBookSummary();
+
+        return new RedirectResponse($bookSummary->epubPublishedUrl());
+    }
+
+    /**
+     * @Route("/download-latest-version/mobi", name="download_latest_version_mobi", methods={"GET"})
+     */
+    public function downloadLatestVersionMobiAction(): Response
+    {
+        $bookSummary = $this->getBookSummary->getBookSummary();
+
+        return new RedirectResponse($bookSummary->mobiPublishedUrl());
     }
 
     private function createUpdateTimeZoneForm(Member $member): FormInterface

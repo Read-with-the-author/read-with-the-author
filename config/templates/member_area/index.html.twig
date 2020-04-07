@@ -6,6 +6,16 @@
 
     <h1>Member area</h1>
 
+    <h2>Latest version of the book</h2>
+
+    <p>Download here the latest version of the book:</p>
+
+    <ul>
+        <li><a href="{{ url('download_latest_version_pdf') }}">PDF</a></li>
+        <li><a href="{{ url('download_latest_version_epub') }}">EPUB</a></li>
+        <li><a href="{{ url('download_latest_version_mobi') }}">MOBI</a></li>
+    </ul>
+
     <h2>Upcoming sessions</h2>
 
     {{ form(updateTimeZoneForm) }}

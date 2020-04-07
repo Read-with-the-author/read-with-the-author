@@ -44,6 +44,10 @@ services:
     LeanpubBookClub\Application\Assets:
         factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'assetPublisher']
 
+    LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary:
+        class: LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi
+        factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'getBookSummary']
+
     LeanpubBookClub\Infrastructure\ProductionServiceContainer:
         public: '%kernel.debug%'
 

@@ -75,7 +75,7 @@ final class ProductionServiceContainer extends ServiceContainer
         );
     }
 
-    protected function getBookSummary(): GetBookSummary
+    public function getBookSummary(): GetBookSummary
     {
         return new GetBookSummaryFromLeanpubApi(
             $this->configuration->leanpubBookSlug(),
