@@ -15,7 +15,7 @@ final class Configuration
 
     private string $leanpubApiKey;
 
-    private string $projectDirectory;
+    private string $assetsDirectory;
 
     private string $systemEmailAddress;
 
@@ -24,25 +24,25 @@ final class Configuration
     public function __construct(
         string $leanpubBookSlug,
         string $leanpubApiKey,
-        string $projectDirectory,
+        string $assetsDirectory,
         string $systemEmailAddress,
         string $authorTimeZone
     ) {
-        Assert::that($projectDirectory)->directory();
+        Assert::that($assetsDirectory)->directory()->writeable();
 
         $this->leanpubBookSlug = $leanpubBookSlug;
         $this->leanpubApiKey = $leanpubApiKey;
-        $this->projectDirectory = $projectDirectory;
+        $this->assetsDirectory = $assetsDirectory;
         $this->systemEmailAddress = $systemEmailAddress;
         $this->authorTimeZone = $authorTimeZone;
     }
 
-    public static function createFromEnvironmentVariables(string $projectDirectory): self
+    public static function createFromEnvironmentVariables(string $assetsDirectory): self
     {
         return new self(
             Env::get('LEANPUB_BOOK_SLUG'),
             Env::get('LEANPUB_API_KEY'),
-            $projectDirectory,
+            $assetsDirectory,
             Env::get('SYSTEM_EMAIL_ADDRESS'),
             Env::get('AUTHOR_TIMEZONE', 'Europe/Amsterdam')
         );
@@ -60,7 +60,7 @@ final class Configuration
 
     public function assetsDirectory(): string
     {
-        return $this->projectDirectory . '/public/assets';
+        return $this->assetsDirectory;
     }
 
     public function systemEmailAddress(): EmailAddress

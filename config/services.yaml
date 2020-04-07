@@ -41,6 +41,9 @@ services:
     LeanpubBookClub\Application\EventDispatcher:
         factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'eventDispatcher']
 
+    LeanpubBookClub\Application\Assets:
+        factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'assetPublisher']
+
     LeanpubBookClub\Infrastructure\ProductionServiceContainer:
         public: '%kernel.debug%'
 
@@ -48,7 +51,7 @@ services:
         arguments:
             - '%env(LEANPUB_BOOK_SLUG)%'
             - '%env(LEANPUB_API_KEY)%'
-            - '%kernel.project_dir%'
+            - '%kernel.project_dir%/var/assets'
             - '%env(SYSTEM_EMAIL_ADDRESS)%'
             - '%env(AUTHOR_TIMEZONE)%'
 
@@ -72,3 +75,4 @@ services:
 
     LeanpubBookClub\Domain\Model\Common\TimeZone:
         factory: ['@LeanpubBookClub\Infrastructure\Configuration', 'authorTimeZone']
+

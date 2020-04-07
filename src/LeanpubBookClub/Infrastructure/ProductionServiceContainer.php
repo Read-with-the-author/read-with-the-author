@@ -83,7 +83,7 @@ final class ProductionServiceContainer extends ServiceContainer
         );
     }
 
-    protected function assetPublisher(): AssetPublisher
+    public function assetPublisher(): AssetPublisher
     {
         return new PublicAssetPublisher($this->configuration->assetsDirectory());
     }

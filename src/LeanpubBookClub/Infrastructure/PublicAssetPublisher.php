@@ -5,9 +5,10 @@ namespace LeanpubBookClub\Infrastructure;
 
 use Assert\Assert;
 use LeanpubBookClub\Application\AssetPublisher;
+use LeanpubBookClub\Application\Assets;
 use function Safe\file_put_contents;
 
-final class PublicAssetPublisher implements AssetPublisher
+final class PublicAssetPublisher implements AssetPublisher, Assets
 {
     private string $assetsDirectory;
 
@@ -21,6 +22,11 @@ final class PublicAssetPublisher implements AssetPublisher
     public function publishTitlePageImageUrl(string $titlePageUrl): void
     {
         $data = file_get_contents($titlePageUrl);
-        file_put_contents($this->assetsDirectory . '/title_page.jpg', $data);
+        file_put_contents($this->titlePageImagePath(), $data);
+    }
+
+    public function titlePageImagePath(): string
+    {
+        return $this->assetsDirectory . '/title_page.jpg';
     }
 }

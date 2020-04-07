@@ -13,7 +13,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 	fi
 	ln -sf "$PHP_INI_RECOMMENDED" "$PHP_INI_DIR/php.ini"
 
-    mkdir -p var/cache var/log var/db/${APP_ENV}
+    mkdir -p var/cache var/log var/db/${APP_ENV} var/assets
 
     # The first time volumes are mounted, the project needs to be recreated
     if [ ! -f composer.json ]; then
