@@ -1,3 +1,0 @@
-framework:
-    mailer:
-        dsn: 'smtp://mailhog:1025'

@@ -13,7 +13,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 	fi
 	ln -sf "$PHP_INI_RECOMMENDED" "$PHP_INI_DIR/php.ini"
 
-    mkdir -p var/cache var/log
+    mkdir -p var/cache var/log var/db/${APP_ENV}
 
     # The first time volumes are mounted, the project needs to be recreated
     if [ ! -f composer.json ]; then
@@ -34,7 +34,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
     fi
 
     # <<< Modifications
-    if [ ! -f data/db.sqlite ]; then
+    if [ ! -f "var/db/${APP_ENV}/db.sqlite" ]; then
         bin/console doctrine:database:create
     fi
 

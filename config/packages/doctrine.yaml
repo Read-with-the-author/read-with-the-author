@@ -1,3 +1,6 @@
+parameters:
+    sqlite_db_path: 'sqlite:///%kernel.project_dir%/var/db/%kernel.environment%/db.sqlite'
+
 doctrine:
     dbal:
-        url: 'sqlite:///%kernel.project_dir%/data/db.sqlite'
+        url: '%sqlite_db_path%'

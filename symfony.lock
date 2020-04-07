@@ -416,6 +416,15 @@
             "config/packages/mailer.yaml"
         ]
     },
+    "symfony/mailgun-mailer": {
+        "version": "4.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.4",
+            "ref": "bf3904179efe657d9fbc5f0905f3daa2c63935a5"
+        }
+    },
     "symfony/mime": {
         "version": "v5.0.5"
     },

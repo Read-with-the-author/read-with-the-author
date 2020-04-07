@@ -42,6 +42,8 @@ services:
             - internal
         env_file:
             - .env.prod.local
+        volumes:
+            - var:/srv/app/var/
 
 #
 #    importer:
@@ -58,4 +60,4 @@ networks:
     internal:
 
 volumes:
-    data:
+    var:
