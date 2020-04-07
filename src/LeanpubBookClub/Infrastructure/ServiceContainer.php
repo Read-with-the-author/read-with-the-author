@@ -83,7 +83,7 @@ abstract class ServiceContainer
             PurchaseWasImported::class,
             [$this->accessPolicy(), 'whenPurchaseWasImported']
         );
-        
+
         $eventDispatcher->subscribeToSpecificEvent(
             AccessWasGrantedToMember::class,
             [new GenerateAccessToken($this->application()), 'whenAccessWasGrantedToMember']

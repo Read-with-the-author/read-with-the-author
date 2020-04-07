@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+    php:
+        volumes:
+            - .:/srv/app:cached
+        depends_on:
+            - mailhog
+        env_file:
+            - .env.local
+
+    nginx:
+        ports:
+            - "80:80"
+
+    mailhog:
+        image: mailhog/mailhog
+        ports:
+            - "8025:8025"

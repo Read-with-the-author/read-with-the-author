@@ -36,13 +36,19 @@ services:
         factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'application']
         public: true
 
+    LeanpubBookClub\Application\EventDispatcher:
+        factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'eventDispatcher']
+
     LeanpubBookClub\Infrastructure\ProductionServiceContainer:
         public: '%kernel.debug%'
 
     LeanpubBookClub\Infrastructure\Configuration:
-        factory: ['LeanpubBookClub\Infrastructure\Configuration', 'createFromEnvironmentVariables']
         arguments:
+            - '%env(LEANPUB_BOOK_SLUG)%'
+            - '%env(LEANPUB_API_KEY)%'
             - '%kernel.project_dir%'
+            - '%env(SYSTEM_EMAIL_ADDRESS)%'
+            - '%env(AUTHOR_TIMEZONE)%'
 
     LeanpubBookClub\Infrastructure\Symfony\SymfonyMailer:
         public: '%kernel.debug%'

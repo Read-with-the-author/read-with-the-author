@@ -26,7 +26,11 @@ final class RefreshBookInformation extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $output->writeln('Refreshing book information...');
+
         $this->application->refreshBookInformation();
+
+        $output->writeln('Done');
 
         return 0;
     }

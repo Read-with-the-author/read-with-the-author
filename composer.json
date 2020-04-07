@@ -24,6 +24,8 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "^7.4",
+        "ext-pcntl": "*",
+        "ext-pdo": "*",
         "beberlei/assert": "^3.2",
         "matthiasnoback/talis-orm": "^0.2.0",
         "php-http/guzzle6-adapter": "^2.0",
@@ -41,6 +43,7 @@
         "symfony/mailer": "5.0.*",
         "symfony/monolog-bundle": "^3.5",
         "symfony/orm-pack": "^1.0",
+        "symfony/security-bundle": "5.0.*",
         "symfony/translation": "5.0.*",
         "symfony/twig-pack": "^1.0",
         "symfony/validator": "5.0.*",
@@ -49,8 +52,7 @@
         "twig/cssinliner-extra": "^3.0",
         "twig/extra-bundle": "^3.0",
         "twig/inky-extra": "^3.0",
-        "twig/twig": "^3.0",
-        "ext-pdo": "*"
+        "twig/twig": "^3.0"
     },
     "autoload": {
         "psr-4": {
@@ -77,18 +79,6 @@
         "symfony/polyfill-php71": "*",
         "symfony/polyfill-php70": "*",
         "symfony/polyfill-php56": "*"
-    },
-    "scripts": {
-        "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
-        },
-        "post-install-cmd": [
-            "@auto-scripts"
-        ],
-        "post-update-cmd": [
-            "@auto-scripts"
-        ]
     },
     "conflict": {
         "symfony/symfony": "*"

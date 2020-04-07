@@ -1,43 +1,61 @@
-version: '2.2'
+version: '3.4'
 
 services:
-    php:
-        image: matthiasnoback/leanpub-book-club-php:latest
-        build: docker/php/
-        volumes:
-            - ./:/app:cached
-            - ${COMPOSER_HOME}:/home/.composer:cached
-        working_dir: /app
-        user: ${HOST_UID}:${HOST_GID}
-        environment:
-            COMPOSER_HOME: "/home/.composer"
-        env_file:
-            - .env
-            - .env.local
 
     nginx:
-        image: matthiasnoback/leanpub-book-club-nginx:latest
-        build: docker/nginx/
-        volumes:
-            - ./:/app:cached
+        image: matthiasnoback/leanpub-book-club-production-nginx:latest
+        build:
+            dockerfile: docker/php/Dockerfile
+            context: .
+            target: symfony_nginx
+        depends_on:
+            - php
+        networks:
+            - traefik
+            - internal
+        # TODO uncomment when doing the actual deploy to production
         ports:
             - "80:80"
-        depends_on:
-          - php-fpm
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.readwiththeauthor_com_https.rule=Host(`readwiththeauthor.com`)"
+            - "traefik.http.routers.readwiththeauthor_com_https.entrypoints=websecure"
+            - "traefik.http.routers.readwiththeauthor_com_https.tls.certresolver=myhttpchallenge"
 
-    php-fpm:
-        image: matthiasnoback/leanpub-book-club-php-fpm:latest
-        build: docker/php-fpm/
-        volumes:
-            - ./:/app:cached
+    php:
+        image: matthiasnoback/leanpub-book-club-production-php:latest
+        build:
+            context: .
+            dockerfile: docker/php/Dockerfile
+            target: symfony_php
+            args:
+                SYMFONY_VERSION: ${SYMFONY_VERSION:-}
+                STABILITY: ${STABILITY:-stable}
+        healthcheck:
+            interval: 10s
+            timeout: 3s
+            retries: 3
+            start_period: 30s
+        environment:
+            - SYMFONY_VERSION
+        networks:
+            - internal
         env_file:
-            - .env
-            - .env.local
-        user: ${HOST_UID}:${HOST_GID}
-        depends_on:
-          - mailhog
+            - .env.prod.local
 
-    mailhog:
-        image: mailhog/mailhog
-        ports:
-            - "8025:8025"
+#
+#    importer:
+#        image: matthiasnoback/leanpub-book-club-production-php:latest
+#        env_file:
+#            - .env.prod.local
+#        entrypoint: php bin/console leanpub:import-all-purchases --loop --delay=60
+#        networks:
+#            - internal
+
+networks:
+    traefik:
+        external: true
+    internal:
+
+volumes:
+    data:
