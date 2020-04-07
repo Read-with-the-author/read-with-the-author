@@ -34,13 +34,17 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
     fi
 
     # <<< Modifications
-    if [ ! -f "var/db/${APP_ENV}/db.sqlite" ]; then
-        bin/console doctrine:database:create
+    if [ "$1" = 'php-fpm' ]; then
+      # For PHP-FPM we first have to get the database in the right shape
+
+      if [ ! -f "var/db/${APP_ENV}/db.sqlite" ]; then
+          bin/console doctrine:database:create
+      fi
+
+      bin/console doctrine:migrations:migrate --no-interaction
+
+      bin/console leanpub:refresh-book-information
     fi
-
-    bin/console doctrine:migrations:migrate --no-interaction
-
-    bin/console leanpub:refresh-book-information
     # Modification >>>
 
 	setfacl -R -m u:www-data:rwX -m u:"$(whoami)":rwX var
