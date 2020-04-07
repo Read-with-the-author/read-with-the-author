@@ -11,6 +11,7 @@ use LeanpubBookClub\Application\FlashType;
 use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\UpdateTimeZone;
+use LeanpubBookClub\Infrastructure\Leanpub\BookSlug;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Symfony\Form\UpdateTimeZoneForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +19,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -34,14 +34,18 @@ final class MemberAreaController extends AbstractController
 
     private GetBookSummary $getBookSummary;
 
+    private BookSlug $leanpubBookSlug;
+
     public function __construct(
         ApplicationInterface $application,
         TranslatorInterface $translator,
-        GetBookSummary $getBookSummary
+        GetBookSummary $getBookSummary,
+        BookSlug $bookSlug
     ) {
         $this->application = $application;
         $this->translator = $translator;
         $this->getBookSummary = $getBookSummary;
+        $this->leanpubBookSlug = $bookSlug;
     }
 
     /**
@@ -144,7 +148,9 @@ final class MemberAreaController extends AbstractController
      */
     public function downloadLatestVersionPdfAction(): Response
     {
-        return $this->redirectToUrlOr404IfEmpty($this->getBookSummary->getBookSummary()->pdfPublishedUrl());
+        return $this->redirectToUrlOr404IfEmpty(
+            $this->getBookSummary->getBookSummary($this->leanpubBookSlug)->pdfPublishedUrl()
+        );
     }
 
     /**
@@ -152,7 +158,9 @@ final class MemberAreaController extends AbstractController
      */
     public function downloadLatestVersionEpubAction(): Response
     {
-        return $this->redirectToUrlOr404IfEmpty($this->getBookSummary->getBookSummary()->epubPublishedUrl());
+        return $this->redirectToUrlOr404IfEmpty(
+            $this->getBookSummary->getBookSummary($this->leanpubBookSlug)->epubPublishedUrl()
+        );
     }
 
     /**
@@ -160,7 +168,9 @@ final class MemberAreaController extends AbstractController
      */
     public function downloadLatestVersionMobiAction(): Response
     {
-        return $this->redirectToUrlOr404IfEmpty($this->getBookSummary->getBookSummary()->mobiPublishedUrl());
+        return $this->redirectToUrlOr404IfEmpty(
+            $this->getBookSummary->getBookSummary($this->leanpubBookSlug)->mobiPublishedUrl()
+        );
     }
 
     private function createUpdateTimeZoneForm(Member $member): FormInterface

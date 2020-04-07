@@ -42,8 +42,6 @@ interface ApplicationInterface
 
     public function cancelAttendance(CancelAttendance $command): void;
 
-    public function refreshBookInformation(): void;
-
     /**
      * @param string|LeanpubInvoiceId $memberId
      */

@@ -7,7 +7,6 @@ use Assert\Assert;
 use LeanpubBookClub\Application\AccessPolicy;
 use LeanpubBookClub\Application\Application;
 use LeanpubBookClub\Application\ApplicationInterface;
-use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
 use LeanpubBookClub\Application\Email\Mailer;
 use LeanpubBookClub\Application\Email\SendEmail;
@@ -27,11 +26,8 @@ use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
 use LeanpubBookClub\Domain\Service\AccessTokenGenerator;
-use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
-use Test\Acceptance\AssetPublisherInMemory;
 use Test\Acceptance\FakeClock;
-use Test\Acceptance\GetBookSummaryInMemory;
 use Test\Acceptance\IndividualPurchasesInMemory;
 
 abstract class ServiceContainer
@@ -118,8 +114,6 @@ abstract class ServiceContainer
                 $this->clock(),
                 $this->sessions(),
                 $this->individualPurchases(),
-                $this->getBookSummary(),
-                $this->assetPublisher(),
                 $this->accessTokenGenerator(),
                 $this->members()
             );
@@ -147,16 +141,6 @@ abstract class ServiceContainer
     abstract protected function sessions(): Sessions;
 
     abstract protected function mailer(): Mailer;
-
-    protected function getBookSummary(): GetBookSummary
-    {
-        return new GetBookSummaryInMemory();
-    }
-
-    protected function assetPublisher(): AssetPublisher
-    {
-        return new AssetPublisherInMemory();
-    }
 
     private function accessTokenGenerator(): AccessTokenGenerator
     {

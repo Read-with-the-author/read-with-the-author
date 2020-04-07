@@ -14,7 +14,7 @@ final class PublicAssetPublisher implements AssetPublisher, Assets
 
     public function __construct(string $assetsDirectory)
     {
-        Assert::that($assetsDirectory)->directory();
+        Assert::that($assetsDirectory)->directory()->writeable();
 
         $this->assetsDirectory = $assetsDirectory;
     }

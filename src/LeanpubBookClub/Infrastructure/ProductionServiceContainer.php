@@ -5,7 +5,6 @@ namespace LeanpubBookClub\Infrastructure;
 
 use Doctrine\DBAL\Connection as DbalConnection;
 use LeanpubBookClub\Application\ApplicationInterface;
-use LeanpubBookClub\Application\AssetPublisher;
 use LeanpubBookClub\Application\Clock;
 use LeanpubBookClub\Application\Email\Mailer;
 use LeanpubBookClub\Application\Members\Members;
@@ -15,8 +14,6 @@ use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
 use LeanpubBookClub\Infrastructure\Doctrine\Connection;
-use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
-use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchaseFromLeanpubApi;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
 use LeanpubBookClub\Infrastructure\TalisOrm\EventDispatcherAdapter;
@@ -73,19 +70,6 @@ final class ProductionServiceContainer extends ServiceContainer
             $this->configuration->leanpubBookSlug(),
             $this->configuration->leanpubApiKey()
         );
-    }
-
-    public function getBookSummary(): GetBookSummary
-    {
-        return new GetBookSummaryFromLeanpubApi(
-            $this->configuration->leanpubBookSlug(),
-            $this->configuration->leanpubApiKey()
-        );
-    }
-
-    public function assetPublisher(): AssetPublisher
-    {
-        return new PublicAssetPublisher($this->configuration->assetsDirectory());
     }
 
     public function setApplication(ApplicationInterface $application): void

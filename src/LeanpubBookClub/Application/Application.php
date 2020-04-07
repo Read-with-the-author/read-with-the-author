@@ -24,7 +24,6 @@ use LeanpubBookClub\Domain\Model\Session\Session;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
 use LeanpubBookClub\Domain\Service\AccessTokenGenerator;
-use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchases;
 
 final class Application implements ApplicationInterface
@@ -43,10 +42,6 @@ final class Application implements ApplicationInterface
 
     private IndividualPurchases $individualPurchases;
 
-    private GetBookSummary $getBookSummary;
-
-    private AssetPublisher $assetPublisher;
-
     private AccessTokenGenerator $accessTokenGenerator;
 
     private Members $members;
@@ -59,8 +54,6 @@ final class Application implements ApplicationInterface
         Clock $clock,
         Sessions $sessions,
         IndividualPurchases $individualPurchases,
-        GetBookSummary $getBookSummary,
-        AssetPublisher $assetPublisher,
         AccessTokenGenerator $accessTokenGenerator,
         Members $members
     ) {
@@ -71,8 +64,6 @@ final class Application implements ApplicationInterface
         $this->clock = $clock;
         $this->sessions = $sessions;
         $this->individualPurchases = $individualPurchases;
-        $this->getBookSummary = $getBookSummary;
-        $this->assetPublisher = $assetPublisher;
         $this->accessTokenGenerator = $accessTokenGenerator;
         $this->members = $members;
     }
@@ -242,12 +233,6 @@ final class Application implements ApplicationInterface
         $this->sessionRepository->save($session);
 
         $this->eventDispatcher->dispatchAll($session->releaseEvents());
-    }
-
-    public function refreshBookInformation(): void
-    {
-        $bookSummary = $this->getBookSummary->getBookSummary();
-        $this->assetPublisher->publishTitlePageImageUrl($bookSummary->titlePageUrl());
     }
 
     public function getOneMemberByAccessToken(string $accessToken): MemberReadModel

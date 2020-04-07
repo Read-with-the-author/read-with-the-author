@@ -41,12 +41,26 @@ services:
     LeanpubBookClub\Application\EventDispatcher:
         factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'eventDispatcher']
 
-    LeanpubBookClub\Application\Assets:
-        factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'assetPublisher']
+    LeanpubBookClub\Application\Assets: '@LeanpubBookClub\Infrastructure\PublicAssetPublisher'
 
-    LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary:
-        class: LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi
-        factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'getBookSummary']
+    LeanpubBookClub\Application\AssetPublisher: '@LeanpubBookClub\Infrastructure\PublicAssetPublisher'
+
+    LeanpubBookClub\Infrastructure\PublicAssetPublisher:
+        arguments:
+            - '%kernel.project_dir%/var/assets'
+
+    LeanpubBookClub\Infrastructure\Leanpub\BookSlug:
+        factory: ['@LeanpubBookClub\Infrastructure\Configuration', 'leanpubBookSlug']
+
+    LeanpubBookClub\Infrastructure\Leanpub\ApiKey:
+        factory: ['@LeanpubBookClub\Infrastructure\Configuration', 'leanpubApiKey']
+
+    LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi: ~
+
+    LeanpubBookClub\Infrastructure\Leanpub\BookSummary\CachedGetBookSummary:
+        decorates: LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi
+
+    LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary: '@LeanpubBookClub\Infrastructure\Leanpub\BookSummary\CachedGetBookSummary'
 
     LeanpubBookClub\Infrastructure\ProductionServiceContainer:
         public: '%kernel.debug%'
@@ -55,7 +69,6 @@ services:
         arguments:
             - '%env(LEANPUB_BOOK_SLUG)%'
             - '%env(LEANPUB_API_KEY)%'
-            - '%kernel.project_dir%/var/assets'
             - '%env(SYSTEM_EMAIL_ADDRESS)%'
             - '%env(AUTHOR_TIMEZONE)%'
 
@@ -79,4 +92,3 @@ services:
 
     LeanpubBookClub\Domain\Model\Common\TimeZone:
         factory: ['@LeanpubBookClub\Infrastructure\Configuration', 'authorTimeZone']
-

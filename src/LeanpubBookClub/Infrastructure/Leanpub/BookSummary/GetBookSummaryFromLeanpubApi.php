@@ -13,17 +13,14 @@ use function Safe\json_decode;
 
 final class GetBookSummaryFromLeanpubApi implements GetBookSummary
 {
-    private BookSlug $bookSlug;
-
     private ApiKey $apiKey;
 
-    public function __construct(BookSlug $bookSlug, ApiKey $apiKey)
+    public function __construct(ApiKey $apiKey)
     {
-        $this->bookSlug = $bookSlug;
         $this->apiKey = $apiKey;
     }
 
-    public function getBookSummary(): BookSummary
+    public function getBookSummary(BookSlug $bookSlug): BookSummary
     {
         $adapter = GuzzleAdapter::createWithConfig(
             [
@@ -36,7 +33,7 @@ final class GetBookSummaryFromLeanpubApi implements GetBookSummary
                 'GET',
                 sprintf(
                     'https://leanpub.com/%s.json?api_key=%s',
-                    $this->bookSlug->asString(),
+                    $bookSlug->asString(),
                     $this->apiKey->asString()
                 )
             )

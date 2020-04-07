@@ -16,11 +16,12 @@ final class GetBookSummaryFromLeanpubApiTest extends TestCase
     public function it_loads_a_book_summary_from_leanpub(): void
     {
         $getBookSummaryFromLeanpubApi = new GetBookSummaryFromLeanpubApi(
-            BookSlug::fromString('microservices-for-everyone'),
             ApiKey::fromString(Env::get('LEANPUB_API_KEY'))
         );
 
-        $bookSummary = $getBookSummaryFromLeanpubApi->getBookSummary();
+        $bookSummary = $getBookSummaryFromLeanpubApi->getBookSummary(
+            BookSlug::fromString('microservices-for-everyone')
+        );
 
         self::assertEquals(
             new BookSummary(
