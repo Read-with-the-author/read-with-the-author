@@ -30,7 +30,7 @@ final class CouldNotLoadIndividualPurchases extends RuntimeException
         );
     }
 
-    public static function becauseInvoiceIdIsMissing(string $purchaseData, string $expectedKey): self
+    public static function becauseKeyIsMissing(string $purchaseData, string $expectedKey): self
     {
         return new self(
             sprintf(

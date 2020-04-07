@@ -10,7 +10,7 @@ trait Mapping
      */
     private static function asString(array $data, string $key): string
     {
-        if ($data[$key] === null || $data[$key] === '') {
+        if (!isset($data[$key]) || $data[$key] === null || $data[$key] === '') {
             return '';
         }
 
@@ -22,7 +22,7 @@ trait Mapping
      */
     private static function asStringOrNull(array $data, string $key): ?string
     {
-        if ($data[$key] === null || $data[$key] === '') {
+        if (!isset($data[$key]) || $data[$key] === null || $data[$key] === '') {
             return null;
         }
 
@@ -34,7 +34,7 @@ trait Mapping
      */
     private static function asInt(array $data, string $key): int
     {
-        if ($data[$key] === null || $data[$key] === '') {
+        if (!isset($data[$key]) || $data[$key] === null || $data[$key] === '') {
             return 0;
         }
 
@@ -46,7 +46,7 @@ trait Mapping
      */
     private static function asIntOrNull(array $data, string $key): ?int
     {
-        if ($data[$key] === null || $data[$key] === '') {
+        if (!isset($data[$key]) || $data[$key] === null || $data[$key] === '') {
             return null;
         }
 
@@ -58,7 +58,7 @@ trait Mapping
      */
     private static function asBool(array $data, string $key): bool
     {
-        if ($data[$key] === null || $data[$key] === '') {
+        if (!isset($data[$key]) || $data[$key] === null || $data[$key] === '') {
             return false;
         }
 
@@ -70,7 +70,7 @@ trait Mapping
      */
     private static function asBoolOrNull(array $data, string $key): ?bool
     {
-        if ($data[$key] === null || $data[$key] === '') {
+        if (!isset($data[$key]) || $data[$key] === null || $data[$key] === '') {
             return null;
         }
 

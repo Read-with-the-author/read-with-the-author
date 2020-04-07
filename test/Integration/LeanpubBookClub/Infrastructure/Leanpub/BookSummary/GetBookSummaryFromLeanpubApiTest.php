@@ -16,7 +16,7 @@ final class GetBookSummaryFromLeanpubApiTest extends TestCase
     public function it_loads_a_book_summary_from_leanpub(): void
     {
         $getBookSummaryFromLeanpubApi = new GetBookSummaryFromLeanpubApi(
-            BookSlug::fromString('object-design'),
+            BookSlug::fromString('microservices-for-everyone'),
             ApiKey::fromString(Env::get('LEANPUB_API_KEY'))
         );
 
@@ -24,11 +24,14 @@ final class GetBookSummaryFromLeanpubApiTest extends TestCase
 
         self::assertEquals(
             new BookSummary(
-                'Style Guide for Object Design',
+                'Microservices for everyone',
                 '',
                 'Matthias Noback',
-                'https://d2sofvawe08yqg.cloudfront.net/object-design/original?1552991369',
-                'http://leanpub.com/object-design'
+                'https://d2sofvawe08yqg.cloudfront.net/microservices-for-everyone/original?1549495580',
+                'http://leanpub.com/microservices-for-everyone',
+                'http://leanpub.com/s/Tg286d6Q80d6JNiXfS1HBA.pdf',
+                'http://leanpub.com/s/Tg286d6Q80d6JNiXfS1HBA.epub',
+                'http://leanpub.com/s/Tg286d6Q80d6JNiXfS1HBA.mobi'
             ),
             $bookSummary
         );
