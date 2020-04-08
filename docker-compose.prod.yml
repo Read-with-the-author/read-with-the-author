@@ -24,6 +24,16 @@ services:
         env_file:
             - .env.prod.local
 
+    importer:
+        container_name: readwiththeauthor_importer
+        labels:
+            - "traefik.enable=false"
+        networks:
+            - internal
+        restart: "unless-stopped"
+        env_file:
+            - .env.prod.local
+
 networks:
     traefik:
         external: true

@@ -8,7 +8,7 @@ monolog:
             buffer_size: 50 # How many messages should be saved? Prevent memory leaks
         nested:
             type: stream
-            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            path: "php://stdout"
             level: debug
         console:
             type: console
@@ -16,7 +16,7 @@ monolog:
             channels: ["!event", "!doctrine"]
         deprecation:
             type: stream
-            path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
+            path: "php://stdout"
         deprecation_filter:
             type: filter
             handler: deprecation

@@ -27,21 +27,14 @@ services:
             start_period: 30s
         environment:
             - SYMFONY_VERSION
-        env_file:
-            - .env.local
         volumes:
             - var:/srv/app/var/
 
-#
-#    importer:
-#        image: matthiasnoback/leanpub-book-club-production-php:latest
-#        command: php bin/console leanpub:import-all-purchases --loop --delay=60
-#        networks:
-#            - internal
-#        env_file:
-#            - .env.prod.local
-#        volumes:
-#            - var:/srv/app/var/
+    importer:
+        image: matthiasnoback/leanpub-book-club-production-php:latest
+        command: php bin/console leanpub:import-all-purchases --loop --delay=60
+        volumes:
+            - var:/srv/app/var/
 
 volumes:
     var:
