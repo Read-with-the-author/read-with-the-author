@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure\Symfony\Form;
 
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
+use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
+use LeanpubBookClub\Infrastructure\Symfony\Validation\LeanpubInvoiceIdConstraint;
+use LeanpubBookClub\Infrastructure\Symfony\Validation\UniqueLeanpubInvoiceIdConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -30,7 +33,13 @@ final class RequestAccessForm extends AbstractType
         $builder
             ->add(
                 'leanpubInvoiceId',
-                LeanpubInvoiceIdField::class
+                LeanpubInvoiceIdField::class,
+                [
+                    'constraints' => [
+                        new NotBlank(),
+                        new LeanpubInvoiceIdConstraint(),
+                    ]
+                ]
             )
             ->add(
                 'emailAddress',

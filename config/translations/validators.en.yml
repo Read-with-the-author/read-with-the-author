@@ -1,1 +1,3 @@
 leanpub_invoice_id.invalid: "{{ value }} does not look like a valid Leanpub purchase ID"
+leanpub_invoice_id.already_used: "{{ value }} has already been used"
+leanpub_invoice_id.does_not_exist: "{{ value }} not found: maybe you haven't requested access yet?"

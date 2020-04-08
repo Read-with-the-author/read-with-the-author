@@ -27,7 +27,7 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
     # <<< Modifications
     elif [ "$APP_ENV" = 'prod' ]; then
       composer install --prefer-dist --no-progress --no-suggest --no-interaction --no-dev
-      bin/console cache:warm
+      bin/console cache:clear
     # Modification >>>
     elif [ "$APP_ENV" != 'prod' ]; then
         composer install --prefer-dist --no-progress --no-suggest --no-interaction

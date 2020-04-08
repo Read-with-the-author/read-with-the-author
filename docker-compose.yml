@@ -35,6 +35,10 @@ services:
         command: php bin/console leanpub:import-all-purchases --loop --delay=60
         volumes:
             - var:/srv/app/var/
+        depends_on:
+            - php # it should start only after "php"'s entrypoint script has finished
+        healthcheck:
+            disable: true
 
 volumes:
     var:

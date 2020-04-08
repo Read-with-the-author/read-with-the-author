@@ -12,6 +12,6 @@ final class LeanpubInvoiceIdConstraint extends Constraint
     public $message = 'leanpub_invoice_id.invalid';
 
     protected static $errorNames = [
-        self::INVALID_FORMAT_ERROR => 'INVALID_FORMAT_ERROR',
+        self::INVALID_FORMAT_ERROR => 'INVALID_FORMAT_ERROR'
     ];
 }

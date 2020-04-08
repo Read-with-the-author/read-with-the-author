@@ -17,8 +17,6 @@ services:
     importer:
         volumes:
             - .:/srv/app:cached
-        depends_on:
-            - php # it should start only after "php"'s entrypoint script has finished
         env_file:
             - .env.local
 

@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure\Symfony\Form;
 
+use LeanpubBookClub\Infrastructure\Symfony\Validation\ExistingLeanpubInvoiceIdConstraint;
+use LeanpubBookClub\Infrastructure\Symfony\Validation\LeanpubInvoiceIdConstraint;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 final class RequestAccessTokenForm extends AbstractType
 {
@@ -23,7 +26,14 @@ final class RequestAccessTokenForm extends AbstractType
         $builder
             ->add(
                 'leanpubInvoiceId',
-                LeanpubInvoiceIdField::class
+                LeanpubInvoiceIdField::class,
+                [
+                    'constraints' => [
+                        new NotBlank(),
+                        new LeanpubInvoiceIdConstraint(),
+                        new ExistingLeanpubInvoiceIdConstraint()
+                    ]
+                ]
             )
             ->add(
                 'request_access_token',
