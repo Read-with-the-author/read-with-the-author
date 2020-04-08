@@ -3,6 +3,7 @@ version: '3.4'
 services:
 
     nginx:
+        container_name: readwiththeauthor_nginx
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.readwiththeauthor_com.rule=Host(`noback.readwiththeauthor.com`)"
@@ -11,12 +12,19 @@ services:
         networks:
             - internal
             - traefik
+        restart: "unless-stopped"
 
     php:
+        container_name: readwiththeauthor_php
         labels:
             - "traefik.enable=false"
         networks:
             - internal
+        restart: "unless-stopped"
+        env_file:
+            - .env.prod.local
 
+networks:
     traefik:
         external: true
+    internal:

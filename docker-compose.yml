@@ -28,7 +28,7 @@ services:
         environment:
             - SYMFONY_VERSION
         env_file:
-            - .env.prod.local
+            - .env.local
         volumes:
             - var:/srv/app/var/
 

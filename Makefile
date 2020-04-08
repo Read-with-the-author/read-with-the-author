@@ -46,3 +46,10 @@ up: hosts-entry down
 .PHONY: down
 down:
 	${DOCKER_COMPOSE_DEV} down --remove-orphans
+
+.PHONY: deploy
+deploy:
+	./deploy.sh
+
+.PHONY: release
+release: build push deploy
