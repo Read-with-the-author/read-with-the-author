@@ -39,10 +39,10 @@ final class SessionsUsingDoctrineDbal implements Sessions
     public function upcomingSessionsForAdministrator(DateTimeImmutable $currentTime): array
     {
         $rows = $this->connection->selectAll(
-            $this->createQueryBuilderForAdministrator()
-                ->andWhere('date >= :dateBefore')
+            $this->createQueryBuilderForAdministrator('s')
+                ->andWhere('s.date >= :dateBefore')
                 ->setParameter('dateBefore', $this->selectDateBefore($currentTime))
-                ->orderBy('date', 'ASC')
+                ->orderBy('s.date', 'ASC')
         );
 
         return array_map([$this, 'createSessionForAdministrator'], $rows);
@@ -51,8 +51,8 @@ final class SessionsUsingDoctrineDbal implements Sessions
     public function getSessionForAdministrator(SessionId $sessionId): SessionForAdministrator
     {
         $row = $this->connection->selectOne(
-            $this->createQueryBuilderForAdministrator()
-                ->andWhere('sessionId = :sessionId')
+            $this->createQueryBuilderForAdministrator('s')
+                ->andWhere('s.sessionId = :sessionId')
                 ->setParameter('sessionId', $sessionId->asString())
         );
 
@@ -104,12 +104,12 @@ final class SessionsUsingDoctrineDbal implements Sessions
             ->withActiveMemberRegisteredAsAttendee(self::asInt($row, 'memberIsRegisteredAsAttendee') > 0);
     }
 
-    private function createQueryBuilderForAdministrator(): QueryBuilder
+    private function createQueryBuilderForAdministrator(string $alias): QueryBuilder
     {
         return $this->connection->createQueryBuilder()
             ->select('*')
-            ->addSelect('(SELECT COUNT(*) FROM attendees a WHERE a.sessionId = sessionId) AS numberOfAttendees')
-            ->from('sessions');
+            ->addSelect('(SELECT COUNT(*) FROM attendees a WHERE a.sessionId = s.sessionId) AS numberOfAttendees')
+            ->from('sessions', $alias);
     }
 
     private function createQueryBuilderForMember(LeanpubInvoiceId $memberId): QueryBuilder
