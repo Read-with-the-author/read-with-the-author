@@ -40,6 +40,7 @@ final class AdminAreaController extends AbstractController
             [
                 'form' => $this->createForm(PlanSessionForm::class)->createView(),
                 'upcomingSessions' => $this->application->listUpcomingSessionsForAdministrator(),
+                'members' => $this->application->listMembersForAdministrator(),
                 'authorTimeZone' => $this->authorTimeZone->asString()
             ]
         );

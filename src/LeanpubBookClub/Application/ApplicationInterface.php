@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Application;
 
 use LeanpubBookClub\Application\Members\Member;
+use LeanpubBookClub\Application\Members\MemberForAdministrator;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\SessionCall\SetCallUrl;
@@ -67,4 +68,9 @@ interface ApplicationInterface
      * @throws CouldNotFindMember
      */
     public function getOneMemberById(string $memberId): Member;
+
+    /**
+     * @return array<MemberForAdministrator>
+     */
+    public function listMembersForAdministrator(): array;
 }

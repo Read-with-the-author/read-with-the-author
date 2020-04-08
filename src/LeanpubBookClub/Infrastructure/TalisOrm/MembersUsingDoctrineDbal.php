@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure\TalisOrm;
 
 use LeanpubBookClub\Application\Members\Member;
+use LeanpubBookClub\Application\Members\MemberForAdministrator;
 use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Domain\Model\Member\AccessToken;
 use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
@@ -55,6 +56,25 @@ final class MembersUsingDoctrineDbal implements Members
         } catch (NoResult $exception) {
             throw CouldNotFindMember::withId($memberId);
         }
+    }
+
+    public function listMembers(): array
+    {
+        $records = $this->connection->selectAll(
+            $this->connection->createQueryBuilder()
+            ->select('*')
+            ->from('members')
+            ->orderBy('wasGrantedAccess', 'desc')
+        );
+
+        return array_map(function (array $record): MemberForAdministrator {
+            return new MemberForAdministrator(
+                self::asString($record, 'memberId'),
+                self::asString($record, 'emailAddress'),
+                self::asString($record, 'requestedAccessAt'),
+                self::asBool($record, 'wasGrantedAccess')
+            );
+        }, $records);
     }
 
     /**

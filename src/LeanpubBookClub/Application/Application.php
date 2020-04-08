@@ -286,4 +286,9 @@ final class Application implements ApplicationInterface
     {
         return $this->sessions->getSessionForAdministrator(SessionId::fromString($sessionId));
     }
+
+    public function listMembersForAdministrator(): array
+    {
+        return $this->members->listMembers();
+    }
 }

@@ -47,4 +47,27 @@
         <p>No sessions have been planned.</p>
     {% endif %}
 
+    <h2>Members</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Leanpub invoice ID</th>
+            <th>Email address</th>
+            <th>Requested access at</th>
+            <th>Access was granted</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for member in members %}
+            <tr class="{% if member.accessWasGranted %}table-success{% else %}table-warning{% endif %}">
+                <td>{{ member.memberId }}</td>
+                <td>{{ member.emailAddress }}</td>
+                <td>{{ member.requestedAccessAt }}</td>
+                <td>{% if member.accessWasGranted %}yes{% else %}no {% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
 {% endblock %}

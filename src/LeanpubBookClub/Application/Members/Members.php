@@ -18,4 +18,9 @@ interface Members
      * @throws CouldNotFindMember
      */
     public function getOneById(LeanpubInvoiceId $memberId): Member;
+
+    /**
+     * @return array<MemberForAdministrator>
+     */
+    public function listMembers(): array;
 }

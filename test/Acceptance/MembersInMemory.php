@@ -54,4 +54,9 @@ final class MembersInMemory implements Members
 
         return $this->members[$memberId->asString()];
     }
+
+    public function listMembers(): array
+    {
+        return [];
+    }
 }
