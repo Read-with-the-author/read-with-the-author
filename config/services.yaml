@@ -44,9 +44,6 @@ services:
     LeanpubBookClub\Application\EventDispatcher:
         factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'eventDispatcher']
 
-    LeanpubBookClub\Domain\Model\Member\MemberRepository:
-        factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'memberRepository']
-
     LeanpubBookClub\Application\Assets: '@LeanpubBookClub\Infrastructure\PublicAssetPublisher'
 
     LeanpubBookClub\Application\AssetPublisher: '@LeanpubBookClub\Infrastructure\PublicAssetPublisher'
@@ -103,6 +100,3 @@ services:
         factory: ['@LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary', 'getBookSummary']
 
     LeanpubBookClub\Infrastructure\Symfony\SetSchemeOnRequestContext: ~
-
-    LeanpubBookClub\Infrastructure\Symfony\Validation\UniqueLeanpubInvoiceIdConstraintValidator: ~
-    LeanpubBookClub\Infrastructure\Symfony\Validation\ExistingLeanpubInvoiceIdConstraintValidator: ~

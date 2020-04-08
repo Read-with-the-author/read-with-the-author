@@ -5,9 +5,14 @@ namespace LeanpubBookClub\Infrastructure\Symfony\Controller;
 
 use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
+use LeanpubBookClub\Domain\Model\Common\UserFacingError;
+use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
+use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceIdHasBeenUsedBefore;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessForm;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessTokenForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -50,11 +55,15 @@ final class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $form->getData();
 
-            $this->application->requestAccess(
-                new RequestAccess($formData['leanpubInvoiceId'], $formData['emailAddress'], $formData['timeZone'])
-            );
+            try {
+                $this->application->requestAccess(
+                    new RequestAccess($formData['leanpubInvoiceId'], $formData['emailAddress'], $formData['timeZone'])
+                );
 
-            return $this->redirectToRoute('access_requested');
+                return $this->redirectToRoute('access_requested');
+            } catch (LeanpubInvoiceIdHasBeenUsedBefore $exception) {
+                $this->convertExceptionToFormError($form, 'leanpubInvoiceId', $exception);
+            }
         }
 
         return $this->render(
@@ -77,9 +86,13 @@ final class IndexController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $formData = $form->getData();
 
-            $this->application->generateAccessToken($formData['leanpubInvoiceId']);
+            try {
+                $this->application->generateAccessToken($formData['leanpubInvoiceId']);
 
-            return $this->redirectToRoute('index');
+                return $this->redirectToRoute('index');
+            } catch (CouldNotFindMember $exception) {
+                $this->convertExceptionToFormError($form, 'leanpubInvoiceId', $exception);
+            }
         }
 
         return $this->render(
@@ -105,5 +118,16 @@ final class IndexController extends AbstractController
     public function privacyPolicyAction(): Response
     {
         return $this->render('privacy_policy.html.twig');
+    }
+
+    private function convertExceptionToFormError(FormInterface $form, string $field, UserFacingError $exception): void
+    {
+        $form->get($field)->addError(
+            new FormError(
+                $this->translator->trans($exception->translationId(), $exception->translationParameters()),
+                $exception->translationId(),
+                $exception->translationParameters()
+            )
+        );
     }
 }

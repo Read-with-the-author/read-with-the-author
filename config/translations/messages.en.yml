@@ -16,3 +16,5 @@ request_access_form.time_zone.help: "We need this to show the dates and times of
 session_video_call_url_not_available.flash_message: "The URL of the video call for this session is not available yet. Please try again later."
 attendee_registered_for_session_email.subject: "You are registered for attendance"
 member_time_zone_changed.flash_message: "Your time zone was updated"
+leanpub_invoice_id.already_used: "{leanpubInvoiceId} has already been used"
+leanpub_invoice_id.does_not_exist: "{leanpubInvoiceId} not found: maybe you haven't signed up yet?"
