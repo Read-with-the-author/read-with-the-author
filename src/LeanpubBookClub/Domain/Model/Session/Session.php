@@ -175,7 +175,7 @@ final class Session implements Aggregate, SpecifiesSchema
         $instance = new self();
 
         $instance->sessionId = SessionId::fromString(self::asString($aggregateState, 'sessionId'));
-        $instance->date = ScheduledDate::fromString(self::asString($aggregateState, 'date'));
+        $instance->date = ScheduledDate::fromDateTime(self::dateTimeAsDateTimeImmutable($aggregateState, 'date'));
         $instance->duration = Duration::fromMinutes(self::asInt($aggregateState, 'duration'));
         $instance->description = self::asString($aggregateState, 'description');
         $instance->maximumNumberOfAttendees = self::asInt($aggregateState, 'maximumNumberOfAttendees');
@@ -196,7 +196,7 @@ final class Session implements Aggregate, SpecifiesSchema
     {
         return [
             'sessionId' => $this->sessionId->asString(),
-            'date' => $this->date->asString(),
+            'date' => self::dateTimeImmutableAsDateTimeString($this->date->asPhpDateTime()),
             'duration' => $this->duration->asInt(),
             'description' => $this->description,
             'maximumNumberOfAttendees' => $this->maximumNumberOfAttendees,
@@ -237,7 +237,7 @@ final class Session implements Aggregate, SpecifiesSchema
         $table->addColumn('sessionId', 'string')->setNotnull(true);
         $table->setPrimaryKey(['sessionId']);
 
-        $table->addColumn('date', 'string')->setNotnull(true);
+        $table->addColumn('date', 'datetime')->setNotnull(true);
         $table->addColumn('duration', 'integer')->setNotnull(false);
         $table->addColumn('description', 'string')->setNotnull(true);
         $table->addColumn('maximumNumberOfAttendees', 'integer')->setNotnull(true);

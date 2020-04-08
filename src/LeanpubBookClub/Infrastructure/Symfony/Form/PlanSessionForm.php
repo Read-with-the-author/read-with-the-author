@@ -48,7 +48,8 @@ final class PlanSessionForm extends AbstractType
                     'constraints' => [
                         new NotBlank(),
                         new Range(['min' => 0])
-                    ]
+                    ],
+                    'label' => 'Duration in minutes'
                 ]
             )
             ->add(

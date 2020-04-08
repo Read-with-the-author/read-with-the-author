@@ -5,7 +5,6 @@ namespace LeanpubBookClub\Infrastructure\TalisOrm;
 
 use DateTimeImmutable;
 use Doctrine\DBAL\Query\QueryBuilder;
-use LeanpubBookClub\Application\UpcomingSessions\CouldNotFindSession;
 use LeanpubBookClub\Application\UpcomingSessions\SessionForAdministrator;
 use LeanpubBookClub\Application\UpcomingSessions\SessionForMember;
 use LeanpubBookClub\Application\UpcomingSessions\Sessions;
@@ -27,10 +26,11 @@ final class SessionsUsingDoctrineDbal implements Sessions
 
     public function upcomingSessions(DateTimeImmutable $currentTime, LeanpubInvoiceId $activeMemberId): array
     {
-        // @todo only upcoming sessions
-
         $rows = $this->connection->selectAll(
             $this->createQueryBuilderForMember($activeMemberId)
+                ->andWhere('date >= :dateBefore')
+                ->setParameter('dateBefore', $this->selectDateBefore($currentTime))
+                ->orderBy('date', 'ASC')
         );
 
         return array_map([$this, 'createSessionForMember'], $rows);
@@ -40,10 +40,10 @@ final class SessionsUsingDoctrineDbal implements Sessions
     {
         $rows = $this->connection->selectAll(
             $this->createQueryBuilderForAdministrator()
+                ->andWhere('date >= :dateBefore')
+                ->setParameter('dateBefore', $this->selectDateBefore($currentTime))
                 ->orderBy('date', 'ASC')
         );
-
-        // @todo only upcoming sessions
 
         return array_map([$this, 'createSessionForAdministrator'], $rows);
     }
@@ -121,5 +121,11 @@ final class SessionsUsingDoctrineDbal implements Sessions
             )
             ->setParameter('memberId', $memberId->asString())
             ->from('sessions');
+    }
+
+    private function selectDateBefore(DateTimeImmutable $currentTime): string
+    {
+        $dateBefore = self::dateTimeImmutableAsDateTimeString($currentTime->modify('-4 hours'));
+        return $dateBefore;
     }
 }
