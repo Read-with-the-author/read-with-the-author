@@ -72,7 +72,7 @@ final class BookSummary
         return $this->subtitle;
     }
 
-    public function authorString(): string
+    public function author(): string
     {
         return $this->authorString;
     }

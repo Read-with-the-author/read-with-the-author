@@ -98,4 +98,12 @@ final class IndexController extends AbstractController
     {
         return $this->render('access_requested.html.twig');
     }
+
+    /**
+     * @Route("/privacy-policy", name="privacy_policy", methods={"GET"})
+     */
+    public function privacyPolicyAction(): Response
+    {
+        return $this->render('privacy_policy.html.twig');
+    }
 }
