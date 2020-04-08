@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Domain\Model\Member;
 
+use DateTimeImmutable;
 use LeanpubBookClub\Application\ProducesFlashMessage;
 use LeanpubBookClub\Application\FlashType;
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
@@ -16,11 +17,18 @@ final class MemberRequestedAccess implements ProducesFlashMessage
 
     private TimeZone $memberTimeZone;
 
-    public function __construct(LeanpubInvoiceId $memberId, EmailAddress $emailAddress, TimeZone $memberTimeZone)
-    {
+    private DateTimeImmutable $requestedAt;
+
+    public function __construct(
+        LeanpubInvoiceId $memberId,
+        EmailAddress $emailAddress,
+        TimeZone $memberTimeZone,
+        DateTimeImmutable $requestedAt
+    ) {
         $this->emailAddress = $emailAddress;
         $this->leanpubInvoiceId = $memberId;
         $this->memberTimeZone = $memberTimeZone;
+        $this->requestedAt = $requestedAt;
     }
 
     public function leanpubInvoiceId(): LeanpubInvoiceId

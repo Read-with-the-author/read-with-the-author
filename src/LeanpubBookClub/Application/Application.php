@@ -104,7 +104,12 @@ final class Application implements ApplicationInterface
             throw CouldNotRequestAccess::becauseInvoiceIdHasBeenUsedBefore($command->leanpubInvoiceId());
         }
 
-        $member = Member::requestAccess($command->leanpubInvoiceId(), $command->emailAddress(), $command->timeZone());
+        $member = Member::requestAccess(
+            $command->leanpubInvoiceId(),
+            $command->emailAddress(),
+            $command->timeZone(),
+            $this->clock->currentTime()
+        );
 
         $this->memberRepository->save($member);
 

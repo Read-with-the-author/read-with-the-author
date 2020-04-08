@@ -24,7 +24,6 @@ final class RegistrationContext extends FeatureContext
 
     private string $memberTimeZone = 'Europe/Amsterdam';
 
-
     /**
      * @Given someone has bought a copy of the book and the invoice ID was :invoiceId
      */

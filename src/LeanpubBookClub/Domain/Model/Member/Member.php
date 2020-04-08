@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Domain\Model\Member;
 
+use DateTimeImmutable;
 use Doctrine\DBAL\Schema\Schema;
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
@@ -28,6 +29,8 @@ final class Member implements Aggregate, SpecifiesSchema
 
     private bool $wasGrantedAccess = false;
 
+    private DateTimeImmutable $requestedAccessAt;
+
     private function __construct()
     {
     }
@@ -35,15 +38,17 @@ final class Member implements Aggregate, SpecifiesSchema
     public static function requestAccess(
         LeanpubInvoiceId $leanpubInvoiceId,
         EmailAddress $emailAddress,
-        TimeZone $timeZone
+        TimeZone $timeZone,
+        DateTimeImmutable $requestedAccessAt
     ): self {
         $member = new self();
 
         $member->memberId = $leanpubInvoiceId;
         $member->emailAddress = $emailAddress;
         $member->timeZone = $timeZone;
+        $member->requestedAccessAt = $requestedAccessAt;
 
-        $member->events[] = new MemberRequestedAccess($leanpubInvoiceId, $emailAddress, $timeZone);
+        $member->events[] = new MemberRequestedAccess($leanpubInvoiceId, $emailAddress, $timeZone, $requestedAccessAt);
 
         return $member;
     }
@@ -110,6 +115,7 @@ final class Member implements Aggregate, SpecifiesSchema
         $instance->accessToken = is_string($accessToken) ? AccessToken::fromString($accessToken) : null;
 
         $instance->wasGrantedAccess = self::asBool($aggregateState, 'wasGrantedAccess');
+        $instance->requestedAccessAt = self::dateTimeAsDateTimeImmutable($aggregateState, 'requestedAccessAt');
 
         return $instance;
     }
@@ -124,7 +130,8 @@ final class Member implements Aggregate, SpecifiesSchema
             'emailAddress' => $this->emailAddress->asString(),
             'timeZone' => $this->timeZone->asString(),
             'accessToken' => $this->accessToken instanceof AccessToken ? $this->accessToken->asString() : null,
-            'wasGrantedAccess' => $this->wasGrantedAccess
+            'wasGrantedAccess' => $this->wasGrantedAccess,
+            'requestedAccessAt' => self::dateTimeImmutableAsDateTimeString($this->requestedAccessAt)
         ];
     }
 
@@ -164,5 +171,6 @@ final class Member implements Aggregate, SpecifiesSchema
         $table->addColumn('accessToken', 'string')->setNotnull(false);
         $table->addColumn('timeZone', 'string')->setNotnull(true);
         $table->addColumn('wasGrantedAccess', 'boolean')->setNotnull(true)->setDefault(false);
+        $table->addColumn('requestedAccessAt', 'datetime')->setNotnull(false);
     }
 }

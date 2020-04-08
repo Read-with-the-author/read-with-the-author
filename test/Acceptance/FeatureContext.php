@@ -16,6 +16,7 @@ abstract class FeatureContext implements Context
     public function __construct()
     {
         $this->serviceContainer = new ServiceContainerForAcceptanceTesting();
+        $this->serviceContainer->setCurrentTime('2020-02-01 10:11');
     }
 
     /**

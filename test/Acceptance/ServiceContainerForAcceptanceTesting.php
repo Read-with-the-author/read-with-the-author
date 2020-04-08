@@ -32,8 +32,18 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
     {
         $clock = $this->clock();
         Assert::that($clock)->isInstanceOf(FakeClock::class);
+        /** @var $clock FakeClock */
 
         $clock->setCurrentDate($date);
+    }
+
+    public function setCurrentTime(string $dateTime): void
+    {
+        $clock = $this->clock();
+        Assert::that($clock)->isInstanceOf(FakeClock::class);
+        /** @var $clock FakeClock */
+
+        $clock->setCurrentTime($dateTime);
     }
 
     protected function registerEventSubscribers(EventDispatcherWithSubscribers $eventDispatcher): void

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Domain\Model\Member;
 
+use DateTimeImmutable;
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use LeanpubBookClub\Domain\Model\Common\EntityTestCase;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
@@ -18,12 +19,13 @@ final class MemberTest extends EntityTestCase
         $emailAddress = $this->anEmailAddress();
         $leanpubInvoiceId = $this->aLeanpubInvoiceId();
         $timeZone = $this->aTimeZone();
+        $requestedAt = new DateTimeImmutable();
 
-        $member = Member::requestAccess($leanpubInvoiceId, $emailAddress, $timeZone);
+        $member = Member::requestAccess($leanpubInvoiceId, $emailAddress, $timeZone, $requestedAt);
 
         self::assertEquals(
             [
-                new MemberRequestedAccess($leanpubInvoiceId, $emailAddress, $timeZone)
+                new MemberRequestedAccess($leanpubInvoiceId, $emailAddress, $timeZone, $requestedAt)
             ],
             $member->releaseEvents()
         );
@@ -115,7 +117,7 @@ final class MemberTest extends EntityTestCase
 
     private function aMember(): Member
     {
-        return Member::requestAccess($this->aLeanpubInvoiceId(), $this->anEmailAddress(), $this->aTimeZone());
+        return Member::requestAccess($this->aLeanpubInvoiceId(), $this->anEmailAddress(), $this->aTimeZone(), $this->now());
     }
 
     private function accessTokenGenerator(AccessToken $accessToken): AccessTokenGenerator
@@ -129,5 +131,10 @@ final class MemberTest extends EntityTestCase
     private function aTimeZone(): TimeZone
     {
         return TimeZone::fromString('Europe/Amsterdam');
+    }
+
+    private function now(): DateTimeImmutable
+    {
+        return new DateTimeImmutable('now');
     }
 }
