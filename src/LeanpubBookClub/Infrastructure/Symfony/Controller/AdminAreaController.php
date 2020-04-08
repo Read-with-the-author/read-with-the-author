@@ -10,6 +10,7 @@ use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Infrastructure\Symfony\Form\EditSessionForm;
 use LeanpubBookClub\Infrastructure\Symfony\Form\PlanSessionForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,6 +43,14 @@ final class AdminAreaController extends AbstractController
                 'authorTimeZone' => $this->authorTimeZone->asString()
             ]
         );
+    }
+
+    /**
+     * @Route("/logout", name="admin_area_logout", methods={"GET"})
+     */
+    public function logoutAction(): Response
+    {
+        return new RedirectResponse($this->generateUrl('index'));
     }
 
     /**

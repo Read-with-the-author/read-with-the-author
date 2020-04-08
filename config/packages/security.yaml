@@ -22,11 +22,16 @@ security:
             guard:
                 authenticator:
                     - LeanpubBookClub\Infrastructure\Symfony\Security\AccessTokenAuthenticator
+            logout:
+                path: member_area_logout
+
         admin_area:
             pattern: ^/admin-area
             http_basic:
                 provider: admins
                 realm: Admin area
+            logout:
+                path: admin_area_logout
 
     access_control:
         - { path: ^/member-area/login$, roles: IS_AUTHENTICATED_ANONYMOUSLY }

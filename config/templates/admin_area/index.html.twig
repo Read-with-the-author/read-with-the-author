@@ -3,6 +3,8 @@
 {% block body %}
     <h1>Admin area</h1>
 
+    <p><a href="{{ path('admin_area_logout') }}">Logout</a></p>
+
     <h2>Plan a new session</h2>
 
     {{ form(form) }}

@@ -57,6 +57,14 @@ final class MemberAreaController extends AbstractController
     }
 
     /**
+     * @Route("/logout", name="member_area_logout", methods={"GET"})
+     */
+    public function logoutAction(): Response
+    {
+        return new RedirectResponse($this->generateUrl('index'));
+    }
+
+    /**
      * @Route("/", name="member_area_index", methods={"GET"})
      */
     public function indexAction(UserInterface $member): Response
