@@ -2,4 +2,4 @@
 
 set -eu
 
-docker-compose run --rm php sh ./slow_tests.sh "$@"
+docker-compose run --rm php sh ./slow_tests.sh

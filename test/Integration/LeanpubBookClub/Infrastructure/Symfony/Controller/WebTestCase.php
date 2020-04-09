@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub;
+namespace LeanpubBookClub\Infrastructure\Symfony\Controller;
 
 use Assert\Assert;
 use LeanpubBookClub\Application\ApplicationInterface;
@@ -30,7 +30,7 @@ abstract class WebTestCase extends SymfonyWebTestCase
         Crawler $crawler,
         string $type,
         string $messageContains
-    ) {
+    ): void {
         $nodes = $crawler->filter('.alerts .alert-' . $type);
         self::assertGreaterThan(0, count($nodes), 'Did not find a flash message of type ' . $type);
 

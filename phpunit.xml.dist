@@ -10,9 +10,6 @@
         <testsuite name="integration">
             <directory>./test/Integration</directory>
         </testsuite>
-        <testsuite name="functional">
-            <directory>./test/Functional</directory>
-        </testsuite>
     </testsuites>
     <filter>
         <whitelist>

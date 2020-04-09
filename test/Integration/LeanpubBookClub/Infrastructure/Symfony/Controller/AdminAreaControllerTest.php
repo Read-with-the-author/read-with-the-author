@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub;
+namespace LeanpubBookClub\Infrastructure\Symfony\Controller;
 
 use LeanpubBookClub\Application\PlanSession;
 use LeanpubBookClub\Application\UpcomingSessions\SessionForAdministrator;
@@ -9,7 +9,10 @@ use LeanpubBookClub\Application\UpdateSession;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Response;
 
-final class AdminAreaTest extends WebTestCase
+/**
+ * @group controller
+ */
+final class AdminAreaControllerTest extends WebTestCase
 {
     public function testAccessDeniedForNonLoggedInUsers(): void
     {

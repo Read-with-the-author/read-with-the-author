@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub;
+namespace LeanpubBookClub\Infrastructure\Symfony\Controller;
 
+use Assert\Assert;
 use LeanpubBookClub\Application\AttendSession;
 use LeanpubBookClub\Application\CancelAttendance;
 use LeanpubBookClub\Application\FlashType;
@@ -14,10 +15,14 @@ use LeanpubBookClub\Domain\Model\Member\AccessToken;
 use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 use Test\Acceptance\MemberBuilder;
 
-final class MemberAreaTest extends WebTestCase
+/**
+ * @group controller
+ */
+final class MemberAreaControllerTest extends WebTestCase
 {
     private Member $loggedInMember;
 
@@ -238,7 +243,7 @@ final class MemberAreaTest extends WebTestCase
     /**
      * @param array<SessionForMember> $upcomingSessions
      */
-    private function assertResponseContainsUpcomingSessions(Crawler $crawler, array $upcomingSessions)
+    private function assertResponseContainsUpcomingSessions(Crawler $crawler, array $upcomingSessions): void
     {
         foreach ($upcomingSessions as $upcomingSession) {
             /** @var SessionForMember $upcomingSession */
@@ -261,7 +266,7 @@ final class MemberAreaTest extends WebTestCase
     {
         $sessionElement = self::sessionElement($crawler, $sessionId);
 
-        self::assertStringContainsString('table-success', $sessionElement->first()->attr('class'));
+        self::assertStringContainsString('table-success', (string)$sessionElement->first()->attr('class'));
         self::assertStringContainsString('Cancel attendance', $sessionElement->filter('.session-actions')->text());
     }
 
@@ -269,7 +274,7 @@ final class MemberAreaTest extends WebTestCase
     {
         $sessionElement = self::sessionElement($crawler, $sessionId);
 
-        self::assertStringNotContainsString('table-success', $sessionElement->first()->attr('class'));
+        self::assertStringNotContainsString('table-success', (string)$sessionElement->first()->attr('class'));
         self::assertStringContainsString('Attend this session', $sessionElement->filter('.session-actions')->text());
     }
 
@@ -283,6 +288,7 @@ final class MemberAreaTest extends WebTestCase
         $this->memberExists($member);
 
         $session = self::$container->get('session');
+        Assert::that($session)->isInstanceOf(Session::class);
 
         $firewallName = 'member_area';
         $firewallContext = $firewallName;

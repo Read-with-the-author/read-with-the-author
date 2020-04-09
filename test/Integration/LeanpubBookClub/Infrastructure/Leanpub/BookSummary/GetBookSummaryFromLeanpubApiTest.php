@@ -8,6 +8,9 @@ use LeanpubBookClub\Infrastructure\Leanpub\BookSlug;
 use PHPUnit\Framework\TestCase;
 use LeanpubBookClub\Infrastructure\Env;
 
+/**
+ * @group internet
+ */
 final class GetBookSummaryFromLeanpubApiTest extends TestCase
 {
     /**

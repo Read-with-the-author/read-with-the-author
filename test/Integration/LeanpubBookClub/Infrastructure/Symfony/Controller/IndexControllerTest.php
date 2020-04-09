@@ -1,11 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace LeanpubBookClub;
+namespace LeanpubBookClub\Infrastructure\Symfony\Controller;
 
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 
-final class IndexTest extends WebTestCase
+/**
+ * @group controller
+ */
+final class IndexControllerTest extends WebTestCase
 {
     public function testIndex(): void
     {
