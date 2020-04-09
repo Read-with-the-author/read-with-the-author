@@ -50,7 +50,7 @@ final class SessionRepositoryContractTest extends KernelTestCase
     }
 
     /**
-     * @return Generator<array<Session,callable>>
+     * @return Generator<array<int,Session|\Closure>>
      */
     public function sessions(): Generator
     {

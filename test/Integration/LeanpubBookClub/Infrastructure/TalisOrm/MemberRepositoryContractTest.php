@@ -52,7 +52,7 @@ final class MemberRepositoryContractTest extends KernelTestCase
     }
 
     /**
-     * @return Generator<array<Member,callable>>
+     * @return Generator<array<int,Member|\Closure>>
      */
     public function members(): Generator
     {
