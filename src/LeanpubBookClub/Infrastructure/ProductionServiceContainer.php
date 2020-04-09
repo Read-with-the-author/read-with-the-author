@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure;
 
 use Doctrine\DBAL\Connection as DbalConnection;
-use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\Clock;
 use LeanpubBookClub\Application\Email\Mailer;
 use LeanpubBookClub\Application\Members\Members;
@@ -24,7 +23,7 @@ use LeanpubBookClub\Infrastructure\TalisOrm\SessionsUsingDoctrineDbal;
 use LeanpubBookClub\Infrastructure\TalisOrm\SessionTalisOrmRepository;
 use TalisOrm\AggregateRepository;
 
-final class ProductionServiceContainer extends ServiceContainer
+class ProductionServiceContainer extends ServiceContainer
 {
     private Configuration $configuration;
 
@@ -59,7 +58,7 @@ final class ProductionServiceContainer extends ServiceContainer
         return new PurchaseTalisOrmRepository($this->talisOrmAggregateRepository());
     }
 
-    protected function memberRepository(): MemberRepository
+    public function memberRepository(): MemberRepository
     {
         return new MemberTalisOrmRepository($this->talisOrmAggregateRepository());
     }
@@ -70,11 +69,6 @@ final class ProductionServiceContainer extends ServiceContainer
             $this->configuration->leanpubBookSlug(),
             $this->configuration->leanpubApiKey()
         );
-    }
-
-    public function setApplication(ApplicationInterface $application): void
-    {
-        $this->application = $application;
     }
 
     private function talisOrmAggregateRepository(): AggregateRepository

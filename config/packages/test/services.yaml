@@ -2,3 +2,10 @@ services:
     LeanpubBookClub\Infrastructure\Symfony\SymfonyMailer:
         autowire: true
         public: true
+
+    LeanpubBookClub\Infrastructure\IntegrationTestServiceContainer:
+        autowire: true
+
+    LeanpubBookClub\Infrastructure\ServiceContainer:
+        alias: 'LeanpubBookClub\Infrastructure\IntegrationTestServiceContainer'
+        public: true

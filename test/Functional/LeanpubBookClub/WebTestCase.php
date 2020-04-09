@@ -5,8 +5,7 @@ namespace LeanpubBookClub;
 
 use Assert\Assert;
 use LeanpubBookClub\Application\ApplicationInterface;
-use LeanpubBookClub\Application\Members\Member;
-use LeanpubBookClub\Infrastructure\ProductionServiceContainer;
+use LeanpubBookClub\Infrastructure\IntegrationTestServiceContainer;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as SymfonyWebTestCase;
@@ -59,9 +58,9 @@ abstract class WebTestCase extends SymfonyWebTestCase
         Assert::that($container)->isInstanceOf(ContainerInterface::class);
         /** @var ContainerInterface $container */
 
-        $serviceContainer = $container->get(ProductionServiceContainer::class);
-        Assert::that($serviceContainer)->isInstanceOf(ProductionServiceContainer::class);
-        /** @var ProductionServiceContainer $serviceContainer */
+        $serviceContainer = $container->get(IntegrationTestServiceContainer::class);
+        Assert::that($serviceContainer)->isInstanceOf(IntegrationTestServiceContainer::class);
+        /** @var IntegrationTestServiceContainer $serviceContainer */
 
         $serviceContainer->setApplication($application);
     }

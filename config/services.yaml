@@ -38,11 +38,11 @@ services:
     # please note that last definitions always *replace* previous ones
 
     LeanpubBookClub\Application\ApplicationInterface:
-        factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'application']
+        factory: ['@LeanpubBookClub\Infrastructure\ServiceContainer', 'application']
         public: true
 
     LeanpubBookClub\Application\EventDispatcher:
-        factory: ['@LeanpubBookClub\Infrastructure\ProductionServiceContainer', 'eventDispatcher']
+        factory: ['@LeanpubBookClub\Infrastructure\ServiceContainer', 'eventDispatcher']
 
     LeanpubBookClub\Application\Assets: '@LeanpubBookClub\Infrastructure\PublicAssetPublisher'
 
@@ -65,8 +65,7 @@ services:
 
     LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary: '@LeanpubBookClub\Infrastructure\Leanpub\BookSummary\CachedGetBookSummary'
 
-    LeanpubBookClub\Infrastructure\ProductionServiceContainer:
-        public: '%kernel.debug%'
+    LeanpubBookClub\Infrastructure\ProductionServiceContainer: ~
 
     LeanpubBookClub\Infrastructure\Configuration:
         arguments:

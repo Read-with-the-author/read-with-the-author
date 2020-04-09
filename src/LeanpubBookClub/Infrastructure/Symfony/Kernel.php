@@ -3,7 +3,7 @@
 namespace LeanpubBookClub\Infrastructure\Symfony;
 
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
-use LeanpubBookClub\Infrastructure\ProductionServiceContainer;
+use LeanpubBookClub\Infrastructure\ServiceContainer;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -36,13 +36,15 @@ class Kernel extends BaseKernel
     {
         parent::boot();
 
-        $eventDispatcher = $this->getContainer()->get(ProductionServiceContainer::class)->eventDispatcher();
-        $eventDispatcher->subscribeToAllEvents(
-            [$this->getContainer()->get(AddFlashMessageToSession::class), 'notify']
-        );
-        $eventDispatcher->subscribeToAllEvents(
-            [$this->getContainer()->get(LogEvents::class), 'notify']
-        );
+        $eventDispatcher = $this->getContainer()->get(ServiceContainer::class)->eventDispatcher();
+        if ($eventDispatcher instanceof EventDispatcherWithSubscribers) {
+            $eventDispatcher->subscribeToAllEvents(
+                [$this->getContainer()->get(AddFlashMessageToSession::class), 'notify']
+            );
+            $eventDispatcher->subscribeToAllEvents(
+                [$this->getContainer()->get(LogEvents::class), 'notify']
+            );
+        }
     }
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void

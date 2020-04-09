@@ -91,7 +91,17 @@ trait Mapping
             return new DateTimeImmutable('now');
         }
 
-        $dateTimeImmutable = DateTimeImmutable::createFromFormat(self::$dateTimeFormat, $data[$key]);
+        $dateTime = $data[$key];
+        return self::dateTimeImmutableFromDateTimeString($dateTime);
+    }
+
+    private static function dateTimeImmutableFromDateTimeString($dateTime)
+    {
+        /*
+         * See http://php.net/manual/en/datetime.createfromformat.php
+         */
+        $formatWithUndeclaredFieldsAs0 = '!' . self::$dateTimeFormat;
+        $dateTimeImmutable = DateTimeImmutable::createFromFormat($formatWithUndeclaredFieldsAs0, $dateTime);
         Assert::that($dateTimeImmutable)->isInstanceOf(DateTimeImmutable::class);
 
         return $dateTimeImmutable;
@@ -100,5 +110,12 @@ trait Mapping
     private static function dateTimeImmutableAsDateTimeString(DateTimeImmutable $dateTimeImmutable): string
     {
         return $dateTimeImmutable->format(self::$dateTimeFormat);
+    }
+
+    private static function removeMicrosecondsPart(DateTimeImmutable $dateTimeImmutable): DateTimeImmutable
+    {
+        return self::dateTimeImmutableFromDateTimeString(
+            self::dateTimeImmutableAsDateTimeString($dateTimeImmutable)
+        );
     }
 }

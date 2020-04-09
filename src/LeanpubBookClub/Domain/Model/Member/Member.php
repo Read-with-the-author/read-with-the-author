@@ -46,7 +46,7 @@ final class Member implements Aggregate, SpecifiesSchema
         $member->memberId = $leanpubInvoiceId;
         $member->emailAddress = $emailAddress;
         $member->timeZone = $timeZone;
-        $member->requestedAccessAt = $requestedAccessAt;
+        $member->requestedAccessAt = self::removeMicrosecondsPart($requestedAccessAt);
 
         $member->events[] = new MemberRequestedAccess($leanpubInvoiceId, $emailAddress, $timeZone, $requestedAccessAt);
 

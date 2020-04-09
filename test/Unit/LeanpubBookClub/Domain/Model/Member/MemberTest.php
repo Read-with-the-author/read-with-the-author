@@ -4,13 +4,14 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Domain\Model\Member;
 
 use DateTimeImmutable;
-use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use LeanpubBookClub\Domain\Model\Common\EntityTestCase;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Service\AccessTokenGenerator;
 
 final class MemberTest extends EntityTestCase
 {
+    use MemberFactoryMethods;
+
     /**
      * @test
      */
@@ -105,36 +106,11 @@ final class MemberTest extends EntityTestCase
         self::assertEmpty($member->releaseEvents());
     }
 
-    private function anEmailAddress(): EmailAddress
-    {
-        return EmailAddress::fromString('info@matthiasnoback.nl');
-    }
-
-    private function aLeanpubInvoiceId(): LeanpubInvoiceId
-    {
-        return LeanpubInvoiceId::fromString('jP6LfQ3UkfOvZTLZLNfDfg');
-    }
-
-    private function aMember(): Member
-    {
-        return Member::requestAccess($this->aLeanpubInvoiceId(), $this->anEmailAddress(), $this->aTimeZone(), $this->now());
-    }
-
     private function accessTokenGenerator(AccessToken $accessToken): AccessTokenGenerator
     {
         $accessTokenGenerator = $this->createStub(AccessTokenGenerator::class);
         $accessTokenGenerator->method('generate')->willReturn($accessToken);
 
         return $accessTokenGenerator;
-    }
-
-    private function aTimeZone(): TimeZone
-    {
-        return TimeZone::fromString('Europe/Amsterdam');
-    }
-
-    private function now(): DateTimeImmutable
-    {
-        return new DateTimeImmutable('now');
     }
 }

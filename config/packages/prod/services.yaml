@@ -1,0 +1,4 @@
+services:
+    LeanpubBookClub\Infrastructure\ServiceContainer:
+        alias: 'LeanpubBookClub\Infrastructure\ProductionServiceContainer'
+        public: true
