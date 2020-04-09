@@ -5,6 +5,7 @@ services:
 
     LeanpubBookClub\Infrastructure\IntegrationTestServiceContainer:
         autowire: true
+        public: true
 
     LeanpubBookClub\Infrastructure\ServiceContainer:
         alias: 'LeanpubBookClub\Infrastructure\IntegrationTestServiceContainer'

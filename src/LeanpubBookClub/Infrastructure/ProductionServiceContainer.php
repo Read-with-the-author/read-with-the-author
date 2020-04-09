@@ -58,7 +58,7 @@ class ProductionServiceContainer extends ServiceContainer
         return new PurchaseTalisOrmRepository($this->talisOrmAggregateRepository());
     }
 
-    public function memberRepository(): MemberRepository
+    protected function memberRepository(): MemberRepository
     {
         return new MemberTalisOrmRepository($this->talisOrmAggregateRepository());
     }

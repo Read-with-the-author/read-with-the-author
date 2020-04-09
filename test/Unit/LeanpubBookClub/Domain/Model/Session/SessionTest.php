@@ -5,10 +5,11 @@ namespace LeanpubBookClub\Domain\Model\Session;
 
 use InvalidArgumentException;
 use LeanpubBookClub\Domain\Model\Common\EntityTestCase;
-use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 
 final class SessionTest extends EntityTestCase
 {
+    use SessionFactoryMethods;
+
     /**
      * @test
      */
@@ -216,60 +217,5 @@ final class SessionTest extends EntityTestCase
         // Not a real update, produces no events
         $session->update($newDescription, $newUrl);
         self::assertEquals([], $session->releaseEvents());
-    }
-
-    private function aSessionId(): SessionId
-    {
-        return SessionId::fromString('48e42502-79ee-47ac-b085-4571fc0f719c');
-    }
-
-    private function aDate(): ScheduledDate
-    {
-        return ScheduledDate::fromString('2020-03-26 09:21');
-    }
-
-    private function aDescription(): string
-    {
-        return 'Description of this session';
-    }
-
-    private function aMaximumNumberOfParticipants(): int
-    {
-        return 10;
-    }
-
-    private function aSession(int $maximumNumberOfParticipants = null): Session
-    {
-        $session = Session::plan(
-            $this->aSessionId(),
-            $this->aDate(),
-            $this->aDuration(),
-            $this->aDescription(),
-            $maximumNumberOfParticipants ?? $this->aMaximumNumberOfParticipants()
-        );
-
-        $session->releaseEvents();
-
-        return $session;
-    }
-
-    private function aSessionWithMaximumNumberOfAttendees(int $number): Session
-    {
-        return $this->aSession($number);
-    }
-
-    private function aMemberId(): LeanpubInvoiceId
-    {
-        return LeanpubInvoiceId::fromString('jP6LfQ3UkfOvZTLZLNfDfg');
-    }
-
-    private function anotherMemberId(): LeanpubInvoiceId
-    {
-        return LeanpubInvoiceId::fromString('6gbXPEDMOEMKCNwOykPvpg');
-    }
-
-    private function aDuration(): Duration
-    {
-        return Duration::fromMinutes(60);
     }
 }

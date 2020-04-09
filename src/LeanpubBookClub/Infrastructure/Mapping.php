@@ -95,7 +95,7 @@ trait Mapping
         return self::dateTimeImmutableFromDateTimeString($dateTime);
     }
 
-    private static function dateTimeImmutableFromDateTimeString($dateTime)
+    private static function dateTimeImmutableFromDateTimeString(string $dateTime): DateTimeImmutable
     {
         /*
          * See http://php.net/manual/en/datetime.createfromformat.php

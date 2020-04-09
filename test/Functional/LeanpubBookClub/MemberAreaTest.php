@@ -10,6 +10,7 @@ use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\UpcomingSessions\SessionForMember;
 use LeanpubBookClub\Application\UpdateTimeZone;
+use LeanpubBookClub\Domain\Model\Member\AccessToken;
 use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\DomCrawler\Crawler;
@@ -39,7 +40,9 @@ final class MemberAreaTest extends WebTestCase
         $this->application->expects($this->any())
             ->method('getOneMemberByAccessToken')
             ->with($accessToken)
-            ->willThrowException(new CouldNotFindMember());
+            ->willThrowException(
+                CouldNotFindMember::withAccessToken(AccessToken::fromString('0a56900e-fc10-4fde-b63c-a17ebc3d5002'))
+            );
 
         $this->client->request('GET', '/member-area/login', ['token' => $accessToken]);
 

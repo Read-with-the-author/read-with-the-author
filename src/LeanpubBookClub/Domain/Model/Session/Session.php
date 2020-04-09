@@ -115,6 +115,8 @@ final class Session implements Aggregate, SpecifiesSchema
                 $this->events[] = new AttendeeCancelledTheirAttendance($this->sessionId, $memberId);
             }
         }
+
+        $this->attendees = array_values($this->attendees);
     }
 
     public function setCallUrl(string $urlForCall): void

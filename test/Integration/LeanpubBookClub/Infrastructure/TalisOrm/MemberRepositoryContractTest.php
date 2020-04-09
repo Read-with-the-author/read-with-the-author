@@ -16,7 +16,7 @@ use LeanpubBookClub\Infrastructure\IntegrationTestServiceContainer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
- * @group wip
+ * @group repositories
  */
 final class MemberRepositoryContractTest extends KernelTestCase
 {
@@ -34,59 +34,85 @@ final class MemberRepositoryContractTest extends KernelTestCase
     }
 
     /**
-     * @return Generator<Member>
+     * @test
+     * @dataProvider members
+     */
+    public function it_can_save_a_member_correctly_between_fetches_it_from_the_repository(
+        Member $member,
+        callable $updateFunction
+    ): void {
+        $this->memberRepository()->save($member);
+
+        $member = $this->memberRepository()->getById($member->memberId());
+        $updateFunction($member);
+
+        $this->memberRepository()->save($member);
+
+        self::assertEquals($member, $this->memberRepository()->getById($member->memberId()));
+    }
+
+    /**
+     * @return Generator<array<Member,callable>>
      */
     public function members(): Generator
     {
-        $member = Member::requestAccess(
-            $this->aRandomLeanpubInvoiceId(),
-            $this->anEmailAddress(),
-            $this->aTimeZone(),
-            $this->now()
-        );
+        yield [
+            Member::requestAccess(
+                $this->aRandomLeanpubInvoiceId(),
+                $this->anEmailAddress(),
+                $this->aTimeZone(),
+                $this->now()
+            ),
+            function (Member $member): void {
+            }
+        ];
 
-        yield [$member];
+        yield [
+            Member::requestAccess(
+                $this->aRandomLeanpubInvoiceId(),
+                $this->anEmailAddress(),
+                $this->aTimeZone(),
+                $this->now()
+            ),
+            function (Member $member): void {
+                $member->grantAccess();
+            }
+        ];
 
-        $member2 = Member::requestAccess(
-            $this->aRandomLeanpubInvoiceId(),
-            $this->anEmailAddress(),
-            $this->aTimeZone(),
-            $this->now()
-        );
-        $member2->grantAccess();
+        yield [
+            Member::requestAccess(
+                $this->aRandomLeanpubInvoiceId(),
+                $this->anEmailAddress(),
+                $this->aTimeZone(),
+                $this->now()
+            ),
+            function (Member $member): void {
+                $member->generateAccessToken(
+                    $this->accessTokenGenerator()
+                );
+            }
+        ];
 
-        yield [$member2];
-
-        $member3 = Member::requestAccess(
-            $this->aRandomLeanpubInvoiceId(),
-            $this->anEmailAddress(),
-            $this->aTimeZone(),
-            $this->now()
-        );
-        $member3->generateAccessToken(
-            $this->accessTokenGenerator()
-        );
-
-        yield [$member3];
-
-        $member4 = Member::requestAccess(
-            $this->aRandomLeanpubInvoiceId(),
-            $this->anEmailAddress(),
-            $this->aTimeZone(),
-            $this->now()
-        );
-        $member4->grantAccess();
-        $member4->generateAccessToken(
-            $this->accessTokenGenerator()
-        );
-        $member4->changeTimeZone(TimeZone::fromString('America/New_York'));
-
-        yield [$member4];
+        yield [
+            Member::requestAccess(
+                $this->aRandomLeanpubInvoiceId(),
+                $this->anEmailAddress(),
+                $this->aTimeZone(),
+                $this->now()
+            ),
+            function (Member $member): void {
+                $member->grantAccess();
+                $member->generateAccessToken(
+                    $this->accessTokenGenerator()
+                );
+                $member->changeTimeZone(TimeZone::fromString('America/New_York'));
+            }
+        ];
     }
 
     protected function tearDown(): void
     {
-        $this->doctrineDbal()->executeQuery('DELETE FROM members');
+        $this->doctrineDbal()->executeQuery('DELETE FROM ' . Member::tableName() . ' WHERE 1');
     }
 
     private function memberRepository(): MemberRepository
