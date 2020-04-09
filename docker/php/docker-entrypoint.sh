@@ -35,6 +35,8 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 
     # <<< Modifications
     if [ "$1" = 'php-fpm' ]; then
+      bin/console cache:pool:clear book_summary_cache
+
       # For PHP-FPM we first have to get the database in the right shape
 
       if [ ! -f "var/db/${APP_ENV}/db.sqlite" ]; then
