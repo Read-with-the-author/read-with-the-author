@@ -5,5 +5,5 @@ twig:
         '%kernel.project_dir%/config/assets/css': css
     globals:
         bookSummary: '@LeanpubBookClub\Infrastructure\Leanpub\BookSummary\BookSummary'
-        site_title: '%env(SITE_TITLE)%'
+        siteTitle: '%env(SITE_TITLE)%'
         systemEmailAddress: '%env(SYSTEM_EMAIL_ADDRESS)%'

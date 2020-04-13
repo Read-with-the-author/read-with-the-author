@@ -1,13 +1,8 @@
-{% apply inky_to_html|inline_css(source('@css/foundation-emails.css')) %}
-    <container>
-        <row>
-            <columns>
-                <spacer size="16"></spacer>
-                <h1>Access token</h1>
+{% extends "email/base.html.twig" %}
 
-                {% set dashboardUrl = url('login', { token: accessToken }) %}
-                <p>Follow this link to go to the dashboard: <a href="{{ dashboardUrl }}">{{ dashboardUrl }}</a>.</p>
-            </columns>
-        </row>
-    </container>
-{% endapply %}
+{% block body %}
+    <h1>Access token for {{ siteTitle }}</h1>
+
+    {% set dashboardUrl = url('login', { token: accessToken }) %}
+    <p>Follow this link to go to the dashboard: <a href="{{ dashboardUrl }}">{{ dashboardUrl }}</a>.</p>
+{% endblock body %}

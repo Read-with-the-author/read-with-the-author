@@ -1,20 +1,14 @@
-{% apply inky_to_html|inline_css(source('@css/foundation-emails.css')) %}
-    <container>
-        <row>
-            <columns>
-                <spacer size="16"></spacer>
-                <h1>Registration</h1>
-                <p>You have been registered to attend the following session: {{ session.description }}</p>
-                <p>This session will take place at: {{ session.date(member.timeZone) }}
-                    at {{ session.time(member.timeZone) }} your time ({{ member.timeZone }}).</p>
-                <p>Use the following links to add the event to your calendar:</p>
-                <ul>
-                    <li><a href="{{ calendarLink.google() }}">Add event to Google calendar</a></li>
-                    <li><a href="{{ calendarLink.yahoo() }}">Add event to Yahoo calendar</a></li>
-                    <li><a href="{{ calendarLink.webOutlook() }}">Add event to Outlook.com calendar</a></li>
-                    <li><a href="{{ calendarLink.ics() }}">Add event to iCal</a></li>
-                </ul>
-            </columns>
-        </row>
-    </container>
-{% endapply %}
+{% extends "email/base.html.twig" %}
+
+{% block body %}
+    <h1>Registration</h1>
+    <p>You have been registered to attend the following session: {{ session.description }}</p>
+    <p>This session will take place at: {{ session.date(member.timeZone) }} at {{ session.time(member.timeZone) }} your time ({{ member.timeZone }}).</p>
+    <p>Use the following links to add the event to your calendar:</p>
+    <ul>
+        <li><a href="{{ calendarLink.google() }}">Add event to Google calendar</a></li>
+        <li><a href="{{ calendarLink.yahoo() }}">Add event to Yahoo calendar</a></li>
+        <li><a href="{{ calendarLink.webOutlook() }}">Add event to Outlook.com calendar</a></li>
+        <li><a href="{{ calendarLink.ics() }}">Add event to iCal</a></li>
+    </ul>
+{% endblock body %}

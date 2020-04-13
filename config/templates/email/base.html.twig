@@ -1,0 +1,17 @@
+{% apply inky_to_html|inline_css(source('@css/foundation-emails.css')) %}
+<container>
+    <row>
+        <columns>
+            <spacer size="16"></spacer>
+            {% block body %}{% endblock %}
+        </columns>
+    </row>
+    <row>
+        <columns>
+            <spacer size="16"></spacer>
+            <p><small>You're receiving this email because you're a member of <a href="{{ url('index') }}">{{ siteTitle }}</a>.<br>
+If you have any questions, please contact <a href="mailto:{{ systemEmailAddress }}">{{ systemEmailAddress }}</a>.</small></p>
+        </columns>
+    </row>
+</container>
+{% endapply %}

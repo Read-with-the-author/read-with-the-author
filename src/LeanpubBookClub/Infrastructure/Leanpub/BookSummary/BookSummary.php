@@ -87,9 +87,31 @@ final class BookSummary
         return $this->titlePageUrl;
     }
 
+    public function isAnyDownloadAvailable(): bool
+    {
+        if ($this->isPdfDownloadAvailable()) {
+            return true;
+        }
+
+        if ($this->isEpubDownloadAvailable()) {
+            return true;
+        }
+
+        if ($this->isMobiDownloadAvailable()) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function pdfPublishedUrl(): string
     {
         return $this->pdfPublishedUrl;
+    }
+
+    public function isPdfDownloadAvailable(): bool
+    {
+        return $this->pdfPublishedUrl() !== '';
     }
 
     public function epubPublishedUrl(): string
@@ -97,8 +119,18 @@ final class BookSummary
         return $this->epubPublishedUrl;
     }
 
+    private function isEpubDownloadAvailable(): bool
+    {
+        return $this->epubPublishedUrl() !== '';
+    }
+
     public function mobiPublishedUrl(): string
     {
         return $this->mobiPublishedUrl;
+    }
+
+    private function isMobiDownloadAvailable(): bool
+    {
+        return $this->mobiPublishedUrl() !== '';
     }
 }
