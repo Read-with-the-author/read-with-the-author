@@ -1,0 +1,8 @@
+Copyright 2020 Matthias Noback
+
+I couldn't find a suitable license for this project. Normally I use the MIT license for everything. But since you have
+to pay to get access to this code, I can't do that. So instead, I'm asking you kindly:
+
+- Not to copy any part of this project.
+- Not to share any part of this project with anyone.
+- Not to run this project on a publicly accessible web server.
