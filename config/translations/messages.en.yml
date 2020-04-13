@@ -1,18 +1,18 @@
-request_access_form.email_address.help: We'll never share your email with anyone else.
-request_access_form.email_address.label: Your email address
-form.leanpub_invoice_id.label: Your Leanpub Purchase ID
-form.leanpub_invoice_id.help: You can find your Purchase ID in the email you received from Leanpub when you purchased this book.
-request_access_form.request_access.label: Request access
-request_access_token_form.request_access_token.label: Get an access token
-access_token_email.subject: Your access token
+request_access_form.email_address.help: "We'll never share your email address with anyone else."
+request_access_form.email_address.label: "Your email address"
+form.leanpub_invoice_id.label: "Your Leanpub Purchase ID"
+form.leanpub_invoice_id.help: "You can find your Purchase ID in the email you received from Leanpub when you purchased this book."
+request_access_form.request_access.label: "Request access"
+request_access_token_form.request_access_token.label: "Get an access token"
+access_token_email.subject: "Your access token"
 access_token_email_was_sent.flash_message: "We've sent a new access token to you by email"
-member_requested_access.flash_message: "We have received your request and will send you an email at {emailAddress}"
+member_requested_access.flash_message: "We have received your request"
 access_token_authentication_failed.flash_message: "Authentication failed using the provided access token. Please request a new token."
 attend_session.button_label: "Attend this session"
 cancel_attendance.button_label: "Cancel attendance"
 time_zone_field.label: "Your time zone"
 update_time_zone_button.label: "Update time zone"
-request_access_form.time_zone.help: "We need this to show the dates and times of our sessions in your own time zone"
+request_access_form.time_zone.help: "We need this to show the dates and times of the sessions in your local time"
 session_video_call_url_not_available.flash_message: "The URL of the video call for this session is not available yet. Please try again later."
 attendee_registered_for_session_email.subject: "You are registered for attendance"
 member_time_zone_changed.flash_message: "Your time zone was updated"
