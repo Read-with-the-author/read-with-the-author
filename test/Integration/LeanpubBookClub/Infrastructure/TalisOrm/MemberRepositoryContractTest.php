@@ -87,6 +87,7 @@ final class MemberRepositoryContractTest extends KernelTestCase
                 $this->now()
             ),
             function (Member $member): void {
+                $member->grantAccess();
                 $member->generateAccessToken(
                     $this->accessTokenGenerator()
                 );

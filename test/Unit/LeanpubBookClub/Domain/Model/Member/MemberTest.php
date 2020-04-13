@@ -66,6 +66,7 @@ final class MemberTest extends EntityTestCase
     public function it_can_generate_a_new_access_token(): void
     {
         $member = $this->aMember();
+        $member->grantAccess();
 
         $accessToken = AccessToken::fromString('e47755b7-5828-4d34-8471-f41967881312');
 
@@ -75,6 +76,18 @@ final class MemberTest extends EntityTestCase
             new AnAccessTokenWasGenerated($member->memberId(), $this->anEmailAddress(), $accessToken),
             $member->releaseEvents()
         );
+    }
+
+    /**
+     * @test
+     */
+    public function it_is_impossible_to_generate_an_access_token_if_the_member_was_not_granted_access_yet(): void
+    {
+        $member = $this->aMember();
+
+        $this->expectException(CouldNotGenerateAccessToken::class);
+
+        $member->generateAccessToken($this->accessTokenGenerator(AccessToken::fromString('e47755b7-5828-4d34-8471-f41967881312')));
     }
 
     /**

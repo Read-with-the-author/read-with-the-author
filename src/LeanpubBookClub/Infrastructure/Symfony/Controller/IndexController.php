@@ -7,6 +7,7 @@ use LeanpubBookClub\Application\ApplicationInterface;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Domain\Model\Common\UserFacingError;
 use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
+use LeanpubBookClub\Domain\Model\Member\CouldNotGenerateAccessToken;
 use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceIdHasBeenUsedBefore;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessForm;
 use LeanpubBookClub\Infrastructure\Symfony\Form\RequestAccessTokenForm;
@@ -91,6 +92,8 @@ final class IndexController extends AbstractController
 
                 return $this->redirectToRoute('index');
             } catch (CouldNotFindMember $exception) {
+                $this->convertExceptionToFormError($form, 'leanpubInvoiceId', $exception);
+            } catch (CouldNotGenerateAccessToken $exception) {
                 $this->convertExceptionToFormError($form, 'leanpubInvoiceId', $exception);
             }
         }

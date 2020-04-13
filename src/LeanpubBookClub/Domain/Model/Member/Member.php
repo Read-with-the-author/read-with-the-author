@@ -71,6 +71,10 @@ final class Member implements Aggregate, SpecifiesSchema
 
     public function generateAccessToken(AccessTokenGenerator $accessTokenGenerator): void
     {
+        if (!$this->wasGrantedAccess) {
+            throw CouldNotGenerateAccessToken::becauseMemberHasNotBeenGrantedAccessYet($this->memberId);
+        }
+
         $this->accessToken = $accessTokenGenerator->generate();
 
         $this->events[] = new AnAccessTokenWasGenerated($this->memberId, $this->emailAddress, $this->accessToken);
