@@ -12,6 +12,7 @@ use LeanpubBookClub\Domain\Model\Member\LeanpubInvoiceId;
 use LeanpubBookClub\Domain\Model\Session\AttendeeCancelledTheirAttendance;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\SessionId;
+use LeanpubBookClub\Domain\Model\Session\SessionWasCancelled;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
 use LeanpubBookClub\Domain\Model\Session\UrlForCallWasUpdated;
 
@@ -58,6 +59,11 @@ final class SessionsInMemory implements Sessions
         $this->updateSessionForAdministrator(
             $this->sessionForAdministrator($event->sessionId())->withUrlForCall($event->callUrl())
         );
+    }
+
+    public function whenSessionWasCancelled(SessionWasCancelled $event): void
+    {
+        unset($this->sessionsForAdministrator[$event->sessionId()->asString()]);
     }
 
     public function whenAttendeeRegisteredForSession(AttendeeRegisteredForSession $event): void

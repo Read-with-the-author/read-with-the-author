@@ -209,6 +209,17 @@ final class Application implements ApplicationInterface
         $this->eventDispatcher->dispatchAll($session->releaseEvents());
     }
 
+    public function cancelSession(string $sessionId): void
+    {
+        $session = $this->sessionRepository->getById(SessionId::fromString($sessionId));
+
+        $session->cancel();
+
+        $this->sessionRepository->save($session);
+
+        $this->eventDispatcher->dispatchAll($session->releaseEvents());
+    }
+
     public function setCallUrl(SetCallUrl $command): void
     {
         $session = $this->sessionRepository->getById($command->sessionId());

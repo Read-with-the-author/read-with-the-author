@@ -29,6 +29,8 @@ interface ApplicationInterface
 
     public function updateSession(UpdateSession $updateSession): void;
 
+    public function cancelSession(string $sessionId): void;
+
     /**
      * @return array<SessionForMember> & SessionForMember[]
      */

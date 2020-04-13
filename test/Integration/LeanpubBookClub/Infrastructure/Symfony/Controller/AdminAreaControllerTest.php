@@ -143,7 +143,12 @@ final class AdminAreaControllerTest extends WebTestCase
                 )
             );
 
-        $crawler = $this->client->request('GET', '/admin-area/edit-session/' . $sessionId, [], [], $this->serverVariables());
+        $crawler = $this->client->request(
+            'GET',
+            '/admin-area/edit-session/' . $sessionId,
+            [],
+            [],
+            $this->serverVariables());
 
         self::assertEquals($oldDescription, $crawler->filter('#edit_session_form_description')->attr('value'));
         self::assertEquals($oldUrlForCall, $crawler->filter('#edit_session_form_urlForCall')->attr('value'));
@@ -162,6 +167,28 @@ final class AdminAreaControllerTest extends WebTestCase
                 'edit_session_form[description]' => $newDescription,
                 'edit_session_form[urlForCall]' => $newUrl,
             ]
+        );
+
+        self::assertTrue($this->client->getResponse()->isRedirect('/admin-area/'));
+    }
+
+    public function testCancelSession(): void
+    {
+        $sessionId = '38a88229-70b6-458c-83e9-77703ca4cca0';
+
+        $this->application->expects($this->once())
+            ->method('cancelSession')
+            ->with($sessionId);
+
+        $this->client->followRedirects(false);
+        $this->client->request(
+            'POST',
+            '/admin-area/cancel-session/',
+            [
+                'sessionId' => $sessionId
+            ],
+            [],
+            $this->serverVariables()
         );
 
         self::assertTrue($this->client->getResponse()->isRedirect('/admin-area/'));

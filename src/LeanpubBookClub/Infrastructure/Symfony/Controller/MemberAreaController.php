@@ -11,6 +11,8 @@ use LeanpubBookClub\Application\FlashType;
 use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\UpdateTimeZone;
+use LeanpubBookClub\Domain\Model\Common\UserFacingError;
+use LeanpubBookClub\Domain\Model\Session\CouldNotAttendSession;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSlug;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummary;
 use LeanpubBookClub\Infrastructure\Symfony\Form\UpdateTimeZoneForm;
@@ -114,9 +116,13 @@ final class MemberAreaController extends AbstractController
      */
     public function attendSessionAction(Request $request, UserInterface $user): Response
     {
-        $this->application->attendSession(
-            new AttendSession($request->request->get('sessionId'), $user->getUsername())
-        );
+        try {
+            $this->application->attendSession(
+                new AttendSession($request->request->get('sessionId'), $user->getUsername())
+            );
+        } catch (CouldNotAttendSession $exception) {
+            $this->convertToFlashMessage($exception);
+        }
 
         return $this->redirectToRoute('member_area_index');
     }
@@ -198,5 +204,13 @@ final class MemberAreaController extends AbstractController
         }
 
         return new RedirectResponse($url);
+    }
+
+    private function convertToFlashMessage(UserFacingError $exception): void
+    {
+        $this->addFlash(
+            FlashType::WARNING,
+            $this->translator->trans($exception->translationId(), $exception->translationParameters())
+        );
     }
 }

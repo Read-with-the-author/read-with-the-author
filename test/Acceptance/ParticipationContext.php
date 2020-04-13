@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Test\Acceptance;
 
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
 use BehatExpectException\ExpectException;
 use LeanpubBookClub\Application\AttendSession;
@@ -49,6 +50,16 @@ final class ParticipationContext extends FeatureContext
             new PlanSession($date, $this->authorTimeZone(), 60, $description, 10)
         );
         $this->plannedSessionDescription = $description;
+    }
+
+    /**
+     * @When the administrator cancels this session
+     */
+    public function theAdministratorCancelsThisSession(): void
+    {
+        Assert::assertNotNull($this->plannedSessionId);
+
+        $this->application()->cancelSession($this->plannedSessionId);
     }
 
     /**
@@ -283,6 +294,20 @@ final class ParticipationContext extends FeatureContext
         }
 
         throw new RuntimeException('Planned session not found in list of upcoming sessions');
+    }
+
+    /**
+     * @Then this session should no longer show up in the list of upcoming sessions for administrators
+     */
+    public function thisSessionShouldNoLongerShowUpInTheListOfUpcomingSessionsForAdministrators(): void
+    {
+        Assert::assertNotNull($this->plannedSessionId);
+
+        foreach ($this->application()->listUpcomingSessionsForAdministrator() as $upcomingSession) {
+            if ($this->plannedSessionId === $upcomingSession->sessionId()) {
+                throw new RuntimeException('Did not expect to see upcoming session ' . $upcomingSession->sessionId());
+            }
+        }
     }
 
     /**

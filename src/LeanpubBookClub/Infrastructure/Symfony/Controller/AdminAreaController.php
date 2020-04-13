@@ -117,8 +117,19 @@ final class AdminAreaController extends AbstractController
         return $this->render(
             'admin_area/edit_session.html.twig',
             [
+                'session' => $session,
                 'form' => $form->createView()
             ]
         );
+    }
+
+    /**
+     * @Route("/cancel-session/", name="cancel_session", methods={"POST"})
+     */
+    public function cancelSessionAction(Request $request): Response
+    {
+        $this->application->cancelSession((string)$request->request->get('sessionId'));
+
+        return $this->redirectToRoute('admin_area_index');
     }
 }

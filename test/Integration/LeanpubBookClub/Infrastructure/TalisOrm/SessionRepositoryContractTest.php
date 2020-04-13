@@ -103,6 +103,13 @@ final class SessionRepositoryContractTest extends KernelTestCase
                 $session->update($this->anUpdatedDescription(), $this->aUrlForTheCall());
             }
         ];
+
+        yield [
+            $this->aSession(),
+            function (Session $session): void {
+                $session->cancel();
+            }
+        ];
     }
 
     protected function tearDown(): void

@@ -28,8 +28,10 @@ final class SessionsUsingDoctrineDbal implements Sessions
     {
         $rows = $this->connection->selectAll(
             $this->createQueryBuilderForMember($activeMemberId)
-                ->andWhere('date >= :dateBefore')
+                ->andWhere('s.date >= :dateBefore')
                 ->setParameter('dateBefore', $this->selectDateBefore($currentTime))
+                ->andWhere('s.wasCancelled = :false')
+                ->setParameter('false', false)
                 ->orderBy('date', 'ASC')
         );
 
@@ -42,6 +44,8 @@ final class SessionsUsingDoctrineDbal implements Sessions
             $this->createQueryBuilderForAdministrator('s')
                 ->andWhere('s.date >= :dateBefore')
                 ->setParameter('dateBefore', $this->selectDateBefore($currentTime))
+                ->andWhere('s.wasCancelled = :false')
+                ->setParameter('false', false)
                 ->orderBy('s.date', 'ASC')
         );
 
@@ -117,10 +121,10 @@ final class SessionsUsingDoctrineDbal implements Sessions
         return $this->connection->createQueryBuilder()
             ->select('*')
             ->addSelect(
-                '(SELECT COUNT(*) FROM attendees WHERE attendees.sessionId = sessions.sessionId AND attendees.memberId = :memberId) AS memberIsRegisteredAsAttendee'
+                '(SELECT COUNT(*) FROM attendees a WHERE a.sessionId = s.sessionId AND a.memberId = :memberId) AS memberIsRegisteredAsAttendee'
             )
             ->setParameter('memberId', $memberId->asString())
-            ->from('sessions');
+            ->from('sessions', 's');
     }
 
     private function selectDateBefore(DateTimeImmutable $currentTime): string

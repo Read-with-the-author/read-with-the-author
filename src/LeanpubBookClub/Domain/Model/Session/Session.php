@@ -36,6 +36,8 @@ final class Session implements Aggregate, SpecifiesSchema
 
     private Duration $duration;
 
+    private bool $wasCancelled = false;
+
     private function __construct()
     {
     }
@@ -80,6 +82,10 @@ final class Session implements Aggregate, SpecifiesSchema
         if ($this->wasClosed) {
             // When the session was closed, we don't accept new attendees
             return;
+        }
+
+        if ($this->wasCancelled) {
+            throw CouldNotAttendSession::becauseItHasBeenCancelled($this->sessionId);
         }
 
         foreach ($this->attendees as $attendee) {
@@ -187,6 +193,7 @@ final class Session implements Aggregate, SpecifiesSchema
         $attendees = $childEntitiesByType[Attendee::class];
         Assert::that($attendees)->all()->isInstanceOf(Attendee::class);
         $instance->attendees = $attendees;
+        $instance->wasCancelled = self::asBool($aggregateState, 'wasCancelled');
 
         return $instance;
     }
@@ -203,7 +210,8 @@ final class Session implements Aggregate, SpecifiesSchema
             'description' => $this->description,
             'maximumNumberOfAttendees' => $this->maximumNumberOfAttendees,
             'wasClosed' => $this->wasClosed,
-            'urlForCall' => $this->urlForCall
+            'urlForCall' => $this->urlForCall,
+            'wasCancelled' => $this->wasCancelled
         ];
     }
 
@@ -245,7 +253,19 @@ final class Session implements Aggregate, SpecifiesSchema
         $table->addColumn('maximumNumberOfAttendees', 'integer')->setNotnull(true);
         $table->addColumn('wasClosed', 'boolean')->setNotnull(true);
         $table->addColumn('urlForCall', 'string')->setNotnull(false);
+        $table->addColumn('wasCancelled', 'boolean')->setNotnull(false);
 
         Attendee::specifySchema($schema);
+    }
+
+    public function cancel(): void
+    {
+        if ($this->wasCancelled) {
+            return;
+        }
+
+        $this->wasCancelled = true;
+
+        $this->events[] = new SessionWasCancelled($this->sessionId);
     }
 }

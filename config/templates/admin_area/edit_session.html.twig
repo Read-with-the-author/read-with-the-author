@@ -1,10 +1,22 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-<h1>Admin area</h1>
+    <h1>Admin area</h1>
 
-<h2>Edit session</h2>
+    <h2>Edit session</h2>
 
-{{ form(form) }}
+    {{ form(form) }}
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Danger zone</h5>
+            <form action="{{ path('cancel_session') }}" method="post">
+                <input type="hidden" name="sessionId" value="{{ session.sessionId }}">
+                <button type="submit" class="btn btn-danger" onclick="return window.confirm('Are you sure?');">
+                    Cancel session
+                </button>
+            </form>
+        </div>
+    </div>
 
 {% endblock body %}

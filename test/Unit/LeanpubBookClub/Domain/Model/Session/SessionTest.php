@@ -196,6 +196,53 @@ final class SessionTest extends EntityTestCase
     /**
      * @test
      */
+    public function it_can_be_cancelled(): void
+    {
+        $session = $this->aSession();
+
+        $session->cancel();
+
+        self::assertEquals(
+            [
+                new SessionWasCancelled($session->sessionId())
+            ],
+            $session->releaseEvents()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function cancelling_again_has_no_effect(): void
+    {
+        $session = $this->aSession();
+        $session->cancel();
+
+        $session->releaseEvents();
+        $session->cancel();
+
+        self::assertEquals(
+            [],
+            $session->releaseEvents()
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function you_can_not_attend_a_session_that_was_cancelled(): void
+    {
+        $session = $this->aSession();
+        $session->cancel();
+
+        $this->expectException(CouldNotAttendSession::class);
+
+        $session->attend($this->aMemberId());
+    }
+
+    /**
+     * @test
+     */
     public function the_description_and_url_for_call_can_be_updated(): void
     {
         $session = $this->aSession();

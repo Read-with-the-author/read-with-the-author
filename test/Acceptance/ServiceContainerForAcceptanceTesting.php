@@ -13,6 +13,7 @@ use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Session\AttendeeCancelledTheirAttendance;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
+use LeanpubBookClub\Domain\Model\Session\SessionWasCancelled;
 use LeanpubBookClub\Domain\Model\Session\SessionWasPlanned;
 use LeanpubBookClub\Domain\Model\Session\UrlForCallWasUpdated;
 use LeanpubBookClub\Infrastructure\ServiceContainer;
@@ -60,6 +61,10 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
         $eventDispatcher->subscribeToSpecificEvent(
             UrlForCallWasUpdated::class,
             [$this->sessions(), 'whenUrlForCallWasUpdated']
+        );
+        $eventDispatcher->subscribeToSpecificEvent(
+            SessionWasCancelled::class,
+            [$this->sessions(), 'whenSessionWasCancelled']
         );
 
         $eventDispatcher->subscribeToSpecificEvent(
