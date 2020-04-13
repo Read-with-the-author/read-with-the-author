@@ -75,6 +75,10 @@ final class MemberAreaControllerTest extends WebTestCase
         $this->memberExists($member);
         $this->accessTokenIsValidForMember($accessToken, $member);
 
+        $this->application->expects($this->once())
+            ->method('clearAccessToken')
+            ->with($member->memberId()->asString());
+
         $crawler = $this->client->request('GET', '/member-area/login', ['token' => $accessToken]);
 
         self::assertTrue($this->client->getResponse()->isSuccessful());

@@ -48,6 +48,11 @@ interface ApplicationInterface
      */
     public function generateAccessToken($memberId): void;
 
+    /**
+     * @param string|LeanpubInvoiceId $memberId
+     */
+    public function clearAccessToken($memberId): void;
+
     public function updateTimeZone(UpdateTimeZone $command): void;
 
     public function setCallUrl(SetCallUrl $command): void;

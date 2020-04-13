@@ -161,6 +161,21 @@ final class Application implements ApplicationInterface
         $this->eventDispatcher->dispatchAll($member->releaseEvents());
     }
 
+    public function clearAccessToken($memberId): void
+    {
+        if (!$memberId instanceof LeanpubInvoiceId) {
+            $memberId = LeanpubInvoiceId::fromString($memberId);
+        }
+
+        $member = $this->memberRepository->getById($memberId);
+
+        $member->clearAccessToken();
+
+        $this->memberRepository->save($member);
+
+        $this->eventDispatcher->dispatchAll($member->releaseEvents());
+    }
+
     public function planSession(PlanSession $command): string
     {
         $sessionId = $this->sessionRepository->nextIdentity();

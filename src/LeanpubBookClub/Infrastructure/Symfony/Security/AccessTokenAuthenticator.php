@@ -86,6 +86,9 @@ final class AccessTokenAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $providerKey): ?Response
     {
+        $memberId = $token->getUser()->getUsername();
+        $this->application->clearAccessToken($memberId);
+
         return $this->redirectToRoute($request, 'member_area_index');
     }
 

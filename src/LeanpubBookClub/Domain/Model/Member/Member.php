@@ -177,4 +177,9 @@ final class Member implements Aggregate, SpecifiesSchema
         $table->addColumn('wasGrantedAccess', 'boolean')->setNotnull(true)->setDefault(false);
         $table->addColumn('requestedAccessAt', 'datetime')->setNotnull(false);
     }
+
+    public function clearAccessToken(): void
+    {
+        $this->accessToken = null;
+    }
 }
