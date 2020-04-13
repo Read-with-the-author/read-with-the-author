@@ -1,0 +1,9 @@
+{% extends "email/base.html.twig" %}
+
+{% block body %}
+    <h1>A session was cancelled</h1>
+    <p>You had been registered to attend the following session: {{ session.description }}</p>
+    <p>This session would take place at: {{ session.date(member.timeZone) }} at {{ session.time(member.timeZone) }} your time ({{ member.timeZone }}).</p>
+    <p><strong>Unfortunately, this session was cancelled.</strong></p>
+    <p>Please log in to the <a href="{{ url('index') }}">Member area</a> and find an alternative session to join.</p>
+{% endblock body %}

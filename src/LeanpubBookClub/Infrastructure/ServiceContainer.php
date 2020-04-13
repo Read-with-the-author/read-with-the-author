@@ -23,6 +23,7 @@ use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasImported;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseRepository;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasClaimed;
+use LeanpubBookClub\Domain\Model\Session\AttendanceWasCancelledBecauseSessionWasCancelled;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 use LeanpubBookClub\Domain\Model\Session\SessionRepository;
 use LeanpubBookClub\Domain\Service\AccessTokenGenerator;
@@ -91,6 +92,10 @@ abstract class ServiceContainer
         $eventDispatcher->subscribeToSpecificEvent(
             AttendeeRegisteredForSession::class,
             [$this->sendEmail(), 'whenAttendeeRegisteredForSession']
+        );
+        $eventDispatcher->subscribeToSpecificEvent(
+            AttendanceWasCancelledBecauseSessionWasCancelled::class,
+            [$this->sendEmail(), 'whenAttendanceWasCancelledBecauseSessionWasCancelled']
         );
     }
 

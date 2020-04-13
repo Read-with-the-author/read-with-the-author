@@ -213,6 +213,31 @@ final class SessionTest extends EntityTestCase
     /**
      * @test
      */
+    public function when_cancelling_a_session_member_attendances_will_be_cancelled_to(): void
+    {
+        $session = $this->aSession();
+
+        $memberId1 = $this->aMemberId();
+        $session->attend($memberId1);
+        $memberId2 = $this->anotherMemberId();
+        $session->attend($memberId2);
+
+        $session->cancel();
+
+        $events = $session->releaseEvents();
+        self::assertContainsEquals(
+            new AttendanceWasCancelledBecauseSessionWasCancelled($session->sessionId(), $memberId1),
+            $events
+        );
+        self::assertContainsEquals(
+            new AttendanceWasCancelledBecauseSessionWasCancelled($session->sessionId(), $memberId2),
+            $events
+        );
+    }
+
+    /**
+     * @test
+     */
     public function cancelling_again_has_no_effect(): void
     {
         $session = $this->aSession();

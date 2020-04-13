@@ -7,6 +7,7 @@ use LeanpubBookClub\Application\EventDispatcher;
 use LeanpubBookClub\Application\Members\Members;
 use LeanpubBookClub\Application\UpcomingSessions\Sessions;
 use LeanpubBookClub\Domain\Model\Member\AnAccessTokenWasGenerated;
+use LeanpubBookClub\Domain\Model\Session\AttendanceWasCancelledBecauseSessionWasCancelled;
 use LeanpubBookClub\Domain\Model\Session\AttendeeRegisteredForSession;
 
 final class SendEmail
@@ -45,6 +46,17 @@ final class SendEmail
         $session = $this->sessions->getSessionForAdministrator($event->sessionId());
 
         $email = new AttendeeRegisteredForSessionEmail($member, $session);
+
+        $this->sendEmail($email);
+    }
+
+    public function whenAttendanceWasCancelledBecauseSessionWasCancelled(
+        AttendanceWasCancelledBecauseSessionWasCancelled $event
+    ): void {
+        $member = $this->members->getOneById($event->memberId());
+        $session = $this->sessions->getSessionForAdministrator($event->sessionId());
+
+        $email = new SessionWasCancelledEmail($member, $session);
 
         $this->sendEmail($email);
     }

@@ -267,5 +267,10 @@ final class Session implements Aggregate, SpecifiesSchema
         $this->wasCancelled = true;
 
         $this->events[] = new SessionWasCancelled($this->sessionId);
+
+        foreach ($this->attendees as $attendee) {
+            $this->cancelAttendance($attendee->memberId());
+            $this->events[] = new AttendanceWasCancelledBecauseSessionWasCancelled($this->sessionId, $attendee->memberId());
+        }
     }
 }
