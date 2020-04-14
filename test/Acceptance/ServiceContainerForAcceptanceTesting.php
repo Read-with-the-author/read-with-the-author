@@ -5,6 +5,7 @@ namespace Test\Acceptance;
 
 use Assert\Assert;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
+use LeanpubBookClub\Application\Purchases\Purchases;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Model\Member\AnAccessTokenWasGenerated;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
@@ -122,6 +123,15 @@ final class ServiceContainerForAcceptanceTesting extends ServiceContainer
         Assert::that($this->members)->isInstanceOf(MembersInMemory::class);
 
         return $this->members;
+    }
+
+    protected function purchases(): Purchases
+    {
+        if ($this->purchases ===  null) {
+            $this->purchases = new PurchasesInMemory();
+        }
+
+        return $this->purchases;
     }
 
     protected function sessions(): SessionsInMemory

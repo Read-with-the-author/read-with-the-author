@@ -13,6 +13,7 @@ use LeanpubBookClub\Application\Email\SendEmail;
 use LeanpubBookClub\Application\EventDispatcher;
 use LeanpubBookClub\Application\EventDispatcherWithSubscribers;
 use LeanpubBookClub\Application\Members\Members;
+use LeanpubBookClub\Application\Purchases\Purchases;
 use LeanpubBookClub\Application\RequestAccess\GenerateAccessToken;
 use LeanpubBookClub\Application\UpcomingSessions\Sessions;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
@@ -43,6 +44,7 @@ abstract class ServiceContainer
     protected ?SessionRepository $sessionRepository = null;
     private ?IndividualPurchasesInMemory $individualPurchases = null;
     protected ?Members $members = null;
+    protected ?Purchases $purchases = null;
 
     protected function clock(): Clock
     {
@@ -120,7 +122,8 @@ abstract class ServiceContainer
                 $this->sessions(),
                 $this->individualPurchases(),
                 $this->accessTokenGenerator(),
-                $this->members()
+                $this->members(),
+                $this->purchases()
             );
         }
 
@@ -153,6 +156,8 @@ abstract class ServiceContainer
     }
 
     abstract protected function members(): Members;
+
+    abstract protected function purchases(): Purchases;
 
     protected function authorTimeZone(): TimeZone
     {

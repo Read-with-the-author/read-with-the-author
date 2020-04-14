@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection as DbalConnection;
 use LeanpubBookClub\Application\Clock;
 use LeanpubBookClub\Application\Email\Mailer;
 use LeanpubBookClub\Application\Members\Members;
+use LeanpubBookClub\Application\Purchases\Purchases;
 use LeanpubBookClub\Application\UpcomingSessions\Sessions;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
@@ -18,6 +19,7 @@ use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\IndividualPurchas
 use LeanpubBookClub\Infrastructure\TalisOrm\EventDispatcherAdapter;
 use LeanpubBookClub\Infrastructure\TalisOrm\MembersUsingDoctrineDbal;
 use LeanpubBookClub\Infrastructure\TalisOrm\MemberTalisOrmRepository;
+use LeanpubBookClub\Infrastructure\TalisOrm\PurchasesUsingDoctrineDbal;
 use LeanpubBookClub\Infrastructure\TalisOrm\PurchaseTalisOrmRepository;
 use LeanpubBookClub\Infrastructure\TalisOrm\SessionsUsingDoctrineDbal;
 use LeanpubBookClub\Infrastructure\TalisOrm\SessionTalisOrmRepository;
@@ -82,6 +84,11 @@ class ProductionServiceContainer extends ServiceContainer
     protected function members(): Members
     {
         return new MembersUsingDoctrineDbal($this->connection());
+    }
+
+    protected function purchases(): Purchases
+    {
+        return new PurchasesUsingDoctrineDbal($this->connection());
     }
 
     protected function sessionRepository(): SessionRepository

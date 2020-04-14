@@ -6,6 +6,7 @@ namespace LeanpubBookClub\Application;
 use LeanpubBookClub\Application\Importing\PurchaseWasAlreadyImported;
 use LeanpubBookClub\Application\Members\Member as MemberReadModel;
 use LeanpubBookClub\Application\Members\Members;
+use LeanpubBookClub\Application\Purchases\Purchases;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\SessionCall\SetCallUrl;
@@ -45,6 +46,7 @@ final class Application implements ApplicationInterface
     private AccessTokenGenerator $accessTokenGenerator;
 
     private Members $members;
+    private Purchases $purchases;
 
     public function __construct(
         MemberRepository $memberRepository,
@@ -55,7 +57,8 @@ final class Application implements ApplicationInterface
         Sessions $sessions,
         IndividualPurchases $individualPurchases,
         AccessTokenGenerator $accessTokenGenerator,
-        Members $members
+        Members $members,
+        Purchases $purchases
     ) {
         $this->memberRepository = $memberRepository;
         $this->eventDispatcher = $eventDispatcher;
@@ -66,6 +69,7 @@ final class Application implements ApplicationInterface
         $this->individualPurchases = $individualPurchases;
         $this->accessTokenGenerator = $accessTokenGenerator;
         $this->members = $members;
+        $this->purchases = $purchases;
     }
 
     public function importAllPurchases(): void
@@ -316,5 +320,10 @@ final class Application implements ApplicationInterface
     public function listMembersForAdministrator(): array
     {
         return $this->members->listMembers();
+    }
+
+    public function listAllPurchasesForAdministrator(): array
+    {
+        return $this->purchases->listAllPurchases();
     }
 }

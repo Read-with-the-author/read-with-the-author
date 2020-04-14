@@ -5,6 +5,7 @@ namespace LeanpubBookClub\Application;
 
 use LeanpubBookClub\Application\Members\Member;
 use LeanpubBookClub\Application\Members\MemberForAdministrator;
+use LeanpubBookClub\Application\Purchases\Purchase;
 use LeanpubBookClub\Application\RequestAccess\RequestAccess;
 use LeanpubBookClub\Application\SessionCall\CouldNotGetCallUrl;
 use LeanpubBookClub\Application\SessionCall\SetCallUrl;
@@ -80,4 +81,9 @@ interface ApplicationInterface
      * @return array<MemberForAdministrator>
      */
     public function listMembersForAdministrator(): array;
+
+    /**
+     * @return array<Purchase>
+     */
+    public function listAllPurchasesForAdministrator(): array;
 }

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Application;
 
-use LeanpubBookClub\Domain\Model\Member\CouldNotFindMember;
 use LeanpubBookClub\Domain\Model\Member\MemberRepository;
 use LeanpubBookClub\Domain\Model\Member\MemberRequestedAccess;
 use LeanpubBookClub\Domain\Model\Purchase\PurchaseWasImported;

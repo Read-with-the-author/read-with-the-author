@@ -70,4 +70,23 @@
 
     </table>
 
+    <h2>Purchases</h2>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Leanpub invoice ID</th>
+            <th>Was claimed</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for purchase in purchases %}
+            <tr class="{% if purchase.wasClaimed %}table-success{% endif %}">
+                <td>{{ purchase.leanpubInvoiceId }}</td>
+                <td>{% if purchase.wasClaimed %}yes{% else %}no {% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+
+    </table>
+
 {% endblock %}
