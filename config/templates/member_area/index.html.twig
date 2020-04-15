@@ -78,18 +78,18 @@
                         {% if upcomingSession.memberIsRegisteredAsAttendee %}
 
                             <a href="{{ path('redirect_to_video_call', { sessionId: upcomingSession.sessionId }) }}"
-                               class="btn btn-primary">
+                               class="btn btn-primary mb-3">
                                 Join the video call
                             </a>
 
                             <form action="{{ path('cancel_attendance') }}" method="post">
                                 <input type="hidden" name="sessionId" value="{{ upcomingSession.sessionId }}"/>
-                                <button class="btn btn-warning mt-3">{{ 'cancel_attendance.button_label'|trans }}</button>
+                                <button class="btn btn-warning">{{ 'cancel_attendance.button_label'|trans }}</button>
                             </form>
                         {% else %}
                             <form action="{{ path('attend_session') }}" method="post">
                                 <input type="hidden" name="sessionId" value="{{ upcomingSession.sessionId }}"/>
-                                <button class="btn btn-warning mt-3">{{ 'attend_session.button_label'|trans }}</button>
+                                <button class="btn btn-warning">{{ 'attend_session.button_label'|trans }}</button>
                             </form>
                         {% endif %}
                     </td>
