@@ -32,17 +32,17 @@
                         <p class="card-text">Download here the latest version of the book:</p>
 
                         <ul class="list-group list-group-horizontal">
-                            {% if ebook.isPdfDownloadAvailable() %}
+                            {% if bookSummary.isPdfDownloadAvailable() %}
                                 <li class="list-group-item">
                                     <a href="{{ path('download_latest_version_pdf') }}">PDF</a>
                                 </li>
                             {% endif %}
-                            {% if ebook.isEpubDownloadAvailable() %}
+                            {% if bookSummary.isEpubDownloadAvailable() %}
                                 <li class="list-group-item">
                                     <a href="{{ path('download_latest_version_epub') }}">EPUB</a>
                                 </li>
                             {% endif %}
-                            {% if ebook.isMobiDownloadAvailable() %}
+                            {% if bookSummary.isMobiDownloadAvailable() %}
                                 <li class="list-group-item">
                                     <a href="{{ path('download_latest_version_mobi') }}">MOBI</a>
                                 </li>

@@ -119,7 +119,7 @@ final class BookSummary
         return $this->epubPublishedUrl;
     }
 
-    private function isEpubDownloadAvailable(): bool
+    public function isEpubDownloadAvailable(): bool
     {
         return $this->epubPublishedUrl() !== '';
     }
@@ -129,7 +129,7 @@ final class BookSummary
         return $this->mobiPublishedUrl;
     }
 
-    private function isMobiDownloadAvailable(): bool
+    public function isMobiDownloadAvailable(): bool
     {
         return $this->mobiPublishedUrl() !== '';
     }
