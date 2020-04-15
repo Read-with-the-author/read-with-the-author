@@ -170,9 +170,10 @@ final class SessionTest extends EntityTestCase
         $session->attend($this->aMemberId());
         $session->releaseEvents();
 
-        $session->attend($this->anotherMemberId());
+        $this->expectException(CouldNotAttendSession::class);
+        $this->expectExceptionMessage('maximum_number_of_attendees');
 
-        self::assertEquals([], $session->releaseEvents());
+        $session->attend($this->anotherMemberId());
     }
 
     /**

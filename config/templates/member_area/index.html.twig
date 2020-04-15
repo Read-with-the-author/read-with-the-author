@@ -86,11 +86,13 @@
                                 <input type="hidden" name="sessionId" value="{{ upcomingSession.sessionId }}"/>
                                 <button class="btn btn-warning">{{ 'cancel_attendance.button_label'|trans }}</button>
                             </form>
-                        {% else %}
+                        {% elseif upcomingSession.canBeJoined %}
                             <form action="{{ path('attend_session') }}" method="post">
                                 <input type="hidden" name="sessionId" value="{{ upcomingSession.sessionId }}"/>
                                 <button class="btn btn-warning">{{ 'attend_session.button_label'|trans }}</button>
                             </form>
+                        {% else %}
+                            This session is full
                         {% endif %}
                     </td>
                 </tr>

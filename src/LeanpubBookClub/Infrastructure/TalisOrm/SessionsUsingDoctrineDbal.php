@@ -100,7 +100,8 @@ final class SessionsUsingDoctrineDbal implements Sessions
         $session = new SessionForMember(
             self::asString($row, 'sessionId'),
             self::asString($row, 'date'),
-            self::asString($row, 'description')
+            self::asString($row, 'description'),
+            self::asBool($row, 'wasClosed')
         );
 
         return $session

@@ -18,14 +18,18 @@ final class SessionForMember
 
     private ?string $urlForCall = null;
 
+    private bool $wasClosed;
+
     public function __construct(
         string $sessionId,
         string $date,
-        string $description
+        string $description,
+        bool $wasClosed
     ) {
         $this->sessionId = $sessionId;
         $this->date = $date;
         $this->description = $description;
+        $this->wasClosed = $wasClosed;
     }
 
     public function sessionId(): string
@@ -88,5 +92,10 @@ final class SessionForMember
         $copy->urlForCall = $urlForCall;
 
         return $copy;
+    }
+
+    public function canBeJoined(): bool
+    {
+        return !$this->wasClosed;
     }
 }

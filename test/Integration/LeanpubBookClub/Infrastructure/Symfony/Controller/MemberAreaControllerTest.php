@@ -103,12 +103,14 @@ final class MemberAreaControllerTest extends WebTestCase
             (new SessionForMember(
                 'e44c5dfa-73f5-4355-aba7-21ac67c3c87a',
                 '2020-02-01 20:00',
-                'Chapter 1'
+                'Chapter 1',
+                false
             ))->withActiveMemberRegisteredAsAttendee(true),
             (new SessionForMember(
                 '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
                 '2020-02-08 20:00',
-                'Chapter 2'
+                'Chapter 2',
+                false
             ))->withActiveMemberRegisteredAsAttendee(false)
         ];
 
@@ -133,7 +135,8 @@ final class MemberAreaControllerTest extends WebTestCase
                 new SessionForMember(
                     '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
                     '2020-02-08 20:00',
-                    'Chapter 2'
+                    'Chapter 2',
+                    false
                 )
             ]);
 
@@ -159,7 +162,8 @@ final class MemberAreaControllerTest extends WebTestCase
                 (new SessionForMember(
                     '336ca07e-b3b8-47c7-a52f-7b67b6f16e49',
                     '2020-02-08 20:00',
-                    'Chapter 2'
+                    'Chapter 2',
+                    false
                 ))->withActiveMemberRegisteredAsAttendee(true)
             ]);
 

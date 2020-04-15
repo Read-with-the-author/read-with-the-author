@@ -38,7 +38,8 @@ final class SessionsInMemory implements Sessions
         $this->sessionsForMembers[$event->sessionId()->asString()] = new SessionForMember(
             $event->sessionId()->asString(),
             $event->date()->asString(),
-            $event->description()
+            $event->description(),
+            false
         );
 
         $this->sessionsForAdministrator[$event->sessionId()->asString()] = new SessionForAdministrator(

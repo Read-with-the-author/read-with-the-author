@@ -80,8 +80,7 @@ final class Session implements Aggregate, SpecifiesSchema
     public function attend(LeanpubInvoiceId $memberId): void
     {
         if ($this->wasClosed) {
-            // When the session was closed, we don't accept new attendees
-            return;
+            throw CouldNotAttendSession::becauseTheMaximumNumberOfAttendeesWasReached($this->sessionId);
         }
 
         if ($this->wasCancelled) {
