@@ -18,6 +18,10 @@ In the Admin area you'll find a list of (fake) Leanpub invoice IDs, which you ca
 
 This project uses Mailhog to catch outgoing emails. Open <http://localhost:8025> to take a look at the emails that were sent by the application.
 
+## Troubleshooting
+
+If Docker says something like: "Bind for 0.0.0.0:80 failed: port is already allocated", then you have another service running on your machine that listens to port 80. If you can, shut that service down, or else: modify `docker-compose.override.yml` and choose a different port for the `nginx` service, e.g. change the value under `ports` to `- 8000:80`.
+
 ## Removing the project
 
 If you no longer want to have this project installed on your machine, run `docker-compose down -v --rmi all`. Then you can safely delete the project directory.
