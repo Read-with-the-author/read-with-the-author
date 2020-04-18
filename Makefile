@@ -9,7 +9,6 @@ endif
 
 RUN_PHP:=docker-compose run --rm php
 DOCKER_COMPOSE_DEV:=docker-compose
-DOCKER_COMPOSE_PROD:=docker-compose -f docker-compose.yml -f docker-compose.prod.yml
 
 HOSTNAME:=noback.readwiththeauthor.localhost
 HOSTS_ENTRY:=127.0.0.1 ${HOSTNAME}
@@ -30,6 +29,10 @@ migrations:
 .PHONY: migrate
 migrate:
 	${RUN_PHP} bin/console doctrine:migrations:migrate --no-interaction
+
+.PHONY: pull
+pull:
+	${DOCKER_COMPOSE_DEV} pull
 
 .PHONY: push
 push:
