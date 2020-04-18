@@ -1,5 +1,5 @@
 #!/bin/sh
-set -e
+set -eux
 
 # first arg is `-f` or `--some-option`
 if [ "${1#-}" != "$1" ]; then
@@ -26,8 +26,8 @@ if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
         rm -Rf tmp/
     # <<< Modifications
     elif [ "$APP_ENV" = 'prod' ]; then
-      composer install --prefer-dist --no-progress --no-suggest --no-interaction --no-dev
-      bin/console cache:clear
+      rm -rf var/cache
+      bin/console cache:warm
     # Modification >>>
     elif [ "$APP_ENV" != 'prod' ]; then
         composer install --prefer-dist --no-progress --no-suggest --no-interaction

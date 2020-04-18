@@ -4,6 +4,7 @@ services:
 
     nginx:
         container_name: readwiththeauthor_nginx
+        image: matthiasnoback/leanpub-book-club-production-nginx:latest
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.readwiththeauthor_com.rule=Host(`noback.readwiththeauthor.com`)"
@@ -12,9 +13,13 @@ services:
         networks:
             - internal
             - traefik
+#        ports: [ "80:80" ]
         restart: "unless-stopped"
 
     php:
+        image: matthiasnoback/leanpub-book-club-production-php:latest
+        build:
+            target: symfony_php_production
         container_name: readwiththeauthor_php
         labels:
             - "traefik.enable=false"
@@ -25,6 +30,7 @@ services:
             - .env.prod.local
 
     importer:
+        image: matthiasnoback/leanpub-book-club-production-php:latest
         container_name: readwiththeauthor_importer
         labels:
             - "traefik.enable=false"

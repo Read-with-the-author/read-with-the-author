@@ -9,6 +9,7 @@ endif
 
 RUN_PHP:=docker-compose run --rm php
 DOCKER_COMPOSE_DEV:=docker-compose
+DOCKER_COMPOSE_PROD:=docker-compose -f docker-compose.yml -f docker-compose.prod.yml
 
 HOSTNAME:=noback.readwiththeauthor.localhost
 HOSTS_ENTRY:=127.0.0.1 ${HOSTNAME}
@@ -38,9 +39,17 @@ pull:
 push:
 	${DOCKER_COMPOSE_DEV} push
 
+.PHONY: push-prod
+push-prod:
+	${DOCKER_COMPOSE_PROD} push
+
 .PHONY: build
 build:
 	${DOCKER_COMPOSE_DEV} build
+
+.PHONY: build-prod
+build-prod:
+	${DOCKER_COMPOSE_PROD} build
 
 .PHONY: up
 up: hosts-entry down
@@ -55,4 +64,4 @@ deploy:
 	./deploy.sh
 
 .PHONY: release
-release: build push deploy
+release: build-prod push-prod deploy

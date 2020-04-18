@@ -99,12 +99,6 @@ RUN composer create-project "symfony/skeleton ${SYMFONY_VERSION}" . --stability=
 ###> recipes ###
 ###< recipes ###
 
-COPY . .
-
-RUN set -eux; \
-	mkdir -p var/cache var/log; \
-	composer dump-autoload --classmap-authoritative --no-dev; \
-	composer run-script --no-dev post-install-cmd; sync
 VOLUME /srv/app/var
 
 COPY docker/php/docker-healthcheck.sh /usr/local/bin/docker-healthcheck
@@ -126,4 +120,12 @@ COPY docker/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /srv/app
 
-COPY --from=symfony_php /srv/app/public public/
+COPY ./public public/
+
+FROM symfony_php as symfony_php_production
+COPY . .
+
+RUN set -eux; \
+	mkdir -p var/cache var/log; \
+	composer install --prefer-dist --no-progress --no-suggest --no-interaction --no-dev; \
+    composer dump-autoload --classmap-authoritative --no-dev; sync
