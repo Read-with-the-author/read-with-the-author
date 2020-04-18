@@ -69,7 +69,8 @@ class ProductionServiceContainer extends ServiceContainer
     {
         return new IndividualPurchaseFromLeanpubApi(
             $this->configuration->leanpubBookSlug(),
-            $this->configuration->leanpubApiKey()
+            $this->configuration->leanpubApiKey(),
+            $this->configuration->leanpubApiBaseUrl()
         );
     }
 

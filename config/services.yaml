@@ -58,6 +58,9 @@ services:
     LeanpubBookClub\Infrastructure\Leanpub\ApiKey:
         factory: ['@LeanpubBookClub\Infrastructure\Configuration', 'leanpubApiKey']
 
+    LeanpubBookClub\Infrastructure\Leanpub\BaseUrl:
+        factory: ['@LeanpubBookClub\Infrastructure\Configuration', 'leanpubApiBaseUrl']
+
     LeanpubBookClub\Infrastructure\Leanpub\BookSummary\GetBookSummaryFromLeanpubApi: ~
 
     LeanpubBookClub\Infrastructure\Leanpub\BookSummary\CachedGetBookSummary:
@@ -71,6 +74,7 @@ services:
         arguments:
             - '%env(LEANPUB_BOOK_SLUG)%'
             - '%env(LEANPUB_API_KEY)%'
+            - '%env(LEANPUB_API_BASE_URL)%'
             - '%env(SYSTEM_EMAIL_ADDRESS)%'
             - '%env(AUTHOR_TIMEZONE)%'
 

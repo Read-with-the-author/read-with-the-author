@@ -7,6 +7,7 @@ use Generator;
 use GuzzleHttp\Psr7\Request;
 use Http\Adapter\Guzzle6\Client as GuzzleAdapter;
 use LeanpubBookClub\Infrastructure\Leanpub\ApiKey;
+use LeanpubBookClub\Infrastructure\Leanpub\BaseUrl;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSlug;
 use Safe\Exceptions\JsonException;
 use function Safe\json_decode;
@@ -18,10 +19,13 @@ final class IndividualPurchaseFromLeanpubApi implements IndividualPurchases
 
     private ApiKey $apiKey;
 
-    public function __construct(BookSlug $bookSlug, ApiKey $apiKey)
+    private BaseUrl $leanpubApiBaseUrl;
+
+    public function __construct(BookSlug $bookSlug, ApiKey $apiKey, BaseUrl $leanpubApiBaseUrl)
     {
         $this->bookSlug = $bookSlug;
         $this->apiKey = $apiKey;
+        $this->leanpubApiBaseUrl = $leanpubApiBaseUrl;
     }
 
     public function all(): Generator
@@ -63,7 +67,8 @@ final class IndividualPurchaseFromLeanpubApi implements IndividualPurchases
             new Request(
                 'GET',
                 sprintf(
-                    'https://leanpub.com/%s/individual_purchases.json?api_key=%s&page=%d',
+                    '%s/%s/individual_purchases.json?api_key=%s&page=%d',
+                    $this->leanpubApiBaseUrl->asString(),
                     $this->bookSlug->asString(),
                     $this->apiKey->asString(),
                     $page

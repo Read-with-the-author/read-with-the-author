@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace LeanpubBookClub\Infrastructure\Leanpub\BookSummary;
 
+use Assert\Assert;
 use GuzzleHttp\Psr7\Request;
 use Http\Adapter\Guzzle6\Client as GuzzleAdapter;
 use LeanpubBookClub\Infrastructure\Leanpub\ApiKey;
+use LeanpubBookClub\Infrastructure\Leanpub\BaseUrl;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSlug;
 use LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases\CouldNotLoadIndividualPurchases;
 use Safe\Exceptions\JsonException;
@@ -14,10 +16,12 @@ use function Safe\json_decode;
 final class GetBookSummaryFromLeanpubApi implements GetBookSummary
 {
     private ApiKey $apiKey;
+    private BaseUrl $leanpubApiBaseUrl;
 
-    public function __construct(ApiKey $apiKey)
+    public function __construct(ApiKey $apiKey, BaseUrl $leanpubApiBaseUrl)
     {
         $this->apiKey = $apiKey;
+        $this->leanpubApiBaseUrl = $leanpubApiBaseUrl;
     }
 
     public function getBookSummary(BookSlug $bookSlug): BookSummary
@@ -32,7 +36,8 @@ final class GetBookSummaryFromLeanpubApi implements GetBookSummary
             new Request(
                 'GET',
                 sprintf(
-                    'https://leanpub.com/%s.json?api_key=%s',
+                    '%s/%s.json?api_key=%s',
+                    $this->leanpubApiBaseUrl->asString(),
                     $bookSlug->asString(),
                     $this->apiKey->asString()
                 )

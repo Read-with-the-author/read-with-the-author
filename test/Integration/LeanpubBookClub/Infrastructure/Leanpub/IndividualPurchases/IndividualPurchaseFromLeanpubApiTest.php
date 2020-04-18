@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure\Leanpub\IndividualPurchases;
 
 use LeanpubBookClub\Infrastructure\Leanpub\ApiKey;
+use LeanpubBookClub\Infrastructure\Leanpub\BaseUrl;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSlug;
 use PHPUnit\Framework\TestCase;
 use LeanpubBookClub\Infrastructure\Env;
 
 /**
- * @group internet
  * @group slow
  */
 final class IndividualPurchaseFromLeanpubApiTest extends TestCase
@@ -20,8 +20,9 @@ final class IndividualPurchaseFromLeanpubApiTest extends TestCase
     public function it_loads_all_purchases_from_leanpub(): void
     {
         $individualPurchases = new IndividualPurchaseFromLeanpubApi(
-            BookSlug::fromString('object-design'),
-            ApiKey::fromString(Env::get('LEANPUB_API_KEY'))
+            BookSlug::fromString(Env::get('LEANPUB_BOOK_SLUG')),
+            ApiKey::fromString(Env::get('LEANPUB_API_KEY')),
+            BaseUrl::fromString(Env::get('LEANPUB_API_BASE_URL'))
         );
 
         $numberOfPurchases = 0;
@@ -45,6 +46,6 @@ final class IndividualPurchaseFromLeanpubApiTest extends TestCase
             $numberOfPurchases++;
         }
 
-        self::assertGreaterThan(50, $numberOfPurchases, 'The API client is supposed to fetch more than one page');
+        self::assertEquals(3, $numberOfPurchases, 'The API client is supposed to fetch more than one page');
     }
 }

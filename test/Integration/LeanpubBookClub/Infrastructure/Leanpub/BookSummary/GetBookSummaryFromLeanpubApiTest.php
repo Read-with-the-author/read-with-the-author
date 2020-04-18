@@ -4,12 +4,13 @@ declare(strict_types=1);
 namespace LeanpubBookClub\Infrastructure\Leanpub\BookSummary;
 
 use LeanpubBookClub\Infrastructure\Leanpub\ApiKey;
+use LeanpubBookClub\Infrastructure\Leanpub\BaseUrl;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSlug;
 use PHPUnit\Framework\TestCase;
 use LeanpubBookClub\Infrastructure\Env;
 
 /**
- * @group internet
+ * @group slow
  */
 final class GetBookSummaryFromLeanpubApiTest extends TestCase
 {
@@ -19,23 +20,24 @@ final class GetBookSummaryFromLeanpubApiTest extends TestCase
     public function it_loads_a_book_summary_from_leanpub(): void
     {
         $getBookSummaryFromLeanpubApi = new GetBookSummaryFromLeanpubApi(
-            ApiKey::fromString(Env::get('LEANPUB_API_KEY'))
+            ApiKey::fromString(Env::get('LEANPUB_API_KEY')),
+            BaseUrl::fromString(Env::get('LEANPUB_API_BASE_URL'))
         );
 
         $bookSummary = $getBookSummaryFromLeanpubApi->getBookSummary(
-            BookSlug::fromString('microservices-for-everyone')
+            BookSlug::fromString(Env::get('LEANPUB_BOOK_SLUG'))
         );
 
         self::assertEquals(
             new BookSummary(
-                'Microservices for everyone',
+                'Advanced Web Application Architecture',
                 '',
                 'Matthias Noback',
-                'https://d2sofvawe08yqg.cloudfront.net/microservices-for-everyone/original?1549495580',
-                'http://leanpub.com/microservices-for-everyone',
-                'http://leanpub.com/s/Tg286d6Q80d6JNiXfS1HBA.pdf',
-                'http://leanpub.com/s/Tg286d6Q80d6JNiXfS1HBA.epub',
-                'http://leanpub.com/s/Tg286d6Q80d6JNiXfS1HBA.mobi'
+                'http://fake_leanpub_server/title_page.jpg',
+                'http://leanpub.com/web-application-architecture',
+                'http://leanpub.com/s/oxS20NHbGUnWb4GEJyHYcF.pdf',
+                'http://leanpub.com/s/oxS20NHbGUnWb4GEJyHYcF.epub',
+                'http://leanpub.com/s/oxS20NHbGUnWb4GEJyHYcF.mobi'
             ),
             $bookSummary
         );

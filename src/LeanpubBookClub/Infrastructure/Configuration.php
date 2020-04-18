@@ -6,6 +6,7 @@ namespace LeanpubBookClub\Infrastructure;
 use LeanpubBookClub\Domain\Model\Common\EmailAddress;
 use LeanpubBookClub\Domain\Model\Common\TimeZone;
 use LeanpubBookClub\Infrastructure\Leanpub\ApiKey;
+use LeanpubBookClub\Infrastructure\Leanpub\BaseUrl;
 use LeanpubBookClub\Infrastructure\Leanpub\BookSlug;
 
 final class Configuration
@@ -14,6 +15,8 @@ final class Configuration
 
     private string $leanpubApiKey;
 
+    private string $leanpubApiBaseUrl;
+
     private string $systemEmailAddress;
 
     private string $authorTimeZone;
@@ -21,11 +24,13 @@ final class Configuration
     public function __construct(
         string $leanpubBookSlug,
         string $leanpubApiKey,
+        string $leanpubApiBaseUrl,
         string $systemEmailAddress,
         string $authorTimeZone
     ) {
         $this->leanpubBookSlug = $leanpubBookSlug;
         $this->leanpubApiKey = $leanpubApiKey;
+        $this->leanpubApiBaseUrl = $leanpubApiBaseUrl;
         $this->systemEmailAddress = $systemEmailAddress;
         $this->authorTimeZone = $authorTimeZone;
     }
@@ -48,5 +53,10 @@ final class Configuration
     public function authorTimeZone(): TimeZone
     {
         return TimeZone::fromString($this->authorTimeZone);
+    }
+
+    public function leanpubApiBaseUrl(): BaseUrl
+    {
+        return BaseUrl::fromString($this->leanpubApiBaseUrl);
     }
 }

@@ -1,0 +1,20 @@
+[
+    {
+        "cause_royalty_percentage": "0.0",
+        "author_royalty_percentage": "100.0",
+        "author_royalties": "12.0",
+        "cause_royalties": "0.0",
+        "author_paid_out_at": null,
+        "cause_paid_out_at": null,
+        "created_at": "2020-04-18T07:13:37.000Z",
+        "royalty_days_hold": 45,
+        "publisher_royalties": "0.0",
+        "publisher_paid_out_at": null,
+        "author_username": "matthiasnoback",
+        "publisher_slug": "",
+        "user_email": "",
+        "purchase_uuid": "Q8L2iajkM8iAaZZ5q1JbqE",
+        "invoice_id": "SHzU144f2VpSPuRSHQt7ag",
+        "date_purchased": "2020-04-18T07:13:37.000Z"
+    }
+]

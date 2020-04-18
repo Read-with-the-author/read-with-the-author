@@ -11,16 +11,27 @@ services:
             - .:/srv/app:cached
         depends_on:
             - mailhog
+            - fake_leanpub_server
         env_file:
-            - .env.local
+            - .env
 
     importer:
         volumes:
             - .:/srv/app:cached
         env_file:
-            - .env.local
+            - .env
 
     mailhog:
         image: mailhog/mailhog
         ports:
             - "8025:8025"
+
+    fake_leanpub_server:
+        image: matthiasnoback/leanpub-book-club-fake-leanpub-server:latest
+        build: docker/fake_leanpub_server/
+        ports:
+            - "8080:80"
+        volumes:
+            - .:/srv/app:cached
+        env_file:
+            - .env
