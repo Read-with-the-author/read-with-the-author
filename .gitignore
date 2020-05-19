@@ -20,3 +20,5 @@
 ###< phpunit/phpunit ###
 
 /machine_id
+/.idea/
+
