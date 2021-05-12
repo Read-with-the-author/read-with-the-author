@@ -4,7 +4,7 @@ set -e
 
 export APP_ENV=test
 
-vendor/bin/phpstan analyse
+php -dmemory_limit=1G vendor/bin/phpstan analyse
 vendor/bin/phpunit --testsuite unit -v "$@"
 vendor/bin/behat --suite acceptance --tags="~@ignore" -v
 

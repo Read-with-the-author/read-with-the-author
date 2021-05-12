@@ -67,7 +67,7 @@ final class SymfonyMailerTest extends KernelTestCase
 
         // Check that the date in the calendar link uses UTC instead of the member's preferred time zone
         self::assertStringContainsString(
-            'dates=20200401T200000/20200401T210000&ctz=UTC',
+            'dates=20200401T200000Z/20200401T210000Z',
             (string)$crawler->filter('a:contains("Google calendar")')->attr('href')
         );
     }

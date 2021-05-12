@@ -8,9 +8,6 @@ use function Safe\json_encode;
 
 final class NoResult extends RuntimeException
 {
-    /**
-     * @param array<string,mixed> $parameters
-     */
     public static function forQuery(string $query, array $parameters): self
     {
         return new self(
