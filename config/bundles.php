@@ -1,7 +1,5 @@
 <?php
 
-use LeanpubBookClub\Infrastructure\TalisOrm\TalisOrmBundle\TalisOrmBundle;
-
 return [
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
     Symfony\Bundle\TwigBundle\TwigBundle::class => ['all' => true],
@@ -12,5 +10,5 @@ return [
     Symfony\Bundle\SecurityBundle\SecurityBundle::class => ['all' => true],
     Doctrine\Bundle\DoctrineBundle\DoctrineBundle::class => ['all' => true],
     Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle::class => ['all' => true],
-    TalisOrmBundle::class => ['all' => true],
+    LeanpubBookClub\Infrastructure\TalisOrm\TalisOrmBundle\TalisOrmBundle::class => ['all' => true],
 ];
